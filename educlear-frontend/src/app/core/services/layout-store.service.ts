@@ -9,7 +9,7 @@ const STORAGE_KEY = '__UBOLD_ANGULAR_CONFIG__';
 
 const defaultState: LayoutState = {
     skin: 'default',
-    theme: 'light',
+    theme: 'dark',
     orientation: 'vertical',
     position: 'fixed',
     width: 'fluid',

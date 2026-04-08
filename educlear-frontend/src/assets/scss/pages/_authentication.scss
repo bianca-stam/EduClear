@@ -60,3 +60,15 @@ html[data-bs-theme="dark"] {
         max-width: 300px;
     }
 }
+
+/* Estilo personalizado para los inputs del formulario */
+.auth-box-form .form-control {
+    background-color: #ffffff !important; 
+    border-color: #06AEC8 !important; 
+    color: #000000 !important; 
+}
+
+.auth-box-form .form-control:focus {
+    background-color: #ffffff !important; 
+    border-color: #06AEC8 !important; 
+}
