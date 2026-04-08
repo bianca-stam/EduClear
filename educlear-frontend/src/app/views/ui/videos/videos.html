@@ -1,0 +1,61 @@
+<div class="container-fluid">
+    <app-page-title title="Videos" subTitle="UI" />
+
+    <div class="row">
+        <div class="col-xl-6">
+            <app-ui-card
+                title="Responsive embed video 21:9"
+                [isTogglable]="true"
+            >
+                <div card-body>
+                    <div class="ratio ratio-21x9">
+                        <iframe
+                            src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+                        ></iframe>
+                    </div>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card
+                title="Responsive embed video 1:1"
+                [isTogglable]="true"
+            >
+                <div card-body>
+                    <div class="ratio ratio-1x1">
+                        <iframe
+                            src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+                        ></iframe>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card
+                title="Responsive embed video 16:9"
+                [isTogglable]="true"
+            >
+                <div card-body>
+                    <div class="ratio ratio-16x9">
+                        <iframe
+                            src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+                        ></iframe>
+                    </div>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card
+                title="Responsive embed video 4:3"
+                [isTogglable]="true"
+            >
+                <div card-body>
+                    <div class="ratio ratio-4x3">
+                        <iframe
+                            src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+                        ></iframe>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+    </div>
+</div>

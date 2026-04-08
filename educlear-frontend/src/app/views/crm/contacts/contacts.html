@@ -1,0 +1,21 @@
+<div class="container-fluid">
+    <app-page-title title="Contacts" subtitle="CRM"/>
+
+    <div class="row">
+        @for (contact of contacts; track $index) {
+            <div class="col-md-6 col-xxl-4">
+                <app-contact-card [item]="contact"/>
+            </div>
+        }
+    </div>
+
+
+    <ul class="pagination pagination-rounded pagination-boxed justify-content-center">
+        <ngb-pagination
+            [page]="2"
+            [collectionSize]="50"
+        />
+
+    </ul>
+
+</div>

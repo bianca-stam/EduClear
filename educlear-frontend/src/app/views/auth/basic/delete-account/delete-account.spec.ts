@@ -1,0 +1,24 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DeleteAccount } from './delete-account';
+
+
+
+describe('DeleteAccountComponent', () => {
+  let component: DeleteAccount;
+  let fixture: ComponentFixture<DeleteAccount>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DeleteAccount]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(DeleteAccount);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

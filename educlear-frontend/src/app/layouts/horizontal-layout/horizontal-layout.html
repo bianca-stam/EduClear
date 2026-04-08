@@ -1,0 +1,22 @@
+<div class="wrapper">
+
+    <app-topbar/>
+
+    @if (!isMobileSidebarVisible) {
+        <app-navbar/>
+    }
+
+    @if (isMobileSidebarVisible) {
+        <app-sidenav/>
+    }
+
+    <div class="content-page">
+
+        <router-outlet/>
+        <footer class="footer">
+            <app-footer class="w-100"/>
+        </footer>
+
+    </div>
+
+</div>

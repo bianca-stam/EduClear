@@ -1,0 +1,68 @@
+<div class="container-fluid">
+    <app-page-title subTitle="Pages" title="FAQs" />
+
+    <div class="row justify-content-center">
+        <div class="col-xxl-10">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-6 col-md-8">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <ng-icon
+                                name="tablerHelpHexagon"
+                                class="fs-1 text-primary"
+                            ></ng-icon>
+                        </div>
+                        <h3 class="fw-semibold mb-2">
+                            Need Help with Something?
+                        </h3>
+                        <p class="text-muted mb-4">
+                            We're here to assist you with any technical
+                            questions, account issues, or feedback.<br />
+                            Reach out to our support team — we’ll get back to
+                            you as soon as possible!
+                        </p>
+                        <div
+                            class="d-flex justify-content-center gap-2 flex-wrap"
+                        >
+                            <a
+                                href="mailto:support@example.com"
+                                class="btn btn-success"
+                            >
+                                <ng-icon name="tablerMail" class="fs-5 me-1"></ng-icon> Contact
+                                Support
+                            </a>
+                            <a
+                                href="https://twitter.com/intent/tweet?text=Hello+Support"
+                                target="_blank"
+                                class="btn btn-primary"
+                            >
+                                   <ng-icon name="tablerBrandTwitter" class="fs-5 me-1"></ng-icon> 
+                                Tweet to Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6">
+                    <app-general />
+                </div>
+
+                <div class="col-xl-6">
+                    <app-payments />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6">
+                    <app-refunds />
+                </div>
+
+                <div class="col-xl-6">
+                    <app-customization />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

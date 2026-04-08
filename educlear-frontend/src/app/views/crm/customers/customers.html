@@ -1,0 +1,273 @@
+<div class="container-fluid">
+    <app-page-title title="Customers" subTitle="CRM"/>
+
+    <div class="row justify-content-center">
+        <div class="col-xxl-12">
+            <div class="card">
+                <div class="card-header border-light justify-content-between">
+                    <div class="d-flex gap-2">
+                        <div class="app-search">
+                            <input [(ngModel)]="tableService.searchTerm" type="text" class="form-control"
+                                   placeholder="Search clients...">
+                            <lucide-angular [img]="LucideSearch" class="app-search-icon text-muted"/>
+                        </div>
+                        @if (hasSelection) {
+                            <button class="btn btn-danger" (click)="deleteSelected()">Delete</button>
+                        }
+                        <button class="btn btn-primary" (click)="openAddCustomerModal(content)">
+                            <ng-icon name="tablerPlus" class="me-1"/> New Customer
+                        </button>
+                        <button type="submit" class="btn btn-purple rounded-circle btn-icon">
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="me-2 fw-semibold">Filter By:</span>
+                        <div class="app-search">
+                            <select [(ngModel)]="filterByCountry"
+                                    (ngModelChange)="tableService.setFilter('countryName', filterByCountry)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="All">Country</option>
+                                <option value="US">United States</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="AU">Australia</option>
+                                tab
+                                <option value="DE">Germany</option>
+                                <option value="IN">India</option>
+                            </select>
+                            <lucide-angular [img]="LucideGlobe" class="app-search-icon text-muted"/>
+                        </div>
+
+
+                        <div class="app-search">
+                            <select [(ngModel)]="statusType"
+                                    (ngModelChange)="tableService.setFilter('status', statusType)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="All">Account Status</option>
+                                <option value="active">Active</option>
+                                <option value="verification-pending">Varification Pending</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Blocked">Blocked</option>
+                            </select>
+                            <lucide-angular [img]="LucideShuffle" class="app-search-icon text-muted"/>
+                        </div>
+
+
+                        <div>
+                            <select [(ngModel)]="tableService.pageSize" data-table-set-rows-per-page
+                                    class="form-select form-control my-1 my-md-0">
+                                <option [ngValue]="5">5</option>
+                                <option [ngValue]="8">8</option>
+                                <option [ngValue]="10">10</option>
+                                <option [ngValue]="15">15</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                        <thead class="bg-light bg-opacity-25 thead-sm">
+                        <tr class="text-uppercase fs-xxs">
+                            <th scope="col" style="width: 1%;">
+                                <input [(ngModel)]="selectAll" (change)="toggleAllSelection()"
+                                       class="form-check-input form-check-input-light fs-14 mt-0"
+                                       type="checkbox" id="checkAll" value="option">
+                            </th>
+                            <th sortable="name"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Customer Name
+                            </th>
+                            <th sortable="phone"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Phone
+                            </th>
+                            <th sortable="countryName"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Country
+                            </th>
+                            <th sortable="enrollDate"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Joined
+                            </th>
+                            <th sortable="type"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Type
+                            </th>
+                            <th sortable="title"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Job Title
+                            </th>
+                            <th sortable="status"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Status
+                            </th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @if ((total$ | async)! > 0) {
+                                @for (client of records$ | async; track $index) {
+                                    <tr>
+                                        <td><input type="checkbox"
+                                                   class="form-check-input form-check-input-light fs-14 mt-0"
+                                                   [(ngModel)]="client.selected"
+                                                   (change)="toggleSingleSelection()"/></td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="avatar avatar-sm">
+                                                    <img [src]="client.avatar" [alt]="client.name"
+                                                         class="img-fluid rounded-circle"/>
+                                                </div>
+                                                <div>
+                                                    <h5 class="mb-0 fs-base">
+                                                        <a routerLink="/pages/profile"
+                                                           class="link-reset">{{ client.name }}</a>
+                                                    </h5>
+                                                    <p class="text-muted fs-xs mb-0">{{ client.email }}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ client.phone }}</td>
+                                        <td>
+                                            <span class="badge p-1 text-bg-light fs-sm">
+                                              <img [src]="client.flag" class="rounded-circle me-1" height="12"/>
+                                                {{ client.countryName }}
+                                            </span>
+                                        </td>
+                                        <td>{{ client.enrollDate }}</td>
+                                        <td>{{ client.type }}</td>
+                                        <td>{{ client.title }}</td>
+                                        <td>
+                                        <span
+                                            class="badge badge-label"
+                                            [class]="client.status === 'verification-pending' ?
+                                            'bg-warning-subtle text-warning':
+                                            client.status === 'blocked' ? 'bg-danger-subtle text-danger':
+                                            client.status === 'inactive' ? 'bg-secondary-subtle text-secondary':
+                                            'bg-success-subtle text-success'
+                                          "
+                                        >
+                                          {{ toTitleCase(client.status) }}
+                                        </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                                <a [routerLink]="[]"
+                                                   class="btn btn-default btn-icon btn-sm">
+                                                    <ng-icon name="tablerEye" class="fs-lg"/>
+                                                </a>
+                                                <a [routerLink]="[]"
+                                                   class="btn btn-default btn-icon btn-sm">
+                                                    <ng-icon name="tablerEdit" class="fs-lg"/>
+                                                </a>
+                                                <button class="btn btn-default btn-icon btn-sm"
+                                                        (click)="tableService.deleteItem(client)">
+                                                    <ng-icon name="tablerTrash" class="fs-lg"/>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } @else {
+                                <tr class="no-results">
+                                    <td colspan="11" class="text-center text-muted py-3">Nothing found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer border-0">
+                    @if ((total$ | async)! > 0) {
+                        <app-custom-pagination
+                            itemsName="customers"
+                            [showingRange]="tableService.showingRange"
+                            [collectionSize]="(total$ | async)!"
+                            [(page)]="tableService.page"
+                            [pageSize]="tableService.pageSize"
+                        >
+                        </app-custom-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <form id="addCustomerForm">
+        <div class="modal-body">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label for="customerName" class="form-label">Customer Name</label>
+                    <input type="text" class="form-control" id="customerName" placeholder="Enter full name" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone" placeholder="e.g. +1 234 567 8900" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="company" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company" placeholder="Company name">
+                </div>
+
+                <div class="col-md-6">
+                    <label for="country" class="form-label">Country</label>
+                    <select class="form-select" id="country" required>
+                        <option value="">Select country</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="IN">India</option>
+                        <option value="CA">Canada</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="JP">Japan</option>
+                        <option value="BR">Brazil</option>
+                        <option value="EG">Egypt</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="customerType" class="form-label">Customer Type</label>
+                    <select class="form-select" id="customerType" required>
+                        <option value="">Select type</option>
+                        <option value="Lead">Lead</option>
+                        <option value="Prospect">Prospect</option>
+                        <option value="Client">Client</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="Accostatus" class="form-label">Account Status</label>
+                    <select class="form-select" id="Accostatus" required>
+                        <option value="">Select status</option>
+                        <option value="Active">Active</option>
+                        <option value="Verification Pending">Verification Pending</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Blocked">Blocked</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="joinedDate" class="form-label">Joined Date</label>
+                    <input type="date" class="form-control" mwlFlatpickr [options]="{dateFormat: 'd M, Y'}" required>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.dismiss()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Customer</button>
+        </div>
+    </form>
+
+</ng-template>
