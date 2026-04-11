@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -80,7 +80,10 @@ type SideNavSizeOptionType = {
     viewProviders: [provideIcons({ tablerX })]
 })
 export class Customizer {
-    constructor(public activeOffcanvas: NgbActiveOffcanvas, public layout: LayoutStoreService) {
+    public activeOffcanvas = inject(NgbActiveOffcanvas);
+    public layout = inject(LayoutStoreService);
+
+    constructor() {
     }
 
     close(): void {
