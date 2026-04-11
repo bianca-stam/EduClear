@@ -1,9 +1,11 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
+
 import { routes } from './app.routes';
 import { DecimalPipe } from '@angular/common'
 import {provideDaterangepickerLocale} from 'ngx-daterangepicker-bootstrap';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from '@core/interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +16,9 @@ export const appConfig: ApplicationConfig = {
       provideDaterangepickerLocale({
           separator: ' - ',
           cancelLabel: 'Cancel',
-      })
+      }),
+      provideHttpClient(
+        withInterceptors([authInterceptor])
+      )
   ],
 };
