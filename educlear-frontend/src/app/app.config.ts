@@ -2,11 +2,23 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { DecimalPipe } from '@angular/common'
+import {provideDaterangepickerLocale} from 'ngx-daterangepicker-bootstrap';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from '@core/interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideRouter(routes), provideClientHydration(withEventReplay())
-  ]
+      DecimalPipe,
+      provideZoneChangeDetection({ eventCoalescing: true }),
+      provideRouter(routes),
+      provideAnimations(),
+      provideDaterangepickerLocale({
+          separator: ' - ',
+          cancelLabel: 'Cancel',
+      }),
+      provideHttpClient(
+        withInterceptors([authInterceptor])
+      )
+  ],
 };
