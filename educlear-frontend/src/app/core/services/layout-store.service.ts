@@ -2,7 +2,6 @@ import {Injectable, signal} from '@angular/core';
 import {LayoutState} from '@/app/types/layout';
 
 import {NgbOffcanvas} from '@ng-bootstrap/ng-bootstrap';
-import {Customizer} from '@layouts/components/customizer/customizer';
 import {BehaviorSubject} from 'rxjs';
 
 const STORAGE_KEY = '__UBOLD_ANGULAR_CONFIG__';
@@ -238,7 +237,8 @@ export class LayoutStoreService {
         this.setHtmlAttribute('data-layout', current.orientation === 'horizontal' ? 'topnav' : '');
     }
 
-    openCustomizer(): void {
+    async openCustomizer(): Promise<void> {
+        const { Customizer } = await import('@layouts/components/customizer/customizer');
         this.offcanvasService.open(Customizer,  {
             position: 'end',
             backdrop: true,

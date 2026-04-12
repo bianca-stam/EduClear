@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import {MainLayout} from '@layouts/main-layout/main-layout';
 import {Landing} from './views/landing/landing';
+import { authGuard } from '@core/guards/auth-guard';
 
 export const routes: Routes = [
     {
@@ -10,12 +11,13 @@ export const routes: Routes = [
     },
     {
         path: '',
-        component: MainLayout,
-        loadChildren: () => import('./views/views.route').then((mod) => mod.VIEWS_ROUTES)
+        loadChildren: () => import('./views/auth/auth.route').then((mod) => mod.AUTH_ROUTES)
     },
     {
         path: '',
-        loadChildren: () => import('./views/auth/auth.route').then((mod) => mod.AUTH_ROUTES)
+        component: MainLayout,
+        canActivate: [authGuard],
+        loadChildren: () => import('./views/views.route').then((mod) => mod.VIEWS_ROUTES)
     },
     {
         path: '',
@@ -30,4 +32,9 @@ export const routes: Routes = [
         component: Landing,
         data: {title: 'One page Landing'}
     },
+    { 
+        path: '**', 
+        redirectTo: '/auth-2/sign-in', 
+        pathMatch: 'full' 
+    }
 ];
