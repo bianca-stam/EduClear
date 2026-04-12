@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: ./educlear-service-Backend/usuario-service
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./educlear-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

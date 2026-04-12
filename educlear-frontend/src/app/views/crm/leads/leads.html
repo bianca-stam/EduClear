@@ -1,0 +1,271 @@
+<div class="container-fluid">
+    <app-page-title title="Leads" subTitle="CRM"/>
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-xl-6 g-1 mb-1">
+        @for (lead of leadStats; track $index) {
+        <div class="col" >
+            <div class="card text-center p-3 mb-0">
+                <p class="mb-1 text-{{lead.variant ? `${lead.variant}` : 'muted' }}">{{lead.label}}</p>
+                <h4 class="mb-0 text-{{lead.variant}}"><span [countUp]="lead.count" [options]="{suffix: lead.suffix || ''}">0</span></h4>
+            </div>
+        </div>
+        }
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-light justify-content-between">
+                    <div class="d-flex gap-2">
+                        <div class="app-search">
+                            <input [(ngModel)]="tableService.searchTerm"
+                                   type="search"
+                                   class="form-control"
+                                   placeholder="Search leads..."/>
+                            <lucide-angular [img]="LucideSearch" class="app-search-icon text-muted"/>
+                        </div>
+
+                        <button class="btn btn-primary" (click)="openLeadModal(content)">
+                            <ng-icon name="tablerPlus" class="me-1"/>
+                            New Leads
+                        </button>
+
+                        @if (hasSelection) {
+                            <button class="btn btn-danger" (click)="deleteSelected()">Delete</button>
+                        }
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="me-2 fw-semibold">Filter By:</span>
+
+                        <div class="app-search">
+                            <select [(ngModel)]="filterStatus"
+                                    (ngModelChange)="tableService.setFilter('status', filterStatus)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="">Status</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Proposal Sent">Proposal Sent</option>
+                                <option value="Follow Up">Follow Up</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Negotiation">Negotiation</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                            <lucide-angular [img]="LucideShuffle" class="app-search-icon text-muted"/>
+                        </div>
+
+
+                        <div>
+                            <select [(ngModel)]="tableService.pageSize"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option [ngValue]="5">5</option>
+                                <option [ngValue]="8">8</option>
+                                <option [ngValue]="10">10</option>
+                                <option [ngValue]="15">15</option>
+                                <option [ngValue]="20">20</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                            <thead class="bg-light align-middle bg-opacity-25 thead-sm text-nowrap">
+                            <tr class="text-uppercase fs-xxs">
+                                <th class="ps-3" style="width:1%">
+                                    <input [(ngModel)]="selectAll"
+                                           (change)="toggleAllSelection()"
+                                           class="form-check-input form-check-input-light fs-14 mt-0" type="checkbox"/>
+                                </th>
+                                <th sortable="id" (sort)="tableService.setSort($event.column, $event.direction)">Lead
+                                    ID
+                                </th>
+                                <th sortable="customer" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Customer
+                                </th>
+                                <th>Company</th>
+                                <th sortable="email" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Email
+                                </th>
+                                <th sortable="phone" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Phone
+                                </th>
+                                <th sortable="amount" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Amount (USD)
+                                </th>
+                                <th sortable="tag" (sort)="tableService.setSort($event.column, $event.direction)">Tags
+                                </th>
+                                <th sortable="assigned" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Assigned
+                                </th>
+                                <th sortable="status" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Status
+                                </th>
+                                <th sortable="created" (sort)="tableService.setSort($event.column, $event.direction)">
+                                    Created
+                                </th>
+                                <th class="text-center" style="width:1%">Actions</th>
+                            </tr>
+                            </thead>
+
+                            <tbody class="text-nowrap">
+                                @if ((total$ | async)! > 0) {
+                                    @for (lead of tableService.items$ | async; track lead.id) {
+                                        <tr>
+                                            <td class="ps-3">
+                                                <input [(ngModel)]="lead.selected"
+                                                       (change)="toggleSingleSelection()"
+                                                       class="form-check-input form-check-input-light fs-14 product-item-check mt-0"
+                                                       type="checkbox"/>
+                                            </td>
+                                            <td><a [routerLink]="[]" class="fw-semibold link-reset">{{ lead.id }}</a>
+                                            </td>
+                                            <td>{{ lead.customer }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div
+                                                        class="avatar-sm border border-dashed rounded-circle me-2 d-flex justify-content-center align-items-center">
+                                                        <img [src]="lead.logo" [alt]="lead.company" height="20"/>
+                                                    </div>
+                                                    <a [routerLink]="[]" class="link-reset">{{ lead.company }}</a>
+                                                </div>
+                                            </td>
+                                            <td>{{ lead.email }}</td>
+                                            <td>{{ lead.phone }}</td>
+                                            <td>{{ currency }}{{ lead.amount }}</td>
+                                            <td>
+                                              <span
+                                                  class="badge badge-label bg-{{lead.tag.color}}-subtle text-{{lead.tag.color}}">
+                                                {{ lead.tag.label }}
+                                              </span>
+                                            </td>
+                                            <td>
+                                                <img [src]="lead.assigned.avatar" [alt]="lead.assigned.name"
+                                                     class="avatar-xs rounded-circle"
+                                                     [attr.title]="lead.assigned.name"/>
+                                            </td>
+                                            <td>
+                                              <span
+                                                  class="badge bg-{{lead.statusVariant}}-subtle text-{{lead.statusVariant}}">
+                                                {{ lead.status }}
+                                              </span>
+                                            </td>
+                                            <td>{{ lead.created }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center gap-1">
+                                                    <button class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerEye" class="fs-lg"/>
+                                                    </button>
+                                                    <button class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerEdit" class="fs-lg"/>
+                                                    </button>
+                                                    <button (click)="tableService.deleteItem(lead)"
+                                                            class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerTrash" class="fs-lg"/>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                } @else {
+                                    <tr class="no-results">
+                                        <td colspan="12" class="text-center text-muted py-3">No leads found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer border-0">
+                    @if ((total$ | async)! > 0) {
+                        <app-custom-pagination
+                            itemsName="leads"
+                            [showingRange]="tableService.showingRange"
+                            [collectionSize]="(total$ | async)!"
+                            [(page)]="tableService.page"
+                            [pageSize]="tableService.pageSize"
+                        >
+                        </app-custom-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <ng-template #content let-modal>
+        <div class="modal-header">
+            <h5 class="modal-title" id="addLeadModalLabel">Add New Lead</h5>
+            <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+        </div>
+
+        <form id="leadForm">
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label for="leadName" class="form-label">Lead Name</label>
+                        <input type="text" class="form-control" id="leadName" placeholder="Enter lead name"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="companyName" class="form-label">Company</label>
+                        <input type="text" class="form-control" id="companyName"
+                               placeholder="Enter company name" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="+1 234-567-8910">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="amount" class="form-label">Amount (USD)</label>
+                        <input type="number" class="form-control" id="amount" placeholder="e.g. 50000">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="Leadstatus" class="form-label">Status</label>
+                        <select class="form-select" id="Leadstatus">
+                            <option value="">Select status</option>
+                            <option>In Progress</option>
+                            <option>Proposal Sent</option>
+                            <option>Follow Up</option>
+                            <option>Pending</option>
+                            <option>Negotiation</option>
+                            <option>Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="assignedTo" class="form-label">Assign To</label>
+                        <select class="form-select" id="assignedTo">
+                            <option value="">Select user</option>
+                            <option value="1">Emily Carter</option>
+                            <option value="2">Rohan Iyer</option>
+                            <option value="3">Sara Kim</option>
+                            <option value="4">Kevin Nguyen</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" (click)="modal.dismiss()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Lead</button>
+            </div>
+        </form>
+
+    </ng-template>
+
+</div>

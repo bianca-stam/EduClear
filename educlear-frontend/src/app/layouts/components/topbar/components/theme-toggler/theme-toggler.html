@@ -1,0 +1,33 @@
+<div ngbDropdown placement="bottom-end" class="topbar-item mx-1">
+    <button
+        ngbDropdownToggle
+        class="topbar-link drop-arrow-none p-0 border-0 bg-transparent"
+    >
+        <lucide-angular
+            [img]="theme() === 'dark' ? LucideMoon : theme() === 'system' ? LucideMonitorCog : LucideSun"
+            class="fs-xxl"
+        ></lucide-angular>
+    </button>
+
+    <ul ngbDropdownMenu class="dropdown-menu-end thememode-dropdown">
+        @for (option of themeOptions; track option.layoutTheme) {
+            <li>
+                <label
+                    class="dropdown-item cursor-pointer d-flex align-items-center cursor-pointer"
+                    [class.active]="theme() === option.layoutTheme"
+                >
+                    <lucide-angular [img]="option.icon" class="me-2 fs-16"></lucide-angular>
+                    <span class="flex-grow-1">{{ toTitleCase(option.layoutTheme) }}</span>
+                    <input
+                        type="radio"
+                        class="form-check-input ms-auto"
+                        name="theme"
+                        [value]="option.layoutTheme"
+                        [checked]="theme() === option.layoutTheme"
+                        (change)="changeTheme(option.layoutTheme)"
+                    />
+                </label>
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,77 @@
+<ul class="side-nav">
+    @for (item of menuItems; track $index) {
+
+        @if (item.isTitle) {
+            <li class="side-nav-title mt-2">{{ item.label }}</li>
+        }
+
+        @if (!item.isTitle) {
+            <!-- menu item without any child -->
+            @if (!hasSubMenu(item)) {
+                <ng-container *ngTemplateOutlet="MenuItem;context:{item}"/>
+            }
+
+            <!-- menu item with child -->
+            @if (hasSubMenu(item)) {
+                <ng-container *ngTemplateOutlet="MenuItemWithChildren;context:{item, siblings: menuItems}"/>
+            }
+
+        }
+
+    }
+</ul>
+
+<ng-template #MenuItemWithChildren let-item="item" let-siblings="siblings">
+    <li class="side-nav-item" [class.active]="isChildActive(item)">
+        <button (click)="toggleMenu(item, siblings)" class="side-nav-link"
+                [attr.aria-expanded]="!item.isCollapsed">
+            @if (item.icon) {
+                <lucide-angular class="menu-icon" [img]="item.icon"/>
+            }
+            <span class="menu-text">{{ item.label }}</span>
+            @if (item.badge) {
+                <span [class]="`badge bg-${item.badge.variant}`">{{ item.badge.text }}</span>
+            }
+            @if (!item.badge) {
+                <ng-icon class="menu-arrow" name="tablerChevronDown"></ng-icon>
+            }
+        </button>
+        <div #collapse="ngbCollapse" [(ngbCollapse)]="item.isCollapsed!" class="collapse">
+            <ul class="sub-menu">
+                @for (child of item.children; track $index) {
+                    <!-- menu item without any child -->
+                    @if (!hasSubMenu(child)) {
+                        <ng-container *ngTemplateOutlet="MenuItem;context:{item:child}"/>
+                    }
+
+                    <!-- menu item with child -->
+                    @if (hasSubMenu(child)) {
+                        <ng-container *ngTemplateOutlet="MenuItemWithChildren;context:{item:child, siblings: item.children}"/>
+                    }
+                }
+            </ul>
+        </div>
+    </li>
+</ng-template>
+
+<ng-template #MenuItem let-item="item">
+    <li class="side-nav-item" [class.active]="isActive(item)">
+        @if (item.url) {
+            <a [routerLink]="item.url" [target]="item.target" class="side-nav-link"
+               [class.disabled]="item.isDisabled"
+               [class.special-menu]="item.isSpecial"
+               [class.active]="isActive(item)"
+               [attr.data-active-link]="isActive(item)"
+            >
+                @if (item.icon) {
+                    <lucide-angular class="menu-icon" [img]="item.icon"/>
+                }
+                <span class="menu-text">{{ item.label }}</span>
+                @if (item.badge) {
+                    <span class="badge text-bg-{{item.badge.variant}} opacity-50"
+                          [innerHTML]="item.badge.text"></span>
+                }
+            </a>
+        }
+    </li>
+</ng-template>

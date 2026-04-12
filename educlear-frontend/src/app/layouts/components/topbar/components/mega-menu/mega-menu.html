@@ -1,0 +1,33 @@
+<div class="topbar-item d-none d-md-flex">
+    <div ngbDropdown class="dropdown">
+        <button ngbDropdownToggle class="topbar-link btn fw-medium btn-link dropdown-toggle drop-arrow-none">
+        Mega Menu
+        <ng-icon name="tablerChevronDown" class="ms-1 fs-16"/>
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu dropdown-menu-xxl p-0">
+            <div class="h-100" style="max-height: 380px;">
+                <div class="row g-0">
+                    @for (item of megaMenuItems; track i;let i = $index) {
+                    <div  class="col-md-4">
+                        <div class="p-2">
+                            <h5 class="mb-1 fw-semibold fs-sm dropdown-header">{{ item.title }}</h5>
+                            <ul class="list-unstyled megamenu-list">
+                                @for (link of item.links; track i;let i = $index) {
+                                <li >
+                                    <a [routerLink]="link.url ? link.url : []" class="dropdown-item">
+                                        <span class="d-flex align-items-center">
+                                            <ng-icon [name]="link.icon" class="me-2 fs-16"/>
+                                            {{ link.label }}
+                                        </span>
+                                    </a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

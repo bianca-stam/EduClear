@@ -1,0 +1,63 @@
+<header class="app-topbar">
+    <div class="container-fluid topbar-menu">
+        <div class="d-flex align-items-center gap-2">
+            <div class="logo-topbar">
+                <a routerLink="/" class="logo-light">
+                    <span class="logo-lg">
+                      <img src="assets/images/logo.png" alt="logo">
+                    </span>
+                    <span class="logo-sm">
+                        <img src="assets/images/logo-sm.png" alt="small logo">
+                    </span>
+                </a>
+
+                <a routerLink="/" class="logo-dark">
+                    <span class="logo-lg">
+                      <img src="assets/images/logo-black.png" alt="dark logo">
+                    </span>
+                    <span class="logo-sm">
+                      <img src="assets/images/logo-sm.png" alt="small logo">
+                    </span>
+                </a>
+            </div>
+
+            <button (click)="toggleSidebar()" class="sidenav-toggle-button btn btn-default btn-icon">
+                <ng-icon name="tablerMenu4" class="fs-22"/>
+            </button>
+
+
+            <app-mega-menu/>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+
+            <div class="app-search d-none d-xl-flex me-2">
+                <input type="search" class="form-control topbar-search rounded-pill" name="search"
+                       placeholder="Quick Search...">
+                <lucide-icon [img]="Search" class="app-search-icon text-muted"/>
+            </div>
+
+            <app-language-dropdown/>
+
+            <app-messages-dropdown/>
+
+            <app-application-menu/>
+
+            <app-theme-toggler/>
+
+            <app-toggle-fullscreen/>
+
+            <div class="topbar-item d-none d-sm-flex">
+                <button class="topbar-link" type="button" (click)="this.layout.toggleMonochrome()">
+                    <lucide-angular [img]="LucidePalette" class="fs-xxl"/>
+                </button>
+            </div>
+
+            <app-user-profile-topbar/>
+
+            <app-customizer-toggler/>
+
+
+        </div>
+    </div>
+</header>

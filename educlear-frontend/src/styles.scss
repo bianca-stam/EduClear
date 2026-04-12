@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+@use "simplebar/dist/simplebar.min.css";
+@use "jsvectormap/dist/css/jsvectormap.css";
+@use "leaflet/dist/leaflet.css";
+@use "flatpickr/dist/flatpickr.css";
+@use "choices.js/src/styles/choices";
+@use "@yaireo/tagify/dist/tagify.css";
+@use "quill/dist/quill.snow.css";
+@use "nouislider/dist/nouislider.css";
+@use "filepond/dist/filepond.min.css";
+@use "shepherd.js/dist/css/shepherd.css";
+@use "spinkit/spinkit.css";
+@use "dropzone/dist/min/dropzone.min.css";
+@use "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+
+@use "./assets/scss/app.scss";

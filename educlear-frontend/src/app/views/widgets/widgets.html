@@ -1,0 +1,130 @@
+<div class="container-fluid">
+    <app-page-title title="Widgets" />
+
+    <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1">
+        @for(item of statisticcard; track $index){
+        <div class="col">
+            <app-statistic-card1 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1">
+        @for(item of statisticCards2; track $index){
+        <div class="col">
+            <app-statistic-card2 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div
+        class="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 align-items-center"
+    >
+        @for(item of statisticCards3; track $index){
+        <div class="col">
+            <app-statistic-card3 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div
+        class="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 align-items-center"
+    >
+        @for(item of statisticCards4; track $index){
+        <div class="col">
+            <app-statistic-card4 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div
+        class="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 align-items-center"
+    >
+        @for(item of statisticCards5; track $index){
+        <div class="col">
+            <app-statistic-card5 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div
+        class="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 align-items-center"
+    >
+        @for(item of statisticCards6; track $index){
+        <div class="col">
+            <app-statistic-card6 [item]="item" />
+        </div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div
+                        class="p-3 bg-light-subtle border-bottom border-dashed"
+                    >
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="fs-sm mb-1">
+                                    Would you like the full report?
+                                </h4>
+                                <small class="text-muted fs-xs mb-0">
+                                    All 120 orders have been successfully
+                                    delivered
+                                </small>
+                            </div>
+                            <div class="col-auto align-self-center">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-default rounded-circle btn-icon"
+                                    placement="top"
+                                    ngbTooltip="Download"
+                                >
+                                    <ng-icon
+                                        name="tablerDownload"
+                                        class="fs-xl"
+                                    ></ng-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="row row-cols-xxl-5 row-cols-md-3 row-cols-1 g-2 p-3"
+                    >
+                        @for(item of statisticCards7; track $index){
+                        <div class="col">
+                            <app-statistic-card7 [item]="item" />
+                        </div>
+                        }
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <a
+                            [routerLink]="['.']"
+                            class="link-reset text-decoration-underline fw-semibold link-offset-3 d-flex align-items-center gap-1 justify-content-center"
+                        >
+                            View all Reports
+                            <ng-icon name="tablerLink"></ng-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-4">
+            <app-chatcard />
+        </div>
+
+        <div class="col-xxl-4 col-lg-6">
+            <app-traffic-sources />
+        </div>
+
+        <div class="col-xxl-4 col-lg-6">
+            <app-top-countries />
+        </div>
+    </div>
+</div>

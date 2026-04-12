@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <app-page-title subTitle="Pages" title="Sitemap" />
+
+    <div class="row">
+        @for (section of sitemap; track section.title) {
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="fw-bold text-uppercase">
+                        <ng-icon [name]="section.icon" class="me-1" />
+                        {{ section.title }}
+                    </h5>
+
+                    <ul class="list-unstyled sitemap-list mt-3">
+                        @for (item of section.items; track item.label) {
+                        <li>
+                            <a
+                                [routerLink]="item.link"
+                                class="link-reset fw-semibold"
+                            >
+                                <ng-icon
+                                    [name]="item.icon"
+                                    class="me-1 text-muted"
+                                />
+                                {{ item.label }}
+                            </a>
+
+                            @if (item.children) {
+                            <ul>
+                                @for (child of item.children; track child.label)
+                                {
+                                <li>
+                                    <a
+                                        [routerLink]="child.link"
+                                        class="link-reset"
+                                    >
+                                        {{ child.label }}
+                                    </a>
+                                </li>
+                                }
+                            </ul>
+                            }
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,164 @@
+<div class="container-fluid">
+    <app-page-title title="Opportunities" subTitle="CRM"/>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-light justify-content-between">
+                    <div class="d-flex gap-2">
+                        <div class="app-search">
+                            <input [(ngModel)]="tableService.searchTerm" type="search" class="form-control"
+                                   placeholder="Search opportunity...">
+                            <lucide-angular [img]="LucideSearch" class="app-search-icon text-muted"/>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="me-2 fw-semibold">Filter By:</span>
+
+                        <div class="app-search">
+                            <select [(ngModel)]="filterStage"
+                                    (ngModelChange)="tableService.setFilter('stage', filterStage)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="All">Stage</option>
+                                <option value="Qualification">Qualification</option>
+                                <option value="Proposal Sent">Proposal Sent</option>
+                                <option value="Negotiation">Negotiation</option>
+                                <option value="Won">Won</option>
+                                <option value="Lost">Lost</option>
+                            </select>
+                            <lucide-angular [img]="LucideShuffle" class="app-search-icon text-muted"/>
+                        </div>
+
+                        <div class="app-search">
+                            <select [(ngModel)]="filterStatus"
+                                    (ngModelChange)="tableService.setFilter('status', filterStatus)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="All">Status</option>
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <lucide-angular [img]="LucideCheckCircle" class="app-search-icon text-muted"/>
+                        </div>
+
+                        <div class="app-search">
+                            <select [(ngModel)]="filterPriority"
+                                    (ngModelChange)="tableService.setFilter('priority', filterPriority)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="All">Priority</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                            <lucide-angular [img]="LucideAlertCircle" class="app-search-icon text-muted"/>
+                        </div>
+
+                        <div>
+                            <select [(ngModel)]="tableService.pageSize" class="form-select form-control my-1 my-md-0">
+                                <option [ngValue]="5">5</option>
+                                <option [ngValue]="8">8</option>
+                                <option [ngValue]="10">10</option>
+                                <option [ngValue]="15">15</option>
+                                <option [ngValue]="20">20</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                            <thead class="bg-light align-middle bg-opacity-25 thead-sm text-nowrap">
+                            <tr class="text-uppercase fs-xxs">
+                                <th>ID</th>
+                                <th>Opportunity</th>
+                                <th>Contact Person</th>
+                                <th>Stage</th>
+                                <th>Value</th>
+                                <th>Close Date</th>
+                                <th>Lead Source</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if ((total$ | async)! > 0) {
+                                    @for (opp of opportunities$ | async; track $index) {
+                                        <tr>
+                                            <td>{{ opp.id }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div
+                                                        class="avatar-sm border border-dashed rounded me-2 d-flex justify-content-center align-items-center">
+                                                        <img [src]="opp.productLogo" alt="logo" height="20">
+                                                    </div>
+                                                    <div>
+                                                        <p class="mb-0 fw-medium">{{ opp.productName }}</p>
+                                                        <p class="text-muted mb-0 small">By: {{ opp.productBy }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm me-2">
+                                                        <img [src]="opp.customerAvatar" alt="user"
+                                                             class="img-fluid rounded-circle">
+                                                    </div>
+                                                    <div>
+                                                        <p class="mb-0 fw-medium">{{ opp.customerName }}</p>
+                                                        <p class="text-muted mb-0 small">{{ opp.customerEmail }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ opp.stage }}</td>
+                                            <td>{{ opp.amount }}</td>
+                                            <td>{{ opp.closeDate }}</td>
+                                            <td>{{ opp.source }}</td>
+                                            <td>{{ opp.owner }}</td>
+                                            <td>
+                      <span class="badge badge-label fs-xs"
+                            [ngClass]="{
+                          'badge-soft-success': opp.status === 'open',
+                          'badge-soft-warning': opp.status === 'in-progress',
+                          'badge-soft-danger': opp.status === 'closed'
+                        }">{{ opp.status }}</span>
+                                            </td>
+                                            <td>
+                      <span class="badge fs-xs"
+                            [ngClass]="{
+                          'text-bg-danger': opp.priority === 'high',
+                          'text-bg-warning': opp.priority === 'medium',
+                          'text-bg-success': opp.priority === 'low'
+                        }">{{ opp.priority }}</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                } @else {
+                                    <tr class="no-results">
+                                        <td colspan="11" class="text-center text-muted py-3">Nothing found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer border-0">
+                    @if ((total$ | async)! > 0) {
+                        <app-custom-pagination
+                            itemsName="Opportunities"
+                            [showingRange]="tableService.showingRange"
+                            [collectionSize]="(total$ | async)!"
+                            [(page)]="tableService.page"
+                            [pageSize]="tableService.pageSize"
+                        >
+                        </app-custom-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

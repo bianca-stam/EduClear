@@ -1,0 +1,82 @@
+<div class="container-fluid">
+
+    <app-page-title subTitle="Miscellaneous" title="Tour"/>
+
+
+                        <div class="row justify-content-center">
+                            <div class="col-lg-5">
+                                <div class="text-center mt-4 mb-5">
+                                    <div class="auth-brand text-center mb-4">
+                                        <a routerLink="/" class="logo-dark">
+                                            <img src="assets/images/logo-black.png" alt="dark logo" height="32">
+                                        </a>
+                                        <a routerLink="/" class="logo-light">
+                                            <img src="assets/images/logo.png" alt="logo" height="32">
+                                        </a>
+                                    </div>
+
+                                    <h5 class="fs-lg mb-2">Versatile & Scalable Admin Panel Template</h5>
+                                    <p class="text-muted fs-sm">
+                                        Build modern web applications faster with our feature-rich admin panel. Compatible with multiple frameworks and packed with diverse demos, it offers seamless customization and a consistent UI across all your projects.
+                                    </p>
+
+
+                                    <div class="d-flex justify-content-center mt-4 flex-wrap gap-2">
+                                        <button id="tourTrigger" class="btn btn-primary" (click)="startTour()">
+                                            <ng-icon name="tablerPlayerPlay" class="me-1"/>
+                                            Start Guided Tour
+                                        </button>
+
+                                     
+                                <a [routerLink]="[]" class="btn btn-dark" data-tg-order="1" data-tg-tour="Click here to get started and explore our framework-rich admin panel. 🚀" data-tg-title="Getting Started">
+                                    <ng-icon name="tablerCompass" class="me-1"></ng-icon> Discover Features
+                                </a>
+
+                                        <a [routerLink]="[]"
+                                           target="_blank" class="btn btn-danger" id="buyNow"
+                                           data-tg-tour="Ready to supercharge your project? Click here to purchase the template!"
+                                           data-tg-title="Buy Now">
+                                            <ng-icon name="tablerShoppingCart" class="me-1"/>
+                                            Get the Template
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="container" data-tg-order="3"
+                             data-tg-tour="Learn more about the versatile services and modules we provide to enhance development."
+                             id="core-features">
+                 
+                            <div class="row">
+                                @for (feature of features; track $index) {
+                                    <div class="col-xl-3">
+                                        <div class="card border-0 p-2 card-h-100">
+                                            <div class="card-body pb-0">
+                                                <div class="avatar-xl mb-3">
+                                                <span class="avatar-title text-bg-secondary rounded-circle fs-22"
+                                                >
+                                                    <ng-icon [name]="feature.icon"/>
+                                                </span>
+                                                </div>
+                                                <h4 class="fw-semibold mb-2">{{ feature.title }}</h4>
+                                                <p class="text-muted mb-3">{{ feature.description }}</p>
+                                            </div>
+                                            <div class="card-footer border-0 pt-0">
+                                                <a class="link-primary fw-semibold d-flex align-items-center flex-wrap"
+                                                   [routerLink]="[]">
+                                                    Know more
+                                                    <ng-icon name="tablerArrowRight" class="ms-2"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+
+</div>
+

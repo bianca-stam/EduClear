@@ -1,0 +1,179 @@
+<div class="container-fluid">
+    <app-page-title title="Tickets" subtitle="Support"/>
+
+    <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1">
+        @for (item of ticketsData; track $index) {
+            <div class="col">
+                <app-ticket-statistic-widget [ticket]="item"/>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div  class="card">
+                    <div class="card-header border-light justify-content-between">
+                        <div class="d-flex gap-2">
+                            <div class="app-search">
+                                <input [(ngModel)]="tableService.searchTerm" type="search" class="form-control"
+                                       placeholder="Search tickets...">
+                                <lucide-angular [img]="LucideSearch" class="app-search-icon text-muted"/>
+                            </div>
+                            <a routerLink="/ticket-create" class="btn btn-primary">
+                                <ng-icon name="tablerPlus" class="me-1"/> New Ticket
+                            </a>
+                            @if (hasSelection) {
+                                <button class="btn btn-danger" (click)="deleteSelected()">Delete</button>
+                            }
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="me-2 fw-semibold">Filter By:</span>
+
+                            <div class="app-search">
+                                <select [(ngModel)]="filterStatus"
+                                        (ngModelChange)="tableService.setFilter('status', filterStatus)"
+                                        class="form-select form-control my-1 my-md-0">
+                                    <option value="">Status</option>
+                                    <option value="Open">Open</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Resolved">Resolved</option>
+                                    <option value="Closed">Closed</option>
+                                    <option value="Escalated">Escalated</option>
+                                </select>
+                                <lucide-angular [img]="LucideShuffle" class="app-search-icon text-muted"/>
+                            </div>
+
+                            <div class="app-search">
+                                <select [(ngModel)]="filterPriority"
+                                        (ngModelChange)="tableService.setFilter('priority', filterPriority)"
+                                        class="form-select form-control my-1 my-md-0">
+                                    <option value="">Priority</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                </select>
+                                <lucide-angular [img]="LucideAlertTriangle" class="app-search-icon text-muted"/>
+                            </div>
+
+                            <div>
+                                <select [(ngModel)]="tableService.pageSize" class="form-select form-control my-1 my-md-0">
+                                    <option [ngValue]="5">5</option>
+                                    <option [ngValue]="8">8</option>
+                                    <option [ngValue]="10">10</option>
+                                    <option [ngValue]="15">15</option>
+                                    <option [ngValue]="20">20</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                            <thead class="bg-light align-middle bg-opacity-25 thead-sm text-nowrap">
+                            <tr class="text-uppercase fs-xxs">
+                                <th class="ps-3" style="width: 1%;">
+                                    <input [(ngModel)]="selectAll"
+                                           (change)="toggleAllSelection()"
+                                           class="form-check-input form-check-input-light fs-14 mt-0"
+                                           type="checkbox" />
+                                </th>
+                                <th sortable="id" (sort)="tableService.setSort($event.column, $event.direction)">ID</th>
+                                <th>Requested By</th>
+                                <th>Ticket Subject</th>
+                                <th>Assigned Agent</th>
+                                <th sortable="priority" (sort)="tableService.setSort($event.column, $event.direction)">Priority</th>
+                                <th sortable="status" (sort)="tableService.setSort($event.column, $event.direction)">Status</th>
+                                <th sortable="createdAt" (sort)="tableService.setSort($event.column, $event.direction)">Date Created</th>
+                                <th sortable="dueDate" (sort)="tableService.setSort($event.column, $event.direction)">Due Date</th>
+                                <th class="text-center" style="width: 1%;">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="text-nowrap">
+                                @if ((total$ | async)! > 0) {
+                                    @for (ticket of tickets$ | async; track $index) {
+                                        <tr>
+                                            <td class="ps-3">
+                                                <input [(ngModel)]="ticket.selected"
+                                                       (change)="toggleSingleSelection()"
+                                                       class="form-check-input form-check-input-light fs-14 product-item-check mt-0"
+                                                       type="checkbox"/>
+                                            </td>
+                                            <td><a [routerLink]="'/ticket-details'" class="fw-semibold link-reset">{{ ticket.id }}</a></td>
+                                            <td>
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    <img [src]="ticket.requestedByImg" [alt]="ticket.requestedBy" class="avatar-xs rounded-circle">
+                                                    <span>{{ ticket.requestedBy }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ ticket.subject }}</td>
+                                            <td>
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    <img [src]="ticket.agentImg" [alt]="ticket.agent" class="avatar-xs rounded-circle">
+                                                    <a [routerLink]="[]" class="link-reset">{{ ticket.agent }}</a>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge"
+                                                      [ngClass]="{
+                               'text-bg-primary': ticket.priority === 'Low',
+                               'text-bg-warning': ticket.priority === 'Medium',
+                               'text-bg-danger': ticket.priority === 'High',
+                               'text-bg-dark': ticket.priority === 'Urgent'
+                             }">{{ ticket.priority }}</span>
+                                            </td>
+                                            <td><span class="badge badge-label"
+                                                      [ngClass]="{
+                               'bg-success-subtle text-success': ticket.status === 'Resolved',
+                               'bg-warning-subtle text-warning': ticket.status === 'Pending',
+                               'bg-danger-subtle text-danger': ticket.status === 'Escalated',
+                               'bg-secondary-subtle text-secondary': ticket.status === 'In Progress',
+                               'text-bg-primary': ticket.status === 'Open',
+                               'text-bg-secondary': ticket.status === 'Closed'
+                             }">{{ toTitleCase(ticket.status) }}</span>
+                                            </td>
+                                            <td>{{ ticket.createdAt }} <small class="text-muted">{{ ticket.createdAtTime }}</small></td>
+                                            <td>{{ ticket.dueDate }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center gap-1">
+                                                    <button class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerEye" class="fs-lg"/>
+                                                    </button>
+                                                    <button class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerEdit" class="fs-lg"/>
+                                                    </button>
+                                                    <button (click)="tableService.deleteItem(ticket)"
+                                                            class="btn btn-default btn-icon btn-sm rounded">
+                                                        <ng-icon name="tablerTrash" class="fs-lg"/>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                } @else {
+                                    <tr>
+                                        <td colspan="10" class="text-center text-muted py-3">Nothing found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer border-0">
+                        @if ((total$ | async)! > 0) {
+                            <app-custom-pagination
+                                itemsName="tickets"
+                                [showingRange]="tableService.showingRange"
+                                [collectionSize]="(total$ | async)!"
+                                [(page)]="tableService.page"
+                                [pageSize]="tableService.pageSize"
+                            >
+                            </app-custom-pagination>
+                        }
+                    </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

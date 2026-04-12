@@ -1,0 +1,30 @@
+<div class="container-fluid">
+    <app-page-title title="Seller Details" subTitle="Ecommerce"/>
+    <div class="row">
+        <div class="col-xl-3">
+            <app-seller-contacts [seller]="seller"/>
+        </div>
+
+        <div class="col-xl-9">
+            <div class="row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 align-items-center row">
+                @for (item of sellerStatistics; track $index) {
+                    <div class="col">
+                        <app-seller-statistic-widget [item]="item"/>
+                    </div>
+                }
+            </div>
+            <app-seller-overview/>
+
+            <h4 class="my-4">My Products</h4>
+
+            <div class="row">
+                <div class="col-12">
+                    <app-seller-products/>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

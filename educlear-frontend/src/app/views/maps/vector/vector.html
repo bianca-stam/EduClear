@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <app-page-title title="Vector Maps" subTitle="Maps" />
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">World Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        A global map showing countries with interactive markers.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map [options]="worldMapConfig" height="360px" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">World Vector Live Map</h5>
+                    <p class="text-muted mb-0">
+                        Live dynamic vector representation of the world with
+                        real-time features.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map
+                        [options]="worldMapLineConfig"
+                        height="360px"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">US Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Interactive vector map of the United States with
+                        state-level details.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map [options]="usaMapConfig" height="360px" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">India Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Detailed vector map of India with region highlights.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map [options]="indiaMapConfig" height="360px" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">Canada Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Displays Canadian provinces and territories with
+                        interactive regions.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map
+                        [options]="canadaMapConfig"
+                        height="360px"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">Russia Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Interactive map highlighting major regions across
+                        Russia.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map
+                        [options]="russiaMapConfig"
+                        height="360px"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">Iraq Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Vector visualization of Iraq highlighting provinces and
+                        regions.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map [options]="iraqMapConfig" height="360px" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h5 class="mb-1 card-title">Spain Vector Map</h5>
+                    <p class="text-muted mb-0">
+                        Geographical map of Spain with region-based interaction.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <app-vector-map [options]="spainMapConfig" height="360px" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

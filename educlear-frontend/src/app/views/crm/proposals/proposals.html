@@ -1,0 +1,243 @@
+<div class="container-fluid">
+    <app-page-title title="Proposals" subTitle="CRM"/>
+
+    <div class="row row-cols-xxl-5 row-cols-md-3 row-cols-1 g-2">
+
+        @for (item of proposalWidgets; track $index; let last = $last) {
+            <div class="{{last ? 'col-lg' : 'col'}}">
+                <app-crm-statistic-widget [item]="item"/>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-light justify-content-between">
+                    <div class="d-flex gap-2">
+                        <div class="app-search">
+                            <input [(ngModel)]="tableService.searchTerm"
+                                   type="search"
+                                   class="form-control"
+                                   placeholder="Search campaign...">
+                            <lucide-angular [img]="LucideSearch" class="app-search-icon text-muted"/>
+                        </div>
+
+                        @if (hasSelection) {
+                            <button class="btn btn-danger" (click)="deleteSelected()">Delete</button>
+                        }
+
+                        <button class="btn btn-primary" (click)="openProposalModal(content)">
+                            <ng-icon name="tablerPlus" class="me-1"/>
+                            Create Proposal
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="me-2 fw-semibold">Filter By:</span>
+
+
+                        <div class="app-search">
+                            <select [(ngModel)]="filterStatus"
+                                    (ngModelChange)="tableService.setFilter('status', filterStatus)"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option value="">Status</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Declined">Declined</option>
+                                <option value="Sent">Sent</option>
+                                <option value="In Review">In Review</option>
+                            </select>
+                            <lucide-angular [img]="LucideShuffle" class="app-search-icon text-muted"/>
+                        </div>
+
+                        <div>
+                            <select [(ngModel)]="tableService.pageSize"
+                                    class="form-select form-control my-1 my-md-0">
+                                <option [ngValue]="5">5</option>
+                                <option [ngValue]="8">8</option>
+                                <option [ngValue]="10">10</option>
+                                <option [ngValue]="15">15</option>
+                                <option [ngValue]="20">20</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                        <thead class="bg-light align-middle bg-opacity-25 thead-sm text-nowrap">
+                        <tr class="text-uppercase fs-xxs">
+                            <th class="ps-3" style="width:1%;">
+                                <input [(ngModel)]="selectAll"
+                                       (change)="toggleAllSelection()"
+                                       class="form-check-input form-check-input-light fs-14 mt-0"
+                                       type="checkbox">
+                            </th>
+                            <th sortable="id" (sort)="tableService.setSort($event.column, $event.direction)">
+                                Proposal ID
+                            </th>
+                            <th sortable="subject" (sort)="tableService.setSort($event.column, $event.direction)">
+                                Subject
+                            </th>
+                            <th>Send To</th>
+                            <th sortable="value" (sort)="tableService.setSort($event.column, $event.direction)">
+                                Value
+                            </th>
+                            <th sortable="created" (sort)="tableService.setSort($event.column, $event.direction)">
+                                Created
+                            </th>
+                            <th sortable="openTill"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Open Till
+                            </th>
+                            <th sortable="status"
+                                (sort)="tableService.setSort($event.column, $event.direction)">Status
+                            </th>
+                            <th class="text-center" style="width:1%;">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="text-nowrap">
+                            @if ((total$ | async)! > 0) {
+                                @for (proposal of proposals$ | async; track $index) {
+                                    <tr>
+                                        <td class="ps-3">
+                                            <input [(ngModel)]="proposal.selected"
+                                                   (change)="toggleSingleSelection()"
+                                                   class="form-check-input form-check-input-light fs-14 product-item-check mt-0"
+                                                   type="checkbox">
+                                        </td>
+
+                                        <td><a [routerLink]="[]" class="fw-semibold link-reset">{{ proposal.id }}</a>
+                                        </td>
+                                        <td>{{ proposal.subject }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div
+                                                    class="avatar-sm border flex-shrink-0 border-dashed rounded-circle me-2 justify-content-center d-flex align-items-center">
+                                                    <img [src]="proposal.sendTo.logo" alt="Google" height="20">
+                                                </div>
+                                                <a [routerLink]="[]" class="link-reset">{{ proposal.sendTo.name }}</a>
+                                            </div>
+                                        </td>
+                                        <td>{{ proposal.value }}</td>
+                                        <td>{{ proposal.created }}<small
+                                            class="text-muted">{{ proposal.createdTime }}</small></td>
+                                        <td>{{ proposal.openTill }} <small
+                                            class="text-muted">{{ proposal.openTillTime }}</small></td>
+                                        <td><span
+                                            class="badge badge-label  fs-xs"
+                                            [ngClass]="  proposal.status === 'Declined' ? 'bg-danger-subtle text-danger' : proposal.status === 'In Review' ? 'bg-info-subtle text-info' : proposal.status === 'Approved' ? 'bg-success-subtle text-success' : proposal.status === 'Pending' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary'">{{ proposal.status }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                                <button class="btn btn-default btn-icon btn-sm rounded">
+                                                    <ng-icon name="tablerEye" class="fs-lg"/>
+                                                </button>
+                                                <button class="btn btn-default btn-icon btn-sm rounded">
+                                                    <ng-icon name="tablerEdit" class="fs-lg"/>
+                                                </button>
+                                                <button (click)="tableService.deleteItem(proposal)"
+                                                        class="btn btn-default btn-icon btn-sm rounded">
+                                                    <ng-icon name="tablerTrash" class="fs-lg"/>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } @else {
+                                <tr class="no-results">
+                                    <td colspan="9" class="text-center text-muted py-3">Nothing found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="card-footer border-0">
+                    @if ((total$ | async)! > 0) {
+                        <app-custom-pagination
+                            [showingRange]="tableService.showingRange"
+                            [collectionSize]="(total$ | async)!"
+                            [(page)]="tableService.page"
+                            [pageSize]="tableService.pageSize"
+                        >
+                        </app-custom-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <ng-template #content let-modal>
+        <div class="modal-header">
+            <h5 class="modal-title" id="createProposalModalLabel">Create New Proposal</h5>
+            <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+        </div>
+
+        <form id="createProposalForm">
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label for="proposalID" class="form-label">Proposal ID</label>
+                        <input type="text" class="form-control" id="proposalID" placeholder="Enter proposal ID (e.g. #PS008120)" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="proposalSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="proposalSubject" placeholder="Enter proposal subject" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="clientName" class="form-label">Send To (Client)</label>
+                        <input type="text" class="form-control" id="clientName" placeholder="Enter client name" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="proposalValue" class="form-label">Value (USD)</label>
+                        <input type="number" class="form-control" id="proposalValue" placeholder="e.g. 15000" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="proposalStatus" class="form-label">Status</label>
+                        <select class="form-select" id="proposalStatus" required>
+                            <option value="">Select status</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Declined">Declined</option>
+                            <option value="Sent">Sent</option>
+                            <option value="In Review">In Review</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="proposalTags" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="proposalTags" placeholder="e.g. Marketing, Development, Design">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="createdDate" class="form-label">Created Date</label>
+                        <input type="date" class="form-control" mwlFlatpickr [options]="{dateFormat: 'd M, Y'}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="openTill" class="form-label">Open Till</label>
+                        <input type="date" class="form-control" mwlFlatpickr [options]="{dateFormat: 'd M, Y'}" required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" (click)="modal.dismiss()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Proposal</button>
+            </div>
+        </form>
+
+    </ng-template>
+
+
+</div>

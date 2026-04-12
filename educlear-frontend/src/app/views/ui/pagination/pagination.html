@@ -1,0 +1,173 @@
+<div class="container-fluid">
+    <app-page-title title="Pagination" subTitle="UI"/>
+    <div class="row">
+        <div class="col-xl-6">
+            <app-ui-card title="Default Pagination"  [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted fs-sm">Use <code>.pagination</code> inside <code>&lt;nav&gt;</code> for
+                        accessible, easy-to-click page links.</p>
+
+                    <nav aria-label="Page navigation example">
+                        <ngb-pagination [collectionSize]="30">
+                            <ng-template ngbPaginationPrevious>Previous</ng-template>
+                            <ng-template ngbPaginationNext>Next</ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Alignment"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Align pagination using flexbox utilities, such as <code>.justify-content-center</code>
+                        to center it.</p>
+
+                    <nav aria-label="Page navigation example">
+                        <ngb-pagination [collectionSize]="30" class="d-flex justify-content-center mb-3">
+                            <ng-template ngbPaginationPrevious>Previous</ng-template>
+                            <ng-template ngbPaginationNext>Next</ng-template>
+                        </ngb-pagination>
+                    </nav>
+
+                    <nav aria-label="Page navigation example">
+                        <ngb-pagination [collectionSize]="30" class="d-flex justify-content-end mb-3">
+                            <ng-template ngbPaginationPrevious>Previous</ng-template>
+                            <ng-template ngbPaginationNext>Next</ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Custom Color Pagination"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Add classes like <code>.pagination-primary</code>, <code>.pagination-info</code>,
+                        or <code>.pagination-secondary</code> to customize pagination color.</p>
+
+                    <nav class="mb-3">
+                        <ngb-pagination [collectionSize]="50"  [page]="2"  class="pagination-boxed pagination-info">
+                            <ng-template ngbPaginationPrevious>
+                                <ng-icon name="tablerChevronLeft"/>
+                            </ng-template>
+                            <ng-template ngbPaginationNext>
+                                <ng-icon name="tablerChevronRight"/>
+                            </ng-template>
+                        </ngb-pagination>
+                    </nav>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="50"  [page]="3"  class="pagination-boxed pagination-secondary">
+                            <ng-template ngbPaginationPrevious>
+                                <ng-icon name="tablerArrowLeft"/>
+                            </ng-template>
+
+                            <ng-template ngbPaginationNext>
+                                <ng-icon name="tablerArrowRight"/>
+                            </ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Disabled state"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Add <code>.disabled</code> and <code>tabindex="-1"</code> to <code>.page-item</code>
+                        to make it non-interactive.</p>
+
+                    <nav aria-label="...">
+                        <ngb-pagination [collectionSize]="30" [page]="2" [disabled]="true">
+                            <ng-template ngbPaginationPrevious>Previous</ng-template>
+                            <ng-template ngbPaginationNext>Next</ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Custom Icon Pagination"  [isTogglable]="true">
+                <div  card-body>
+                <p class="text-muted fs-sm">Add icons like <code>&lt;i class="ti ti-chevron-**"&gt;&lt;/i&gt;</code> or SVGs inside <code>.page-link</code> for custom pagination arrows.</p>
+
+                    <nav class="mb-3">
+                        <ngb-pagination [collectionSize]="50" [page]="2" class="pagination-boxed">
+                            <ng-template ngbPaginationPrevious>
+                                <ng-icon name="tablerChevronLeft"/>
+                            </ng-template>
+                            <ng-template ngbPaginationNext>
+                                <ng-icon name="tablerChevronRight"/>
+                            </ng-template>
+                        </ngb-pagination>
+                    </nav>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="50" [page]="3" class="pagination-boxed">
+                            <ng-template ngbPaginationPrevious>
+                                <ng-icon name="tablerArrowLeft"/>
+                            </ng-template>
+                            <ng-template ngbPaginationNext>
+                                <ng-icon name="tablerArrowRight"/>
+                            </ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Sizing"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Use <code>.pagination-lg</code> or <code>.pagination-sm</code> to change
+                        pagination size.</p>
+
+                    <nav class="mb-3">
+                        <ngb-pagination [collectionSize]="30" size="lg"/>
+                    </nav>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="30" size="sm"/>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Boxed Pagination"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Use <code>.pagination-boxed</code> with <code>.pagination</code> to give
+                        pagination items a boxed appearance.</p>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="50"   [page]="3" class="pagination pagination-boxed"/>
+                        <ngb-pagination [collectionSize]="50"  [page]="3"  size="lg" class="pagination pagination-lg pagination-boxed"/>
+                        <ngb-pagination [collectionSize]="50"  [page]="3"  class="pagination pagination-sm pagination-boxed mb-0" size="sm"/>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Rounded Pagination"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Use <code>.pagination-rounded</code> with <code>.pagination</code> to
+                        create rounded pagination links.</p>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="50" [page]="3"  class="pagination-rounded pagination-boxed "/>
+                    </nav>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Soft Pagination"  [isTogglable]="true">
+                <div  card-body>
+                    <p class="text-muted fs-sm">Use <code>.pagination-soft-**</code> with <code>.pagination</code> for a
+                        soft-colored pagination style.</p>
+
+                    <nav>
+                        <ngb-pagination [collectionSize]="50" [page]="3" class="pagination-boxed pagination pagination-soft-danger">
+                            <ng-template ngbPaginationPrevious>
+                                <ng-icon name="tablerChevronLeft"/>
+                            </ng-template>
+                            <ng-template ngbPaginationNext>
+                                <ng-icon name="tablerChevronRight"/>
+                            </ng-template>
+                        </ngb-pagination>
+                    </nav>
+                </div>
+            </app-ui-card>
+        </div>
+    </div>
+
+</div>

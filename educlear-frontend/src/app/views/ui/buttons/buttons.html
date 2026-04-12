@@ -1,0 +1,645 @@
+<div class="container-fluid">
+    <app-page-title title="Buttons" subTitle="UI" />
+
+    <div class="row">
+        <div class="col-xl-6">
+            <app-ui-card title="Default Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use any of the available <code>&lt;a&gt;</code>,
+                        <code>&lt;button&gt;</code>, or
+                        <code>&lt;input&gt;</code> classes <code>.btn</code> to
+                        quickly create a styled button.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-default">
+                            Default
+                        </button>
+
+                        @for (color of colorsVariants; track $index) {
+                        <button type="button" class="btn btn-{{color}}">
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Button Rounded" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use <code>.rounded-pill</code> with a default button to
+                        give it pill-shaped rounded corners.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="btn btn-default rounded-pill"
+                        >
+                            Default
+                        </button>
+                        @for (color of colorsVariants; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-{{color}} rounded-pill"
+                        >
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Button Outline" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>.btn-outline-**</code> classes to quickly
+                        create buttons with borders.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants; track $index) {
+                        <button type="button" class="btn btn-outline-{{color}}">
+                            {{ color|titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Button Outline Rounded" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use <code>.rounded-pill</code> with an outline button to
+                        give it pill-shaped rounded corners.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-outline-{{color}} rounded-pill"
+                        >
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Soft Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use <code>btn-soft-**</code> class with the
+                        below-mentioned variation to create a button with the
+                        soft background.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants1; track $index) {
+                        <button type="button" class="btn btn-soft-{{color}}">
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Soft Rounded Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>btn-soft-**</code> class along with
+                        <code>.rounded-pill</code> to create a softly styled
+                        button with rounded corners.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants1; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-soft-{{color}} rounded-pill"
+                        >
+                            {{ color | titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Ghost Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>btn-ghost-**</code> class to create
+                        buttons with a transparent background that highlight
+                        with color on hover.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants1; track $index) {
+                        <button type="button" class="btn btn-ghost-{{color}}">
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Ghost Rounded Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use <code>btn-ghost-**</code> with
+                        <code>.rounded-pill</code> for rounded ghost buttons
+                        that highlight on hover.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (color of colorsVariants1; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-ghost-{{color}} rounded-pill"
+                        >
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+        <div class="col-xl-6">
+            <app-ui-card title="Gradient Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>.bg-gradient</code> class to apply a
+                        gradient style to buttons.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="btn btn-default bg-gradient"
+                        >
+                            Default
+                        </button>
+                        @for (color of colorsVariants; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-{{color}} bg-gradient"
+                        >
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+        <div class="col-xl-6">
+            <app-ui-card title="Gradient Rounded Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>.bg-gradient</code> and
+                        <code>.rounded-pill</code> classes to apply a gradient
+                        style with rounded edges to buttons.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="btn btn-default rounded-pill bg-gradient"
+                        >
+                            Default
+                        </button>
+                        @for (color of colorsVariants; track $index) {
+                        <button
+                            type="button"
+                            class="btn btn-{{color}} rounded-pill  bg-gradient"
+                        >
+                            {{ color |titlecase }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Button Sizes" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Want larger or smaller buttons? Use
+                        <code>.btn-lg</code> or <code>.btn-sm</code> to adjust
+                        the button size.
+                    </p>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <button type="button" class="btn btn-primary btn-lg">
+                            Large
+                        </button>
+                        <button type="button" class="btn btn-info">
+                            Normal
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm">
+                            Small
+                        </button>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Disabled Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use the <code>disabled</code> attribute on a
+                        <code>&lt;button&gt;</code> to make it inactive and
+                        non-interactive.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-info" disabled>
+                            Info
+                        </button>
+                        <button type="button" class="btn btn-success" disabled>
+                            Success
+                        </button>
+                        <button type="button" class="btn btn-danger" disabled>
+                            Danger
+                        </button>
+                        <button type="button" class="btn btn-dark" disabled>
+                            Dark
+                        </button>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Block Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted font-14">
+                        To create block-level buttons, add the
+                        <code>.d-grid</code> class to the parent
+                        <code>&lt;div&gt;</code>.
+                    </p>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-sm btn-primary">
+                            Block Button
+                        </button>
+                        <button type="button" class="btn btn-lg btn-success">
+                            Block Button
+                        </button>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Toggle Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Add <code>data-bs-toggle="button"</code> to toggle a
+                        button’s <code>active</code> state. For pre-toggled
+                        buttons, also add <code>.active</code> and
+                        <code>aria-pressed="true"</code>.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="button"
+                        >
+                            Toggle button
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-primary active"
+                            data-bs-toggle="button"
+                            aria-pressed="true"
+                        >
+                            Active toggle button
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            disabled
+                            data-bs-toggle="button"
+                        >
+                            Disabled toggle button
+                        </button>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+        <div class="col-xl-6">
+            <app-ui-card title="Icon Buttons" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Icon only button. Use it when you want a button with
+                        just an icon and no text, ideal for compact UI elements
+                        or toolbars.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-success btn-icon">
+                            <ng-icon name="tablerCheck" class="fs-lg"></ng-icon>
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-icon">
+                            <ng-icon name="tablerTrash" class="fs-xl" />
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-soft-primary rounded-circle btn-icon"
+                        >
+                            <ng-icon name="tablerMessage" class="fs-xxl" />
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-info rounded-circle btn-icon"
+                        >
+                            <ng-icon name="tablerShare" class="fs-xxl" />
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline-warning rounded-circle btn-icon"
+                        >
+                            <ng-icon name="tablerAlertTriangle" class="fs-xl" />
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-soft-dark btn-icon"
+                        >
+                            <ng-icon name="tablerUser" class="fs-xl" />
+                        </button>
+                        <button type="button" class="btn btn-light">
+                            <ng-icon
+                                name="tablerArrowLeft"
+                                class="fs-xl"
+                            />&nbsp;Back
+                        </button>
+
+                        <button type="button" class="btn btn-primary">
+                            <ng-icon
+                                name="tablerRocket"
+                                data-lucide="rocket"
+                                class="fs-xl"
+                            ></ng-icon>
+                            &nbsp;Launch
+                        </button>
+                        <button type="button" class="btn btn-outline-success">
+                            <ng-icon name="tablerWallet" class="fs-xl" />
+                            &nbsp; Wallet
+                        </button>
+
+                        <button type="button" class="btn btn-secondary">
+                            <ng-icon name="tablerSettings" class="fs-xl me-1" />
+                            Settings
+                        </button>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button
+                            class="btn btn-sm btn-outline-secondary btn-icon"
+                            type="button"
+                        >
+                            <ng-icon name="tablerUser" />
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary btn-icon"
+                            type="button"
+                        >
+                            <ng-icon name="tablerMessageCircle" />
+                        </button>
+                        <button
+                            class="btn btn-sm btn-success btn-icon rounded-circle"
+                            type="button"
+                        >
+                            <ng-icon name="tablerSend" />
+                        </button>
+                        <button
+                            class="btn btn-sm btn-info btn-icon rounded-circle"
+                            type="button"
+                        >
+                            <ng-icon name="tablerBell" />
+                        </button>
+                        <button
+                            class="btn btn-sm btn-warning btn-icon"
+                            type="button"
+                        >
+                            <ng-icon name="tablerAlertTriangle" />
+                        </button>
+                        <button
+                            class="btn btn-sm btn-outline-danger btn-icon"
+                            type="button"
+                        >
+                            <ng-icon name="tablerTrash" />
+                        </button>
+
+                        <button
+                            class="btn btn-outline-secondary btn-icon btn-lg"
+                            type="button"
+                        >
+                            <ng-icon name="tablerUser" />
+                        </button>
+                        <button
+                            class="btn btn-primary btn-icon btn-lg rounded-circle"
+                            type="button"
+                        >
+                            <ng-icon name="tablerMessageCircle" />
+                        </button>
+                        <button
+                            class="btn btn-success btn-icon btn-lg rounded-circle"
+                            type="button"
+                        >
+                            <ng-icon name="tablerSend" />
+                        </button>
+                        <button
+                            class="btn btn-info btn-icon btn-lg"
+                            type="button"
+                        >
+                            <ng-icon name="tablerBell" />
+                        </button>
+                        <button
+                            class="btn btn-warning btn-icon btn-lg"
+                            type="button"
+                        >
+                            <ng-icon name="tablerAlertTriangle" />
+                        </button>
+                        <button
+                            class="btn btn-danger btn-icon btn-lg"
+                            type="button"
+                        >
+                            <ng-icon name="tablerTrash" />
+                        </button>
+                        <button
+                            class="btn btn-outline-danger btn-icon btn-lg"
+                            type="button"
+                        >
+                            <ng-icon name="tablerHeart" />
+                        </button>
+                    </div>
+                </div>
+            </app-ui-card>
+
+            <app-ui-card title="Button Tags" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Use <code>.btn</code> classes with
+                        <code>&lt;button&gt;</code>, <code>&lt;a&gt;</code>, or
+                        <code>&lt;input&gt;</code> elements, though rendering
+                        may vary slightly across browsers.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a
+                            class="btn btn-primary"
+                            href="javascript:void(0)"
+                            role="button"
+                            >Link</a
+                        >
+                        <button class="btn btn-primary" type="submit">
+                            Button
+                        </button>
+                        <input
+                            class="btn btn-primary"
+                            type="button"
+                            value="Input"
+                        />
+                        <input
+                            class="btn btn-primary"
+                            type="submit"
+                            value="Submit"
+                        />
+                        <input
+                            class="btn btn-primary"
+                            type="reset"
+                            value="Reset"
+                        />
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+
+        <div class="col-xl-6">
+            <app-ui-card title="Button Group" [isTogglable]="true">
+                <div card-body>
+                    <p class="text-muted">
+                        Group multiple buttons together by wrapping them with
+                        the <code>.btn</code> class inside a
+                        <code>.btn-group</code> container. This helps align
+                        buttons side by side with consistent spacing and
+                        styling.
+                    </p>
+
+                    <div class="btn-group mb-2">
+                        <button type="button" class="btn btn-light">
+                            Left
+                        </button>
+                        <button type="button" class="btn btn-light">
+                            Middle
+                        </button>
+                        <button type="button" class="btn btn-light">
+                            Right
+                        </button>
+                    </div>
+
+                    <br />
+
+                    <div class="btn-group mb-2 me-1">
+                        <button type="button" class="btn btn-light">1</button>
+                        <button type="button" class="btn btn-light">2</button>
+                        <button type="button" class="btn btn-light">3</button>
+                        <button type="button" class="btn btn-light">4</button>
+                    </div>
+
+                    <div class="btn-group mb-2 me-1">
+                        <button type="button" class="btn btn-light">5</button>
+                        <button type="button" class="btn btn-light">6</button>
+                        <button type="button" class="btn btn-light">7</button>
+                    </div>
+
+                    <div class="btn-group mb-2">
+                        <button type="button" class="btn btn-light">8</button>
+                    </div>
+
+                    <br />
+
+                    <div class="btn-group mb-2">
+                        <button type="button" class="btn btn-light">1</button>
+                        <button type="button" class="btn btn-primary">2</button>
+                        <button type="button" class="btn btn-light">3</button>
+                        <div class="btn-group" ngbDropdown>
+                            <button
+                                ngbDropdownToggle
+                                type="button"
+                                class="btn btn-light"
+                            >
+                                Dropdown <span class="caret"></span>
+                            </button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                                <button ngbDropdownItem>Dropdown link</button>
+                                <button ngbDropdownItem>Dropdown link</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="btn-group-vertical mb-2">
+                                <button type="button" class="btn btn-light">
+                                    Top
+                                </button>
+                                <button type="button" class="btn btn-light">
+                                    Middle
+                                </button>
+                                <button type="button" class="btn btn-light">
+                                    Bottom
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div ngbDropdown class="btn-group-vertical mb-2">
+                                <button type="button" class="btn btn-light">
+                                    Button 1
+                                </button>
+                                <button type="button" class="btn btn-light">
+                                    Button 2
+                                </button>
+                                <button
+                                    ngbDropdownToggle
+                                    type="button"
+                                    class="btn btn-light"
+                                >
+                                    Button 3 <span class="caret"></span>
+                                </button>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <button ngbDropdownItem>
+                                        Dropdown link
+                                    </button>
+                                    <button ngbDropdownItem>
+                                        Dropdown link
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </app-ui-card>
+        </div>
+    </div>
+</div>
