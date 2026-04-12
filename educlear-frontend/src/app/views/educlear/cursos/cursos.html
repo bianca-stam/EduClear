@@ -1,0 +1,43 @@
+<div class="cursos-header">
+    <div class="title">
+        <h2>Cursos</h2>
+    </div>
+    <div class="cursos-buscador">
+        <div class="app-search d-none d-xl-flex me-2">
+            <input type="search" class="form-control rounded-pill bg-body border-0" name="search"
+                placeholder="Buscar curso..." (input)="buscarCurso($any($event.target).value)">
+            <lucide-icon [img]="search" class="app-search-icon text-muted" />
+        </div>
+    </div>
+</div>
+
+<div class="cursos-main">
+    @if (isLoading()) {
+        <div class="cursos-estado">
+            <lucide-icon [img]="loader" class="spin" [size]="32" />
+            <p>Cargando cursos...</p>
+        </div>
+    }
+
+    @if (errorMsg()) {
+        <div class="cursos-estado cursos-error">
+            <lucide-icon [img]="alertCircle" [size]="32" />
+            <p>{{ errorMsg() }}</p>
+        </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+        @for (curso of cursos(); track curso.id) {
+            <div class="curso" (click)="verCurso(curso)">
+                <h3>{{ curso.nombre }}</h3>
+                <span class="alumnos-badge">{{ curso.alumnos }} alumno{{ curso.alumnos !== 1 ? 's' : '' }}</span>
+            </div>
+        }
+        @if (cursos().length === 0) {
+            <div class="cursos-estado">
+                <p>No se encontraron cursos con "{{ terminoBusqueda() }}"</p>
+            </div>
+        }
+    }
+</div>
+

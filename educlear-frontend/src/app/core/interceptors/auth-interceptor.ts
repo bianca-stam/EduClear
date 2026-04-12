@@ -1,43 +1,25 @@
-import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
-import { delay, of, switchMap, throwError } from 'rxjs';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
   const token = localStorage.getItem('access_token');
 
-  // if (token) {
-  //   const authReq = req.clone({
-  //     headers: req.headers.set('Authorization', `Bearer ${token}`)
-  //   });
-  //   return next(authReq);
-  // }
+  const authReq = token
+    ? req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) })
+    : req;
 
-  if (req.url.endsWith('/auth/login') && req.method === 'POST') {
-    const body = req.body as any;
-    console.log(body);
-    
-    return of(null).pipe(
-      delay(1500),
-      switchMap(() => {
-        if (body.correo === 'admin@educlear.com' && body.password === '123456') {
-          
-          return of(new HttpResponse({
-            status: 200,
-            body: {
-              token: 'mock-jwt-token-7382947239',
-              user: { id: 1, email: 'admin@educlear.com', name: 'Kevin Front' }
-            }
-          }));
-          
-        } else {
-          return throwError(() => new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized',
-            error: { message: 'Credenciales incorrectas' }
-          }));
-        }
-      })
-    );
-  }
-
-  return next(req);
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('current_user');
+        router.navigate(['/auth-2/sign-in']);
+      }
+      return throwError(() => error);
+    })
+  );
 };
+

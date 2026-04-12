@@ -13,7 +13,7 @@ import {NgIcon} from '@ng-icons/core';
 
             <div class="text-end">
                 <ol class="breadcrumb m-0 py-0">
-                    <li class="breadcrumb-item"><a routerLink="/">UBold</a></li>
+                    <li class="breadcrumb-item"><a routerLink="/">EduClear</a></li>
                     <li class="d-flex justify-content-center align-items-center">
                         <ng-icon name="tablerChevronRight" size="14" class="breadcrumb-arrow  mx-1"/>
                     </li>

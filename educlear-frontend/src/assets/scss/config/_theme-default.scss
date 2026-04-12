@@ -113,7 +113,7 @@
     html[data-bs-theme="dark"][data-topbar-color="light"],
     html[data-bs-theme="dark"][data-topbar-color="dark"],
     html[data-bs-theme="dark"][data-topbar-color="gray"] {
-        --#{$prefix}topbar-bg:                      #252630;
+        --#{$prefix}topbar-bg:                      #383838;
         --#{$prefix}topbar-item-color:              #adb5bf;
         --#{$prefix}topbar-item-hover-color:        #e0eeff;
         --#{$prefix}topbar-search-bg:               #2d2e3c;

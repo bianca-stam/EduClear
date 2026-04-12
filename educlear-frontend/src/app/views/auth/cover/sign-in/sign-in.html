@@ -26,7 +26,7 @@
                         <form [formGroup]="loginForm" (ngSubmit)="logIn()" class="mt-4">
                             <div class="mb-3">
                                 <label for="userEmail" class="form-label"
-                                    >Email address
+                                    >Correo Electronico
                                 </label>
                                 <div class="app-search">
                                     <input
@@ -45,7 +45,7 @@
 
                             <div class="mb-3">
                                 <label for="userPassword" class="form-label"
-                                    >Password
+                                    >Contraseña
                                 </label>
                                 <div class="app-search">
                                     <input
@@ -71,19 +71,28 @@
                                 <button
                                     type="submit"
                                     class="btn btn-primary fw-bold py-2"
+                                    [disabled]="isLoading()"
                                 >
-                                    Sign In
+                                    @if (isLoading()) {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Iniciando sesión...
+                                    } @else {
+                                        Iniciar Sesión
+                                    }
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     <p class="text-center text-muted mt-auto mb-0">
-                        ©
-                        {{currentYear}}
-                        UBold — by <span class="fw-semibold">{{credits.name}}</span>
+                        @if ( errorMessage()) {
+                        <span class="fw-semibold">{{errorMessage()}}</span>
+                        }
                     </p>
+                    
                 </div>
+
+                
             </div>
         </div>
         <div class="col">

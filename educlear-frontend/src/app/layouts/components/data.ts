@@ -22,46 +22,8 @@ type UserDropdownItemType = {
 
 export const userDropdownItems: UserDropdownItemType[] = [
     {
-        label: 'Welcome back!',
-        isHeader: true
-    },
-    {
-        label: 'Profile',
-        icon: 'tablerUserCircle',
-        url: '/pages/profile'
-    },
-    {
-        label: 'Notifications',
-        icon: 'tablerBellRinging',
-        url: ''
-    },
-    {
-        label: 'Balance: $985.25',
-        icon: 'tablerCreditCard',
-        url: '',
-    },
-    {
-        label: 'Account Settings',
-        icon: 'tablerSettings2',
-        url: ''
-    },
-    {
-        label: 'Support Center',
-        icon: 'tablerHeadset',
-        url: ''
-    },
-    {
-        isDivider: true
-    },
-    {
-        label: 'Lock Screen',
-        icon: 'tablerLock',
-        url: '/auth/lock-screen'
-    },
-    {
         label: 'Log Out',
         icon: 'tablerLogout2',
-        url: '',
         class: 'text-danger fw-semibold'
     }
 ];

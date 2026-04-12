@@ -1,11 +1,24 @@
 import { environment } from '@/environments/environment.development';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { catchError, tap, throwError } from 'rxjs';
+import { map } from 'rxjs';
 
-export interface AuthResponse {
-  token: string,
-  user: { id: number, correo:string, name: string }
+export type UserRol = 'ALUMNO' | 'PROFESOR' | 'ADMINISTRADOR';
+
+export interface UsuarioDTO {
+  id: number;
+  username: string;
+  email: string;
+  rol: UserRol;
+  cursoId: number | null;
+}
+
+export interface SesionUsuario {
+  id: number;
+  email: string;
+  username: string;
+  rol: UserRol;
+  token: string;
 }
 
 @Injectable({
@@ -14,26 +27,67 @@ export interface AuthResponse {
 export class AuthService {
 
   private _http = inject(HttpClient);
+  private readonly TOKEN_KEY = 'access_token';
+  private readonly USER_KEY = 'current_user';
 
-  readonly usuarioActual = signal<AuthResponse['user'] | null>(null);
+  readonly usuarioActual = signal<SesionUsuario | null>(null);
+
+  constructor() {
+    this.restoreSession();
+  }
 
   login(credentials: { correo: string; password: string }) {
-    return this._http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
-      tap(response => {
-        localStorage.setItem('access_token', response.token);
-        this.usuarioActual.set(response.user);
-      }),
-      catchError(this.handleError)
+    return this._http.get<UsuarioDTO[]>(`${environment.usuariosUrl}/usuarios`).pipe(
+      map(usuarios => {
+        const usuario = usuarios.find(u => u.email === credentials.correo);
+
+        if (!usuario) {
+          throw new Error('No existe ningún usuario con ese correo.');
+        }
+
+        const token = btoa(`${usuario.id}:${usuario.email}:${Date.now()}`);
+
+        const sesion: SesionUsuario = {
+          id: usuario.id,
+          email: usuario.email,
+          username: usuario.username,
+          rol: usuario.rol,
+          token
+        };
+
+        localStorage.setItem(this.TOKEN_KEY, token);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(sesion));
+        this.usuarioActual.set(sesion);
+
+        return sesion;
+      })
     );
   }
 
   logout() {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.usuarioActual.set(null);
   }
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('Error en autenticación:', error);
-    return throwError(() => new Error('Credenciales inválidas o error de red.'));
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  private restoreSession() {
+    const raw = localStorage.getItem(this.USER_KEY);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (raw && token) {
+      try {
+        const sesion: SesionUsuario = JSON.parse(raw);
+        this.usuarioActual.set(sesion);
+      } catch {
+        this.logout();
+      }
+    }
   }
 }

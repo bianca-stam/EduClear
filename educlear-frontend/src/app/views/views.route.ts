@@ -1,5 +1,11 @@
 import {Routes} from '@angular/router';
 import {Widgets} from '@/app/views/widgets/widgets';
+import { Inicio } from './educlear/inicio/inicio';
+import { Cursos } from './educlear/cursos/cursos';
+import { Asignaturas } from './educlear/asignaturas/asignaturas';
+import { cursoSeleccionadoGuard } from '@core/guards/curso-seleccionado.guard';
+import { Asignatura } from './educlear/asignaturas/asignatura/asignatura';
+import { asignaturaSeleccionadaGuard } from '@core/guards/asignatura-seleccionada.guard';
 
 export const VIEWS_ROUTES: Routes = [
     {
@@ -63,5 +69,34 @@ export const VIEWS_ROUTES: Routes = [
     {
         path: '',
         loadChildren: () => import('./charts/charts.route').then((mod) => mod.CHARTS_ROUTES)
+    },
+    {
+        path: 'inicio',
+        component: Inicio,
+        data: {title: "Inicio"},
+        children: [
+            {
+                path: '',
+                redirectTo: 'cursos',
+                pathMatch: 'full',
+            },
+            {
+                path: 'cursos',
+                component: Cursos,
+                data: {title: "Cursos"},
+            },
+            {
+                path: ':nombreCurso',
+                component: Asignaturas,
+                canActivate: [cursoSeleccionadoGuard],
+                data: {title: "Asignaturas"},
+            },
+            {
+                path: ':nombreCurso/:nombreAsignatura',
+                component: Asignatura,
+                canActivate: [asignaturaSeleccionadaGuard],
+                data: {title: "Asignatura"},
+            }
+        ]
     },
 ];
