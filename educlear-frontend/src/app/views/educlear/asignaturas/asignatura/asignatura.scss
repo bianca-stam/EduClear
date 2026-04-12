@@ -1,0 +1,61 @@
+.asignatura-main{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    
+    .asignatura-tab{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+
+        .col, .card{
+            border-radius: 0 !important;
+            border: 0 !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+.temas{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    margin: 15px 0; 
+    gap: 15px;
+
+    .tema {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        min-height: 80px; /* Usamos min-height en lugar de height: 100% */
+        background-color: #565656;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+
+        .tema-info {
+            flex: 1; /* Esto hace que el texto ocupe el espacio disponible */
+            overflow: hidden;
+        }
+
+        h3 {
+            margin: 0;
+            margin-left: 20px; /* Un margen fijo es más seguro que un % para evitar empujar el texto fuera */
+            white-space: nowrap; /* Evita que el texto baje de línea */
+            overflow: hidden; /* Oculta lo que sobre */
+            text-overflow: ellipsis; /* Añade los "..." si es muy largo */
+        }
+
+        .tema-icon{
+            cursor: pointer;
+        }
+
+        
+    }
+}

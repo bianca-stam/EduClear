@@ -1,0 +1,36 @@
+<div class="asignaturas-header">
+    <div class="title">
+        <h2>Asignaturas</h2>
+    </div>
+    <div class="asignaturas-buscador">
+        <div class="app-search d-none d-xl-flex me-2">
+            <input type="search" class="form-control rounded-pill bg-body border-0" name="search"
+                placeholder="Buscar asignatura..." (input)="buscarAsignatura($event.target.value)">
+            <lucide-icon [img]="search" class="app-search-icon text-muted" />
+        </div>
+    </div>
+</div>
+<div class="asignaturas-main">
+    @for (asignatura of asignaturas(); track $index) {
+        <div class="asignatura" (click)="verAsignatura(asignatura)">
+            <div class="img-asignatura">
+                
+            </div>
+            <div class="info-asignatura">
+                <ul>
+                    <li>
+                        <h3>{{asignatura.nombre}}</h3>
+                    </li>
+                    <li>
+                        <p>Profesor: {{asignatura.profesor}}</p>
+                    </li>
+                    <li>
+                        <p>Alumnos: {{asignatura.alumnos}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>  
+    }
+
+</div>
+

@@ -40,18 +40,16 @@ export class SignIn {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Extraemos el payload limpio
     const credentials = this.loginForm.getRawValue();
 
     this.authService.login(credentials).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/dashboard']); // Redirección al éxito
+        this.router.navigate(['/inicio/cursos']);
       },
-      error: (err) => {
+      error: (err: Error) => {
         this.isLoading.set(false);
-        this.errorMessage.set(err.message);
-        // Opcional: resetear solo el password si falla
+        this.errorMessage.set(err.message ?? 'Error al iniciar sesión. Verifica tus credenciales.');
         this.form.password.reset();
       }
     });

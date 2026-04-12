@@ -1,0 +1,54 @@
+<div class="asignatura-header">
+    <div class="title">
+        <h2>Asignatura</h2>
+    </div>
+</div>
+<div class="asignatura-main">
+    <div class="asignatura-tab">
+        <div class="col ">
+            <div class="card">
+                <div class="card-header card-tabs d-flex align-items-center">
+                    <ul
+                        ngbNav
+                        #cardNav="ngbNav"
+                        [activeId]="1"
+                        class="nav nav-tabs nav-justified card-header-tabs nav-bordered"
+                    >
+                        <li [ngbNavItem]="1">
+                            <a href="javascript:void(0);" ngbNavLink>
+                                <span class="d-none d-md-block">Temas</span>
+                            </a>
+                            <ng-template ngbNavContent>
+                                <div class="temas">
+                                    @for (tema of temas; track $index) {
+                                        <div class="tema" (click)="verTema(tema)">
+                                            <div class="tema-info">
+                                                <h3>{{tema.nombre}}</h3>
+                                            </div>
+                                            <div class="tema-icon">
+                                                <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a href="javascript:void(0);" ngbNavLink>
+                                <span class="d-none d-md-block">Calificaciones</span>
+                            </a>
+                            <ng-template ngbNavContent>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content" [ngbNavOutlet]="cardNav"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
