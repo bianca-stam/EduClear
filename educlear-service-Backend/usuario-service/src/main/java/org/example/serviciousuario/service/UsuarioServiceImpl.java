@@ -30,9 +30,18 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public UsuarioDTO save(Usuario usuario) {
+        if (!cursoExiste(usuario.getCursoId())) {
+            throw new RuntimeException("El curso no existe");
+        }
         Usuario guardado = usuarioRepository.save(usuario);
         return convertToDTO(guardado);
     }
+
+    private boolean cursoExiste(Integer cursoId) {
+        // De momento asumimos que el curso existe
+        return true;
+    }
+
 
     @Override
     public void delete(Integer id) {
