@@ -1,12 +1,56 @@
 services:
-  backend:
+  mariadb:
+    image: mariadb:11
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    ports:
+      - "${PORT_MARIADB}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  usuario-service:
     build: ./educlear-service-Backend/usuario-service
     ports:
-      - "8080:8080"
+      - "${PORT_USUARIO}:8080"
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: ${PORT_MARIADB}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  curso-service:
+    build: ./educlear-service-Backend/curso-service
+    ports:
+      - "${PORT_CURSO}:8081"
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: ${PORT_MARIADB}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      mariadb:
+        condition: service_healthy
 
   frontend:
     build: ./educlear-frontend
     ports:
-      - "80:80"
+      - "${PORT_FRONTEND}:80"
     depends_on:
-      - backend
+      - usuario-service
+      - curso-service
+
+volumes:
+  mariadb_data:
