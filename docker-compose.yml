@@ -2,14 +2,15 @@ services:
   mariadb:
     image: mariadb:11
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "${PORT_MARIADB}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+      - ./educlear-service-Backend/basedatoseduclear.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
