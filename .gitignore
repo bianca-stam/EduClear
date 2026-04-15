@@ -2,8 +2,6 @@
 Thumbs.db
 
 .env
-.env.*
-
 *.log
 
 # IntelliJ IDEA
