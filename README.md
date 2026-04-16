@@ -43,9 +43,9 @@ cp .env.example .env
 Edita el `.env` con tus datos:
 
 ```
-DB_NAME=nombre_de_tu_base_de_datos
-DB_USER=tu_usuario
-DB_PASSWORD=tu_contraseña
+DB_NAME=nombre_de_la_base_de_datos
+DB_USER=usuario_para_la_base_de_datos
+DB_PASSWORD=contraseña_para_este_usuario
 ```
 
 ### 3. Arranca el proyecto
