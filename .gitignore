@@ -2,7 +2,11 @@
 Thumbs.db
 
 .env
-.env.*
-!.env.example
-
 *.log
+
+# IntelliJ IDEA
+.idea/
+
+# Maven
+target/
+

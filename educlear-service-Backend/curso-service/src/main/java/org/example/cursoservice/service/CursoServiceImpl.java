@@ -1,0 +1,51 @@
+package org.example.cursoservice.service;
+
+import org.example.cursoservice.dto.CursoDto;
+import org.example.cursoservice.model.Curso;
+import org.example.cursoservice.repository.CursoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class CursoServiceImpl implements CursoService{
+    @Autowired
+    private CursoRepository cursoRepository;
+
+    @Override
+    public List<CursoDto> findAll() {
+        return cursoRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+    @Override
+    public CursoDto findById(Integer id) {
+        return cursoRepository.findById(id)
+                .map(this::convertToDTO)
+                .orElse(null);
+    }
+
+
+
+    @Override
+    public CursoDto save(Curso curso) {
+        Curso guardado = cursoRepository.save(curso);
+        return convertToDTO(guardado);
+    }
+
+
+
+    private CursoDto convertToDTO(Curso curso) {
+        CursoDto dto = new CursoDto();
+        dto.setId(curso.getId());
+        dto.setNombre(curso.getNombre());
+        return dto;
+    }
+
+
+}

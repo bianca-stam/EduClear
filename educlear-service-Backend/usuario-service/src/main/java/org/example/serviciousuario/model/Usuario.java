@@ -5,10 +5,9 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
-
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name="usuario")
 public class Usuario {
     @Id

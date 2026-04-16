@@ -1,13 +1,13 @@
-package com.educlear.educlear_app;
+package org.example.cursoservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EduclearAppApplicationTests {
+class CursoServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
