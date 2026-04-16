@@ -50,11 +50,24 @@ DB_PASSWORD=tu_contraseña
 
 ### 3. Arranca el proyecto
 
+Abre la app de Docker Desktop, espera a que arranque y escribe el siguiente comando en la raíz del proyecto:
+
 ```bash
 docker compose up --build
 ```
 
-La primera vez tardará unos minutos mientras descarga las imágenes y compila el proyecto.
+La **primera** vez tardará unos minutos mientras descarga las imágenes y compila el proyecto. Después, para arrancarlo solo tienes que usar este otro comando:
+
+```bash
+docker compose up -d
+```
+
+Cuando acabes, termina la sesión con este otro comando:
+
+```bash
+docker compose down
+```
+
 
 ## URLs
 
