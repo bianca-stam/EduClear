@@ -10,9 +10,9 @@ services:
       - "${PORT_MARIADB}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./educlear-service-Backend/basedatoseduclear.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./basedatoseduclear.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
