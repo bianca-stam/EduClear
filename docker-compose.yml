@@ -1,57 +1,17 @@
 services:
-  mariadb:
-    image: mariadb:11
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "${PORT_MARIADB}:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
-      - ./basedatoseduclear.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   usuario-service:
     build: ./educlear-service-Backend/usuario-service
-    ports:
-      - "${PORT_USUARIO}:8080"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: ${PORT_MARIADB}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-    depends_on:
-      mariadb:
-        condition: service_healthy
 
   curso-service:
     build: ./educlear-service-Backend/curso-service
-    ports:
-      - "${PORT_CURSO}:8081"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: ${PORT_MARIADB}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-    depends_on:
-      mariadb:
-        condition: service_healthy
 
   frontend:
     build: ./educlear-frontend
-    ports:
-      - "${PORT_FRONTEND}:80"
-    depends_on:
-      - usuario-service
-      - curso-service
-
-volumes:
-  mariadb_data:
