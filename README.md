@@ -28,7 +28,7 @@ Plataforma educativa basada en microservicios, desarrollada con Spring Boot y An
 ### 1. Clona el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/EduClear.git
+git clone https://github.com/bianca-stam/EduClear.git
 cd EduClear
 ```
 
