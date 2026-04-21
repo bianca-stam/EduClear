@@ -48,7 +48,6 @@ public class UsuarioServiceImpl implements UsuarioService{
         usuarioRepository.deleteById(id);
     }
 
-    // Método auxiliar para mapear Entidad -> DTO
     private UsuarioDTO convertToDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
