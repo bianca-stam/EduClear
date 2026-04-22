@@ -3,8 +3,10 @@ package org.example.serviciousuario.service;
 import org.example.serviciousuario.dto.UsuarioDTO;
 import org.example.serviciousuario.model.Usuario;
 import org.example.serviciousuario.repository.UsuarioRepository;
+import org.example.serviciousuario.tokenjwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 public class UsuarioServiceImpl implements UsuarioService{
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public List<UsuarioDTO> findAll() {
@@ -30,11 +34,19 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public UsuarioDTO save(Usuario usuario) {
-        if (!cursoExiste(usuario.getCursoId())) {
-            throw new RuntimeException("El curso no existe");
-        }
+
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+
         Usuario guardado = usuarioRepository.save(usuario);
-        return convertToDTO(guardado);
+
+        String token = JwtUtil.generarToken(
+                guardado.getId(),
+                guardado.getEmail(),
+                guardado.getRol().name()
+        );
+        UsuarioDTO dto = convertToDTO(guardado);
+        dto.setToken(token);
+        return dto;
     }
 
     private boolean cursoExiste(Integer cursoId) {
@@ -51,10 +63,9 @@ public class UsuarioServiceImpl implements UsuarioService{
     private UsuarioDTO convertToDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
-        dto.setUsername(usuario.getUsername());
+        dto.setUsername(usuario.getNombreCompleto());
         dto.setEmail(usuario.getEmail());
         dto.setRol(usuario.getRol());
-        dto.setCursoId(usuario.getCursoId());
         return dto;
     }
 }

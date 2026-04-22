@@ -18,9 +18,14 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
     @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> getAll() {
-        return new ResponseEntity<>(usuarioService.findAll(), HttpStatus.OK);
+    public List<UsuarioDTO> getAll() {
+        return usuarioService.findAll();
     }
 
     @GetMapping("/{id}")

@@ -14,6 +14,5 @@ public class UsuarioDTO {
     private String username;
     private String email;
     private Rol rol;
-    private Integer cursoId;
-    private Object datosCurso;
+    private String token;
 }
