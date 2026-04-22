@@ -1,0 +1,26 @@
+services:
+  usuario-service:
+    # Usaremos la imagen ya compilada en Docker Hub o ECR
+    image: tu-usuario-docker/usuario-service:latest 
+    ports:
+      - "8080:8080"
+    environment:
+      # Estos valores apuntarán al Endpoint de AWS RDS en el .env de la EC2
+      DB_HOST: ${AWS_RDS_ENDPOINT} 
+      DB_PORT: 3306
+    restart: always
+
+  curso-service:
+    image: tu-usuario-docker/curso-service:latest
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: ${AWS_RDS_ENDPOINT}
+      DB_PORT: 3306
+    restart: always
+
+  frontend:
+    image: tu-usuario-docker/frontend-tfg:latest
+    ports:
+      - "80:80"
+    restart: always
