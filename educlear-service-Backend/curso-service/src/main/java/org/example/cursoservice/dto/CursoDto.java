@@ -10,4 +10,5 @@ import lombok.Setter;
 public class CursoDto {
     private Integer id;
     private String nombre;
+    private String descripcion;
 }
