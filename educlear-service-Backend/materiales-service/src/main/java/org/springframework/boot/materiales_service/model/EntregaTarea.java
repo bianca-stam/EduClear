@@ -17,10 +17,10 @@ public class EntregaTarea {
     @Column(name = "id_entrega_tarea")
     private Integer id;
 
-    @Column(name = "tarea_id")
+    @Column(name = "tarea_id", nullable = false)
     private Integer tareaId;
 
-    @Column(name = "alumno_id")
+    @Column(name = "alumno_id", nullable = false)
     private Integer alumnoId; // Viene de usuario-service
 
     @Enumerated(EnumType.STRING)
