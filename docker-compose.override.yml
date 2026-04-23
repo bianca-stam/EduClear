@@ -23,7 +23,7 @@ services:
       context: ./educlear-service-Backend/usuario-service
       target: build
     ports:
-      - "${PORT_USUARIO}:8080"
+      - "${PORT_USUARIO}:8081"
     environment:
       DB_HOST: mariadb
       DB_PORT: 3306 # Puerto interno de la red Docker
@@ -43,7 +43,7 @@ services:
       context: ./educlear-service-Backend/curso-service
       target: build
     ports:
-      - "${PORT_CURSO}:8081"
+      - "${PORT_CURSO}:8082"
     environment:
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -62,7 +62,7 @@ services:
       context: ./educlear-service-Backend/asignatura-service
       target: build
     ports:
-      - "${PORT_ASIGNATURA}:8082"
+      - "${PORT_ASIGNATURA}:8083"
     environment:
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -81,7 +81,7 @@ services:
       context: ./educlear-service-Backend/materiales-service
       target: build
     ports:
-      - "${PORT_MATERIALES}:8083"
+      - "${PORT_MATERIALES}:8084"
     environment:
       DB_HOST: mariadb
       DB_PORT: 3306
