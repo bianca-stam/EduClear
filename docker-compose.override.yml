@@ -70,7 +70,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./educlear-service-Backend/curso-service:/app
+      - ./educlear-service-Backend/asignatura-service:/app
     entrypoint: mvn spring-boot:run
     depends_on:
       mariadb:
@@ -89,7 +89,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./educlear-service-Backend/curso-service:/app
+      - ./educlear-service-Backend/materiales-service:/app
     entrypoint: mvn spring-boot:run
     depends_on:
       mariadb:
