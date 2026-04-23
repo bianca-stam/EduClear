@@ -9,4 +9,5 @@ Thumbs.db
 
 # Maven
 target/
-
+**/target/
+*.class
