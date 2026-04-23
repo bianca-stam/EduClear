@@ -8,22 +8,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="usuario")
+@Table(name="usuarios")
+
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Integer id;
-    @Column(nullable = false, unique = true)
-    private String username;
+
+    @Column(name = "nombre_completo", nullable = false)
+    private String nombreCompleto;
+
     @Column(nullable = false)
-    private String password;
+    private String contrasena;
+
     @Email
     @Column(nullable = false, unique = true)
     private String email;
+
     @Enumerated(EnumType.STRING)
     private Rol rol;
-    @Column(name = "curso_id")
-    private Integer cursoId;
-
 }
+
 
