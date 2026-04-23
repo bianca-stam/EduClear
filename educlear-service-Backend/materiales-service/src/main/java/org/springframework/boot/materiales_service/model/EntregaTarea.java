@@ -1,6 +1,6 @@
 package org.springframework.boot.materiales_service.model;
 
-import org.springframework.boot.materiales_service.model.enums.EstadoEntrega;
+import org.springframework.boot.materiales_service.enums.EstadoEntrega;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
