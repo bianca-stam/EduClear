@@ -57,7 +57,7 @@ services:
       mariadb:
         condition: service_healthy
 
-    asignatura-service:
+  asignatura-service:
     build:
       context: ./educlear-service-Backend/asignatura-service
       target: build
@@ -76,7 +76,7 @@ services:
       mariadb:
         condition: service_healthy
 
-    materiales-service:
+  materiales-service:
     build:
       context: ./educlear-service-Backend/materiales-service
       target: build
