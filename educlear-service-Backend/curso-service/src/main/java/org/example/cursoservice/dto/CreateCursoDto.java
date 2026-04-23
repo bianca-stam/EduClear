@@ -10,4 +10,5 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateCursoDto {
     private String nombre;
+    private String descripcion;
 }

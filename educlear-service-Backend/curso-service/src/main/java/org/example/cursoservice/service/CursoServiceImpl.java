@@ -1,5 +1,6 @@
 package org.example.cursoservice.service;
 
+import org.example.cursoservice.dto.CreateCursoDto;
 import org.example.cursoservice.dto.CursoDto;
 import org.example.cursoservice.model.Curso;
 import org.example.cursoservice.repository.CursoRepository;
@@ -21,8 +22,6 @@ public class CursoServiceImpl implements CursoService{
                 .collect(Collectors.toList());
     }
 
-
-
     @Override
     public CursoDto findById(Integer id) {
         return cursoRepository.findById(id)
@@ -30,14 +29,17 @@ public class CursoServiceImpl implements CursoService{
                 .orElse(null);
     }
 
-
-
     @Override
-    public CursoDto save(Curso curso) {
+    public CursoDto save(CreateCursoDto cursoDto) {
+        Curso curso = convertToEntity(cursoDto);
         Curso guardado = cursoRepository.save(curso);
         return convertToDTO(guardado);
     }
 
+    @Override
+    public void delete(Integer id){
+        cursoRepository.deleteById(id);
+    }
 
 
     private CursoDto convertToDTO(Curso curso) {
@@ -45,6 +47,12 @@ public class CursoServiceImpl implements CursoService{
         dto.setId(curso.getId());
         dto.setNombre(curso.getNombre());
         return dto;
+    }
+
+    private Curso convertToEntity(CreateCursoDto dto) {
+        Curso curso = new Curso();
+        curso.setNombre(dto.getNombre());
+        return curso;
     }
 
 
