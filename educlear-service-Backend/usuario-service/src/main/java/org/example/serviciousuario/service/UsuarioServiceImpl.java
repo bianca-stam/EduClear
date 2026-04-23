@@ -33,21 +33,47 @@ public class UsuarioServiceImpl implements UsuarioService{
     }
 
     @Override
+    public UsuarioDTO findByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return convertToDTO(usuario);
+    }
+
+    @Override
     public UsuarioDTO save(Usuario usuario) {
 
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-
         Usuario guardado = usuarioRepository.save(usuario);
 
-        String token = JwtUtil.generarToken(
-                guardado.getId(),
-                guardado.getEmail(),
-                guardado.getRol().name()
-        );
         UsuarioDTO dto = convertToDTO(guardado);
-        dto.setToken(token);
         return dto;
     }
+
+    @Override
+    public UsuarioDTO login(String email, String contrasena) {
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Comparar contraseña
+        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            throw new RuntimeException("Credenciales incorrectas");
+        }
+
+        // Generar token
+        String token = JwtUtil.generarToken(
+                usuario.getId(),
+                usuario.getEmail(),
+                usuario.getRol().name()
+        );
+
+        UsuarioDTO dto = convertToDTO(usuario);
+        dto.setToken(token);
+
+        return dto;
+    }
+
 
     private boolean cursoExiste(Integer cursoId) {
         // De momento asumimos que el curso existe

@@ -1,5 +1,6 @@
 package org.example.serviciousuario.controller;
 
+import org.example.serviciousuario.dto.LoginRequest;
 import org.example.serviciousuario.dto.UsuarioDTO;
 import org.example.serviciousuario.model.Usuario;
 import org.example.serviciousuario.service.UsuarioService;
@@ -18,7 +19,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
@@ -32,6 +32,23 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDTO> getById(@PathVariable Integer id) {
         UsuarioDTO user = usuarioService.findById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/email/{email:.+}")
+    public ResponseEntity<UsuarioDTO> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(
+                usuarioService.findByEmail(email)
+        );
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioDTO> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(
+                usuarioService.login(
+                        request.getEmail(),
+                        request.getContrasena()
+                )
+        );
     }
 
     @PostMapping
