@@ -1,0 +1,71 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-educlear
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        # Login - SIN filtro de autenticación (es pública)
+        - id: usuario-login
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/usuarios/login
+          
+        # Usuarios - CON filtro de autenticación
+        - id: usuario-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            - AuthFilter
+
+        # Cursos - CON filtro
+        - id: curso-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/cursos/**
+          filters:
+            - AuthFilter
+
+        # Asignaturas - CON filtro
+        - id: asignatura-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/asignaturas/**
+          filters:
+            - AuthFilter
+
+        # Materiales - CON filtro
+        - id: materiales-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/materiales/**
+          filters:
+            - AuthFilter
+
+# Enable actuator endpoints for monitoring if needed
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
