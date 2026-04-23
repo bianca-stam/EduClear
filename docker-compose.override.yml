@@ -57,6 +57,44 @@ services:
       mariadb:
         condition: service_healthy
 
+  asignatura-service:
+    build:
+      context: ./educlear-service-Backend/asignatura-service
+      target: build
+    ports:
+      - "${PORT_ASIGNATURA}:8082"
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./educlear-service-Backend/curso-service:/app
+    entrypoint: mvn spring-boot:run
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  materiales-service:
+    build:
+      context: ./educlear-service-Backend/materiales-service
+      target: build
+    ports:
+      - "${PORT_MATERIALES}:8083"
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./educlear-service-Backend/curso-service:/app
+    entrypoint: mvn spring-boot:run
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
   frontend:
       build:
         context: ./educlear-frontend

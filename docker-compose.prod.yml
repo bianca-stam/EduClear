@@ -19,6 +19,24 @@ services:
       DB_PORT: 3306
     restart: always
 
+  asignatura-service:
+    image: tu-usuario-docker/asignatura-service:latest
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: ${AWS_RDS_ENDPOINT}
+      DB_PORT: 3306
+    restart: always
+
+  materiales-service:
+    image: tu-usuario-docker/materiales-service:latest
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: ${AWS_RDS_ENDPOINT}
+      DB_PORT: 3306
+    restart: always
+
   frontend:
     image: tu-usuario-docker/frontend-tfg:latest
     ports:
