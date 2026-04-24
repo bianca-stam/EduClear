@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="usuarios")
+@Table(name = "usuarios")
 
 public class Usuario {
 
@@ -30,5 +30,3 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 }
-
-
