@@ -13,7 +13,10 @@ spring:
       globalcors:
         cors-configurations:
           "[/**]":
-            allowedOrigins: "http://localhost:4200"
+            allowedOrigins:
+              - "http://localhost:4200"
+              - "http://localhost"
+              - "http://localhost:80"
             allowedMethods:
               - GET
               - POST
@@ -27,13 +30,13 @@ spring:
       routes:
         # Login - SIN filtro de autenticación (es pública)
         - id: usuario-login
-          uri: http://localhost:8081
+          uri: http://usuario-service:8081
           predicates:
             - Path=/api/usuarios/login
-          
+
         # Usuarios - CON filtro de autenticación
         - id: usuario-service
-          uri: http://localhost:8081
+          uri: http://usuario-service:8081
           predicates:
             - Path=/api/usuarios/**
           filters:
@@ -41,7 +44,7 @@ spring:
 
         # Cursos - CON filtro
         - id: curso-service
-          uri: http://localhost:8082
+          uri: http://curso-service:8082
           predicates:
             - Path=/api/cursos/**
           filters:
@@ -49,7 +52,7 @@ spring:
 
         # Asignaturas - CON filtro
         - id: asignatura-service
-          uri: http://localhost:8083
+          uri: http://asignatura-service:8083
           predicates:
             - Path=/api/asignaturas/**
           filters:
@@ -57,15 +60,8 @@ spring:
 
         # Materiales - CON filtro
         - id: materiales-service
-          uri: http://localhost:8084
+          uri: http://materiales-service:8084
           predicates:
             - Path=/api/materiales/**
           filters:
             - AuthFilter
-
-# Enable actuator endpoints for monitoring if needed
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"

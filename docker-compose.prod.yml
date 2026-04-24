@@ -1,9 +1,14 @@
 services:
+  # El GATEWAY es el único que expone puertos al exterior (80 o 9000)
+  api-gateway:
+    image: tu-usuario-docker/gateway-educlear:latest
+    ports:
+      - "80:8080" # Mapeamos el puerto 80 de la EC2 al 8080 del Gateway
+    restart: always
+
   usuario-service:
     # Usaremos la imagen ya compilada en Docker Hub o ECR
     image: tu-usuario-docker/usuario-service:latest 
-    ports:
-      - "8080:8080"
     environment:
       # Estos valores apuntarán al Endpoint de AWS RDS en el .env de la EC2
       DB_HOST: ${AWS_RDS_ENDPOINT} 
@@ -12,8 +17,6 @@ services:
 
   curso-service:
     image: tu-usuario-docker/curso-service:latest
-    ports:
-      - "8081:8081"
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
@@ -21,8 +24,6 @@ services:
 
   asignatura-service:
     image: tu-usuario-docker/asignatura-service:latest
-    ports:
-      - "8082:8082"
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
@@ -30,8 +31,6 @@ services:
 
   materiales-service:
     image: tu-usuario-docker/materiales-service:latest
-    ports:
-      - "8083:8083"
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306

@@ -11,6 +11,7 @@ export interface UsuarioDTO {
   email: string;
   rol: UserRol;
   cursoId: number | null;
+  token?: string;
 }
 
 export interface SesionUsuario {
@@ -37,25 +38,24 @@ export class AuthService {
   }
 
   login(credentials: { correo: string; password: string }) {
-    return this._http.get<UsuarioDTO[]>(`${environment.usuariosUrl}/usuarios`).pipe(
-      map(usuarios => {
-        const usuario = usuarios.find(u => u.email === credentials.correo);
-
-        if (!usuario) {
-          throw new Error('No existe ningún usuario con ese correo.');
+    return this._http.post<UsuarioDTO>(`${environment.usuariosUrl}/usuarios/login`, {
+      email: credentials.correo,
+      contrasena: credentials.password
+    }).pipe(
+      map(usuario => {
+        if (!usuario || !usuario.token) {
+          throw new Error('Credenciales inválidas o no se pudo autenticar al usuario.');
         }
-
-        const token = btoa(`${usuario.id}:${usuario.email}:${Date.now()}`);
 
         const sesion: SesionUsuario = {
           id: usuario.id,
           email: usuario.email,
           username: usuario.username,
           rol: usuario.rol,
-          token
+          token: usuario.token
         };
 
-        localStorage.setItem(this.TOKEN_KEY, token);
+        localStorage.setItem(this.TOKEN_KEY, usuario.token);
         localStorage.setItem(this.USER_KEY, JSON.stringify(sesion));
         this.usuarioActual.set(sesion);
 
