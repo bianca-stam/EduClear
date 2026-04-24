@@ -13,7 +13,10 @@ spring:
       globalcors:
         cors-configurations:
           "[/**]":
-            allowedOrigins: "http://localhost:4200"
+            allowedOrigins:
+              - "http://localhost:4200"
+              - "http://localhost"
+              - "http://localhost:80"
             allowedMethods:
               - GET
               - POST
@@ -30,7 +33,7 @@ spring:
           uri: http://usuario-service:8081
           predicates:
             - Path=/api/usuarios/login
-          
+
         # Usuarios - CON filtro de autenticación
         - id: usuario-service
           uri: http://usuario-service:8081
@@ -62,10 +65,3 @@ spring:
             - Path=/api/materiales/**
           filters:
             - AuthFilter
-
-# Enable actuator endpoints for monitoring if needed
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
