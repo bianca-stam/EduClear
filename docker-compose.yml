@@ -1,4 +1,7 @@
 services:
+  api-gateway:
+      build: ./educlear-service-Backend/gateway-educlear
+
   usuario-service:
     build: ./educlear-service-Backend/usuario-service
     environment:

@@ -17,6 +17,20 @@ services:
       timeout: 5s
       retries: 5
 
+  api-gateway:
+    build: { context: ./educlear-service-Backend/gateway-educlear, target: build }
+    ports:
+      - "${PORT_GATEWAY}:8080"
+    volumes:
+      - ./educlear-service-Backend/gateway-educlear:/app
+    entrypoint: mvn spring-boot:run
+    # El gateway depende de que los servicios estén listos (opcional)
+    depends_on:
+      - usuario-service
+      - curso-service
+      - asignatura-service
+      - materiales-service
+
   usuario-service:
     # Usamos la etapa de 'build' del Dockerfile porque contiene Maven
     build:
