@@ -7,7 +7,7 @@ export const cursoSeleccionadoGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   // Verificamos si el curso está seleccionado
-  if (cursosService.cursoSleccionado()) {
+  if (cursosService.cursoSeleccionado()) {
     return true;
   } else {
     // Si no tiene valor, lo redirigimos de vuelta a cursos

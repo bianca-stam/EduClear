@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CursoConAlumnos, CursosService } from '@core/services/cursos.service';
 import { LucideAngularModule, Search, AlertCircle, Loader } from "lucide-angular";
 import { CommonModule } from '@angular/common';
+import { AuthService } from '@core/services/auth.service';
+import { DbCurso } from '@core/models/db-models';
 
 @Component({
   selector: 'app-cursos',
@@ -17,11 +19,12 @@ export class Cursos implements OnInit {
 
   private router = inject(Router);
   private cursosService = inject(CursosService);
+  private authService = inject(AuthService);
 
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
 
-  private cursosRaw = signal<CursoConAlumnos[]>([]);
+  private cursosRaw = signal<DbCurso[]>([]);
 
   terminoBusqueda = signal<string>('');
 
@@ -34,7 +37,21 @@ export class Cursos implements OnInit {
   });
 
   ngOnInit() {
-    this.cursosService.getCursosConAlumnos().subscribe({
+    // this.cursosService.getCursosDelAlumno().subscribe({
+    //   next: (data) => {
+    //     this.cursosRaw.set(data);
+    //     this.isLoading.set(false);
+    //   },
+    //   error: (err) => {
+    //     this.errorMsg.set('No se pudieron cargar los cursos. Verifica que el servidor esté activo.');
+    //     this.isLoading.set(false);
+    //     console.error('Error al cargar cursos:', err);
+    //   }
+    // });
+
+
+    // using mock data
+    this.cursosService.getCursosDelAlumno(this.authService.usuarioActual()!.id).subscribe({
       next: (data) => {
         this.cursosRaw.set(data);
         this.isLoading.set(false);
@@ -47,8 +64,8 @@ export class Cursos implements OnInit {
     });
   }
 
-  verCurso(curso: CursoConAlumnos) {
-    this.cursosService.cursoSleccionado.set(curso);
+  verCurso(curso: DbCurso) {
+    this.cursosService.cursoSeleccionado.set(curso);
     const nombreUrl = curso.nombre
       .toLowerCase()
       .normalize("NFD")

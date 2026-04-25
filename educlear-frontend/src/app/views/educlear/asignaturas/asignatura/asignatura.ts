@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { DbTema } from '@core/models/db-models';
 import { AsignaturasService } from '@core/services/asignaturas.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ArrowRight, LucideAngularModule } from "lucide-angular";
@@ -9,28 +10,22 @@ import { ArrowRight, LucideAngularModule } from "lucide-angular";
   templateUrl: './asignatura.html',
   styleUrl: './asignatura.scss'
 })
-export class Asignatura {
+export class Asignatura implements OnInit{
 
-  asignaturaSeleccionada = inject(AsignaturasService).asignaturaSeleccionada;
+  asignaturasService = inject(AsignaturasService);
+  asignaturaSeleccionada = this.asignaturasService.asignaturaSeleccionada;
   arrowRight = ArrowRight;
 
-  temas = [
-    {
-      nombre: 'Tema 1',
-      descripcion: 'Descripcion 1'
-    },
-    {
-      nombre: 'Tema 2',
-      descripcion: 'Descripcion 2'
-    },
-    {
-      nombre: 'Tema 3',
-      descripcion: 'Descripcion 3'
-    }
-  ]
+  temas = signal<DbTema[]>([]);
+
+  ngOnInit(): void {
+    this.asignaturasService.getTemasByAsignatura(this.asignaturaSeleccionada()!.id_asignatura).subscribe((temas) => {
+      this.temas.set(temas);
+    });
+  }
 
   verTema(tema: any) {
-    this.asignaturaSeleccionada.set(tema);
+    
   }
 
 
