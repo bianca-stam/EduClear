@@ -1,6 +1,6 @@
 <div class="asignatura-header">
     <div class="title">
-        <h2>Asignatura</h2>
+        <h2>{{asignaturaSeleccionada()?.nombre}}</h2>
     </div>
 </div>
 <div class="asignatura-main">
@@ -20,13 +20,18 @@
                             </a>
                             <ng-template ngbNavContent>
                                 <div class="temas">
-                                    @for (tema of temas; track $index) {
-                                        <div class="tema" (click)="verTema(tema)">
-                                            <div class="tema-info">
-                                                <h3>{{tema.nombre}}</h3>
+                                    @for (tema of temas(); track tema.id_tema) {
+                                        <div class="tema" >
+                                            <div class="tema_header" (click)="verTema(tema)">
+                                                <div class="tema-info">
+                                                    <h3>{{tema.titulo}}</h3>
+                                                </div>
+                                                <div class="tema-icon">
+                                                    <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                                                </div>
                                             </div>
-                                            <div class="tema-icon">
-                                                <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                                            <div class="tema_body">
+                                                <span>{{tema.descripcion}}</span>
                                             </div>
                                         </div>
                                     }

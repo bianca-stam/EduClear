@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
 import {RouterLink} from '@angular/router';
-import {NgIcon} from '@ng-icons/core';
 import {LayoutStoreService} from '@core/services/layout-store.service';
-import {LucideAngularModule, LucidePalette, Search} from 'lucide-angular';
-import {ThemeToggler} from '@layouts/components/topbar/components/theme-toggler/theme-toggler';
+import {LucideAngularModule} from 'lucide-angular';
 import {UserProfile} from '@layouts/components/topbar/components/user-profile/user-profile';
 
 
@@ -12,7 +10,6 @@ import {UserProfile} from '@layouts/components/topbar/components/user-profile/us
     imports: [
         RouterLink,
         LucideAngularModule,
-        ThemeToggler,
         UserProfile,
     ],
     templateUrl: './topbar.html'
