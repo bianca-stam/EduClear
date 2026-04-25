@@ -22,6 +22,25 @@ public class CursoServiceImpl implements CursoService{
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<CursoDto> findCursosByProfesor(Integer profesorId) {
+        return cursoRepository.findCursosByProfesorId(profesorId)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Cursos de un alumno
+    @Override
+    public List<CursoDto> findCursosByAlumno(Integer alumnoId) {
+        return cursoRepository.findCursosByAlumnoId(alumnoId)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
     @Override
     public CursoDto findById(Integer id) {
         return cursoRepository.findById(id)
@@ -46,6 +65,7 @@ public class CursoServiceImpl implements CursoService{
         CursoDto dto = new CursoDto();
         dto.setId(curso.getId());
         dto.setNombre(curso.getNombre());
+        dto.setDescripcion(curso.getDescripcion());
         return dto;
     }
 

@@ -39,4 +39,19 @@ public class CursoController {
         cursoService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/profesor/{profesorId}")
+    public ResponseEntity<List<CursoDto>> getCursosByProfesor(
+            @PathVariable Integer profesorId) {
+        return ResponseEntity.ok(cursoService.findCursosByProfesor(profesorId));
+    }
+
+
+    @GetMapping("/alumno/{alumnoId}")
+    public ResponseEntity<List<CursoDto>> getCursosByAlumno(
+            @PathVariable Integer alumnoId) {
+        return ResponseEntity.ok(cursoService.findCursosByAlumno(alumnoId));
+    }
+
+
 }

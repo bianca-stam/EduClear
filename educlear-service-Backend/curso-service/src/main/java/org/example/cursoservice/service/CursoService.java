@@ -12,4 +12,10 @@ public interface CursoService {
     CursoDto save(CreateCursoDto curso);
     void delete(Integer id);
 
+    // Cursos que imparte un profesor
+    List<CursoDto> findCursosByProfesor(Integer profesorId);
+
+    // Cursos en los que está matriculado un alumno
+    List<CursoDto> findCursosByAlumno(Integer alumnoId);
+
 }
