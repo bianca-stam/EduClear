@@ -20,20 +20,20 @@ public class TemaController {
         this.temaService = temaService;
     }
 
-    //Crear un tema
+    // Crear un tema
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateTemaDTO dto) {
         TemaDTO creado = temaService.create(dto);
         return new ResponseEntity<>(creado, HttpStatus.CREATED);
     }
 
-    //Obtener todos los temas
+    // Obtener todos los temas
     @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(temaService.findAll());
     }
 
-    //Obtener un tema por id
+    // Obtener un tema por id
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         try {
@@ -43,17 +43,17 @@ public class TemaController {
         }
     }
 
-    //Actualizar un tema
+    // Actualizar un tema
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody UpdateTemaDTO dto) {
         try {
             return ResponseEntity.ok(temaService.update(id, dto));
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("Error",ex.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("Error", ex.getMessage()));
         }
     }
 
-    //Eliminar un tema
+    // Eliminar un tema
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {
