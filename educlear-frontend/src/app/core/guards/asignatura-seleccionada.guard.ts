@@ -11,7 +11,7 @@ export const asignaturaSeleccionadaGuard: CanActivateFn = (route, state) => {
     return true;
   } else {
     // Si entran directamente, los mandamos a la lista de cursos para reiniciar el flujo
-    router.navigate(['/inicio/cursos']);
+    router.navigate(['/cursos']);
     return false;
   }
 };
