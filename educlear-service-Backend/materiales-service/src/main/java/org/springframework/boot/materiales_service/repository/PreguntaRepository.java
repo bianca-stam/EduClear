@@ -1,4 +1,7 @@
 package org.springframework.boot.materiales_service.repository;
 
-public interface PreguntaRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.boot.materiales_service.model.Pregunta;
+
+public interface PreguntaRepository extends JpaRepository<Pregunta, Integer> {
 }
