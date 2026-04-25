@@ -45,7 +45,7 @@ export class SignIn {
     this.authService.login(credentials).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/inicio/cursos']);
+        this.router.navigate(['/cursos']);
       },
       error: (err: Error) => {
         this.isLoading.set(false);

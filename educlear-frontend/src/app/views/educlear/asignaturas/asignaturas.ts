@@ -45,7 +45,9 @@ export class Asignaturas {
     
     const nombreUrl = asignatura.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
     
-    this.router.navigate(['/inicio', this.cursoService.cursoSleccionado()?.nombre, nombreUrl]);
+    const cursoNombre = this.cursoService.cursoSleccionado()?.nombre || '';
+    const cursoUrl = cursoNombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+    this.router.navigate(['/cursos', cursoUrl, nombreUrl]);
     
   }
 
@@ -54,7 +56,7 @@ export class Asignaturas {
   asignaturas = computed(() => {
     const busqueda = this.terminoBusqueda().toLowerCase();
     if (!busqueda) return this.asignaturasRaw();
-    return this.asignaturasRaw().filter(asignatura => asignatura.nombre.toLowerCase().startsWith(busqueda));
+    return this.asignaturasRaw().filter(asignatura => asignatura.nombre.toLowerCase().includes(busqueda));
   });
 
   buscarAsignatura(busqueda: string){
