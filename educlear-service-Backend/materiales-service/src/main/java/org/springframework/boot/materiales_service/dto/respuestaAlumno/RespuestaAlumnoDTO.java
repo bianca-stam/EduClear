@@ -1,4 +1,4 @@
-package org.springframework.boot.materiales_service.dto.archivos;
+package org.springframework.boot.materiales_service.dto.respuestaAlumno;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateArchivoContenidoDTO {
+public class RespuestaAlumnoDTO {
 }
