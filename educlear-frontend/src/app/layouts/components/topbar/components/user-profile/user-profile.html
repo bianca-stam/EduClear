@@ -2,7 +2,11 @@
     <div ngbDropdown [placement]="'bottom-end'" class="dropdown">
         <button ngbDropdownToggle class="btn btn-link p-0 topbar-link dropdown-toggle drop-arrow-none px-2">
             <div class="d-lg-flex align-items-center gap-1 d-none">
-                <h5 class="my-0">Geneva</h5>
+                <div class="text-start mx-1">
+                    <h5 class="my-0">{{usuarioActual()?.username}}</h5>
+                    <p class="my-0 text-secondary fs-6">{{usuarioActual()?.rol}}</p>
+                </div>
+                
                 <span class="d-flex align-middle"><ng-icon name="tablerChevronDown"/></span>
             </div>
         </button>

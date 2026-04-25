@@ -28,9 +28,9 @@ export class Cursos implements OnInit {
   cursos = computed(() => {
     const busqueda = this.terminoBusqueda().toLowerCase();
     if (!busqueda) return this.cursosRaw();
-    return this.cursosRaw().filter(curso =>
-      curso.nombre.toLowerCase().startsWith(busqueda)
-    );
+    return this.cursosRaw().filter(curso => {
+      return curso.nombre.toLowerCase().includes(busqueda);
+    });
   });
 
   ngOnInit() {
@@ -54,7 +54,7 @@ export class Cursos implements OnInit {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s+/g, '-');
-    this.router.navigate(['/inicio', nombreUrl]);
+    this.router.navigate(['/cursos', nombreUrl]);
   }
 
   buscarCurso(busqueda: string) {

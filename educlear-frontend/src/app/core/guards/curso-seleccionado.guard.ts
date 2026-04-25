@@ -11,7 +11,7 @@ export const cursoSeleccionadoGuard: CanActivateFn = (route, state) => {
     return true;
   } else {
     // Si no tiene valor, lo redirigimos de vuelta a cursos
-    router.navigate(['/inicio/cursos']);
+    router.navigate(['/cursos']);
     return false;
   }
 };

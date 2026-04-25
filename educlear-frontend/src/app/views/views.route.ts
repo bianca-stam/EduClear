@@ -71,17 +71,12 @@ export const VIEWS_ROUTES: Routes = [
         loadChildren: () => import('./charts/charts.route').then((mod) => mod.CHARTS_ROUTES)
     },
     {
-        path: 'inicio',
+        path: 'cursos',
         component: Inicio,
-        data: {title: "Inicio"},
+        data: {title: "Cursos"},
         children: [
             {
                 path: '',
-                redirectTo: 'cursos',
-                pathMatch: 'full',
-            },
-            {
-                path: 'cursos',
                 component: Cursos,
                 data: {title: "Cursos"},
             },

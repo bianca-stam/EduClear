@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
 import {userDropdownItems} from '@layouts/components/data';
 import {Router, RouterLink} from '@angular/router';
@@ -20,6 +20,8 @@ export class UserProfile {
   menuItems = userDropdownItems;
   authService = inject(AuthService);
   router = inject(Router);
+
+  usuarioActual = computed(() => this.authService.usuarioActual());
 
   logout() {
     this.authService.logout();
