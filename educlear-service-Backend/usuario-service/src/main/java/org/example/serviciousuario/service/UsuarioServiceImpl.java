@@ -42,7 +42,12 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public UsuarioDTO save(Usuario usuario) {
-
+        if (usuario == null) {
+            throw new RuntimeException("Datos de usuario inválidos");
+        }
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new RuntimeException("Email ya registrado");
+        }
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
         Usuario guardado = usuarioRepository.save(usuario);
 

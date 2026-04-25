@@ -36,24 +36,33 @@ public class UsuarioController {
 
     @GetMapping("/email/{email:.+}")
     public ResponseEntity<UsuarioDTO> getByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(
-                usuarioService.findByEmail(email)
-        );
+        try{
+            return ResponseEntity.ok(usuarioService.findByEmail(email));
+        }catch(RuntimeException ex){
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     @PostMapping("/login")
     public ResponseEntity<UsuarioDTO> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(
-                usuarioService.login(
-                        request.getEmail(),
-                        request.getContrasena()
-                )
-        );
+        try{
+            return ResponseEntity.ok(
+                    usuarioService.login(
+                            request.getEmail(),
+                            request.getContrasena()));
+        }catch(RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> create(@RequestBody Usuario usuario) {
-        return new ResponseEntity<>(usuarioService.save(usuario), HttpStatus.CREATED);
+        try{
+            return new ResponseEntity<>(usuarioService.save(usuario), HttpStatus.CREATED);
+        }catch(RuntimeException ex){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
