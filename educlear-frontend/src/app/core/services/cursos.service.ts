@@ -1,8 +1,12 @@
 import { environment } from '@/environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { forkJoin, map, Observable } from 'rxjs';
+import { delay, forkJoin, map, Observable, of } from 'rxjs';
 import { UsuarioDTO } from './auth.service';
+import { MOCK_CURSOS } from '@core/mocks/db-mock';
+import { MOCK_ASIGNATURAS } from '@core/mocks/db-mock';
+import { MOCK_MATRICULAS } from '@core/mocks/db-mock';
+import { DbCurso } from '@core/models/db-models';
 
 export interface CursoDTO {
   id: number;
@@ -22,7 +26,7 @@ export class CursosService {
   private _http = inject(HttpClient);
   private readonly BASE_URL = `${environment.cursosUrl}/cursos`;
 
-  cursoSleccionado = signal<CursoConAlumnos | null>(null);
+  cursoSeleccionado = signal<DbCurso | null>(null);
 
   getAllCursos(): Observable<CursoDTO[]> {
     return this._http.get<CursoDTO[]>(this.BASE_URL);
@@ -47,5 +51,25 @@ export class CursosService {
       })
     );
   }
+
+    getCursosDelAlumno(alumnoId: number): Observable<DbCurso[]> {
+    // 1. Obtenemos los IDs de las asignaturas donde está matriculado el alumno
+    const idsAsignaturasMatriculadas = MOCK_MATRICULAS
+      .filter(m => m.alumno_id === alumnoId)
+      .map(m => m.asignatura_id);
+
+    // 2. Obtenemos los IDs de los cursos a los que pertenecen esas asignaturas
+    const idsCursosDelAlumno = MOCK_ASIGNATURAS
+      .filter(asig => idsAsignaturasMatriculadas.includes(asig.id_asignatura))
+      .map(asig => asig.curso_id);
+
+    // 3. Filtramos la lista maestra de cursos
+    // Usamos un Set para eliminar duplicados de IDs de cursos si el alumno tiene varias asignaturas en el mismo curso
+    const idsUnicos = [...new Set(idsCursosDelAlumno)];
+    const cursosFiltrados = MOCK_CURSOS.filter(curso => idsUnicos.includes(curso.id_curso));
+
+    return of(cursosFiltrados).pipe(delay(500));
+  }
+
 }
 

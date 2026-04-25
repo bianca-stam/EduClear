@@ -1,3 +1,7 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "../../../../../assets/scss/variables";
+
 .asignatura-main{
     display: flex;
     align-items: center;
@@ -30,15 +34,21 @@
 
     .tema {
         display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        background-color: #565656;
+        min-height: 80px; 
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        .tema_header {
+        display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        min-height: 80px; /* Usamos min-height en lugar de height: 100% */
-        background-color: #565656;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         padding: 20px;
-
         .tema-info {
             flex: 1; /* Esto hace que el texto ocupe el espacio disponible */
             overflow: hidden;
@@ -55,7 +65,23 @@
         .tema-icon{
             cursor: pointer;
         }
+    }
+
+    .tema_body{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        border-top: 2px solid $primary;
+        padding: 20px;
+    }
+
+
+
+    
 
         
     }
+
+    
 }

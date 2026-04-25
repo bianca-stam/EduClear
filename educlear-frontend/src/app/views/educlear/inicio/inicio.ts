@@ -45,6 +45,7 @@ export class Inicio {
   }
 
   formatName(segment: string) {
-    return segment.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const decoded = decodeURIComponent(segment);
+    return decoded.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 }
