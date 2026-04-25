@@ -1,4 +1,4 @@
-package org.springframework.boot.materiales_service.dto.entregaTarea.response;
+package org.springframework.boot.materiales_service.dto.entregaTarea.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -10,8 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EntregaTareaDTO {
-    private Integer id;
+public class UpdateEntregaTareaDTO {
     private Integer tareaId;
     private Integer alumnoId;
     private EstadoEntrega estadoEntrega;
