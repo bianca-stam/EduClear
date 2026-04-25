@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -29,45 +30,58 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> getById(@PathVariable Integer id) {
+    public ResponseEntity<?> getById(@PathVariable Integer id) {
         UsuarioDTO user = usuarioService.findById(id);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado"));
+        }
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/email/{email:.+}")
-    public ResponseEntity<UsuarioDTO> getByEmail(@PathVariable String email) {
+    public ResponseEntity<?> getByEmail(@PathVariable String email) {
         try{
             return ResponseEntity.ok(usuarioService.findByEmail(email));
         }catch(RuntimeException ex){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error",ex.getMessage()));
         }
-
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioDTO> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()
+                || request.getContrasena() == null || request.getContrasena().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("Error", "Email y contraseña obligatorios"));
+        }
         try{
             return ResponseEntity.ok(
                     usuarioService.login(
                             request.getEmail(),
                             request.getContrasena()));
         }catch(RuntimeException ex){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Error",ex.getMessage()));
         }
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> create(@RequestBody Usuario usuario) {
         try{
             return new ResponseEntity<>(usuarioService.save(usuario), HttpStatus.CREATED);
         }catch(RuntimeException ex){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(Map.of("error",ex.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        usuarioService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        try {
+            usuarioService.delete(id);
+            return ResponseEntity.ok(Map.of("message","Usuario borrado correctamente"));
+        }catch (RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", ex.getMessage()));
+        }
     }
 }

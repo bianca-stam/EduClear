@@ -42,8 +42,11 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public UsuarioDTO save(Usuario usuario) {
-        if (usuario == null) {
-            throw new RuntimeException("Datos de usuario inválidos");
+        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
+            throw new RuntimeException("El email es obligatorio");
+        }
+        if (usuario.getContrasena() == null || usuario.getContrasena().isBlank()) {
+            throw new RuntimeException("La contraseña es obligatoria");
         }
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             throw new RuntimeException("Email ya registrado");
@@ -57,7 +60,6 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public UsuarioDTO login(String email, String contrasena) {
-
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -75,7 +77,6 @@ public class UsuarioServiceImpl implements UsuarioService{
 
         UsuarioDTO dto = convertToDTO(usuario);
         dto.setToken(token);
-
         return dto;
     }
 
@@ -88,6 +89,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public void delete(Integer id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
         usuarioRepository.deleteById(id);
     }
 
