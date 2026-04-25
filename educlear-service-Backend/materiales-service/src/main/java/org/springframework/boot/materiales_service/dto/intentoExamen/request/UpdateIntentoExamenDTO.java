@@ -1,4 +1,4 @@
-package org.springframework.boot.materiales_service.dto.intentoExamen.response;
+package org.springframework.boot.materiales_service.dto.intentoExamen.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IntentoExamenDTO {
-    private Integer id;
+public class UpdateIntentoExamenDTO {
     private Integer examenId;
     private Integer alumnoId;
     private LocalDateTime fechaInicio;
