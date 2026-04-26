@@ -1,16 +1,14 @@
 import { environment } from '@/environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { delay, forkJoin, map, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { UsuarioDTO } from './auth.service';
-import { MOCK_CURSOS } from '@core/mocks/db-mock';
-import { MOCK_ASIGNATURAS } from '@core/mocks/db-mock';
-import { MOCK_MATRICULAS } from '@core/mocks/db-mock';
 import { DbCurso } from '@core/models/db-models';
 
 export interface CursoDTO {
   id: number;
   nombre: string;
+  descripcion?: string;
 }
 
 export interface CursoConAlumnos extends CursoDTO {
@@ -24,7 +22,7 @@ export interface CursoConAlumnos extends CursoDTO {
 export class CursosService {
 
   private _http = inject(HttpClient);
-  private readonly BASE_URL = `${environment.cursosUrl}/cursos`;
+  private readonly BASE_URL = `${environment.apiUrl}/cursos`;
 
   cursoSeleccionado = signal<DbCurso | null>(null);
 
@@ -39,7 +37,7 @@ export class CursosService {
   getCursosConAlumnos(): Observable<CursoConAlumnos[]> {
     return forkJoin({
       cursos: this._http.get<CursoDTO[]>(this.BASE_URL),
-      usuarios: this._http.get<UsuarioDTO[]>(`${environment.usuariosUrl}/usuarios`)
+      usuarios: this._http.get<UsuarioDTO[]>(`${environment.apiUrl}/usuarios`)
     }).pipe(
       map(({ cursos, usuarios }) => {
         const alumnos = usuarios.filter(u => u.rol === 'alumno');
@@ -52,24 +50,34 @@ export class CursosService {
     );
   }
 
-    getCursosDelAlumno(alumnoId: number): Observable<DbCurso[]> {
-    // 1. Obtenemos los IDs de las asignaturas donde está matriculado el alumno
-    const idsAsignaturasMatriculadas = MOCK_MATRICULAS
-      .filter(m => m.alumno_id === alumnoId)
-      .map(m => m.asignatura_id);
+  getCursosDelAlumno(alumnoId: number): Observable<DbCurso[]> {
+    return forkJoin({
+      matriculas: this._http.get<any[]>(`${environment.apiUrl}/matriculas`),
+      asignaturas: this._http.get<any[]>(`${environment.apiUrl}/asignaturas`),
+      cursos: this._http.get<CursoDTO[]>(this.BASE_URL)
+    }).pipe(
+      map(({ matriculas, asignaturas, cursos }) => {
+        // 1. Obtenemos los IDs de las asignaturas donde está matriculado el alumno
+        const idsAsignaturasMatriculadas = matriculas
+          .filter(m => m.alumnoId === alumnoId)
+          .map(m => m.asignaturaId);
 
-    // 2. Obtenemos los IDs de los cursos a los que pertenecen esas asignaturas
-    const idsCursosDelAlumno = MOCK_ASIGNATURAS
-      .filter(asig => idsAsignaturasMatriculadas.includes(asig.id_asignatura))
-      .map(asig => asig.curso_id);
+        // 2. Obtenemos los IDs de los cursos a los que pertenecen esas asignaturas
+        const idsCursosDelAlumno = asignaturas
+          .filter(asig => idsAsignaturasMatriculadas.includes(asig.id))
+          .map(asig => asig.cursoId);
 
-    // 3. Filtramos la lista maestra de cursos
-    // Usamos un Set para eliminar duplicados de IDs de cursos si el alumno tiene varias asignaturas en el mismo curso
-    const idsUnicos = [...new Set(idsCursosDelAlumno)];
-    const cursosFiltrados = MOCK_CURSOS.filter(curso => idsUnicos.includes(curso.id_curso));
-
-    return of(cursosFiltrados).pipe(delay(500));
+        // 3. Filtramos la lista maestra de cursos
+        const idsUnicos = [...new Set(idsCursosDelAlumno)];
+        return cursos
+          .filter(curso => idsUnicos.includes(curso.id))
+          .map(curso => ({
+            id_curso: curso.id,
+            nombre: curso.nombre,
+            descripcion: curso.descripcion || ''
+          }));
+      })
+    );
   }
-
 }
 

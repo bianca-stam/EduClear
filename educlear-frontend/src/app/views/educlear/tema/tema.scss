@@ -1,0 +1,94 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "../../../../assets/scss/variables";
+
+
+.item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    gap: 15px;
+    cursor: pointer;
+    transition: $transition-base;
+    border: 3px solid transparent;
+    border-radius: $border-radius;
+    margin-bottom: 1rem;
+
+    & > :nth-child(2) {
+        flex: 1;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        
+        h4 {
+            transition: $transition-base;
+            margin-bottom: 4px;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+
+    ::ng-deep lucide-icon {
+        transition: $transition-base;
+        svg {
+            width: 32px !important;
+            height: 32px !important;
+            stroke-width: 1.5;
+            transition: $transition-base;
+        }
+    }
+
+    &:hover {
+        box-shadow: $box-shadow;
+        
+        .arrow-icon lucide-icon {
+            transform: scale(1.2);
+        }
+    }
+}
+
+.entrega{
+    border-top: 3px solid $secondary;
+    
+    &:hover {
+        border: 3px solid $secondary;
+        border-top: 3px solid $secondary;
+
+        h4 {
+            color: $secondary;
+        }
+    }
+}
+
+.material{
+    border-top: 3px solid $primary;
+
+    ::ng-deep lucide-icon {
+        svg {
+            stroke: $primary !important;
+        }
+    }
+
+    &:hover {
+        border: 3px solid $primary;
+        border-top: 3px solid $primary;
+
+        h4 {
+            color: $primary;
+        }
+    }
+}
+
+.cierre {
+    color: $secondary;
+}
+
+.tarea-item.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    border: 0;
+}

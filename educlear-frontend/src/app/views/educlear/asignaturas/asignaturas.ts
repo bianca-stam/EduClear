@@ -41,7 +41,7 @@ export class Asignaturas implements OnInit {
     const cursoSeleccionado = this.cursoService.cursoSeleccionado();
     if (!cursoSeleccionado) return;
 
-    this.asignaturasService.getAsignaturasDelAlumno(cursoSeleccionado.id_curso).pipe(
+    this.asignaturasService.getAsignaturasByCurso(cursoSeleccionado.id_curso).pipe(
       switchMap(asignaturas => {
         if (asignaturas.length === 0) return of([]);
 
