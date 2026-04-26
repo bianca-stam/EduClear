@@ -63,4 +63,10 @@ public class TemaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
+
+    // Promedio de calificaciones por tema de un alumno
+    @GetMapping("/alumno/{alumnoId}/promedios")
+    public ResponseEntity<?> getPromediosPorAlumno(@PathVariable Integer alumnoId) {
+        return ResponseEntity.ok(temaService.getPromediosPorAlumno(alumnoId));
+    }
 }

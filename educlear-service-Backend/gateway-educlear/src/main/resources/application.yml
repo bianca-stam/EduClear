@@ -59,6 +59,6 @@ spring:
         - id: materiales-service
           uri: http://materiales-service:8084
           predicates:
-            - Path=/api/materiales/**
+            - Path=/api/materiales/**,/api/temas/**
           filters:
             - AuthFilter
