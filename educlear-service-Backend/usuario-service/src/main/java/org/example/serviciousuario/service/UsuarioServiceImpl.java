@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioServiceImpl implements UsuarioService{
+public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -72,20 +72,17 @@ public class UsuarioServiceImpl implements UsuarioService{
         String token = JwtUtil.generarToken(
                 usuario.getId(),
                 usuario.getEmail(),
-                usuario.getRol().name()
-        );
+                usuario.getRol().name());
 
         UsuarioDTO dto = convertToDTO(usuario);
         dto.setToken(token);
         return dto;
     }
 
-
     private boolean cursoExiste(Integer cursoId) {
         // De momento asumimos que el curso existe
         return true;
     }
-
 
     @Override
     public void delete(Integer id) {

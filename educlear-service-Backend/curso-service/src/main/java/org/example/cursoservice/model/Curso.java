@@ -20,4 +20,5 @@ public class Curso {
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
+
 }
