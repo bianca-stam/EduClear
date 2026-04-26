@@ -48,6 +48,18 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return asignaturaRepository.findCursoIdsByAlumnoId(alumnoId);
     }
 
+    @Override
+    public List<AsignaturaDTO> findByCursoId(Integer cursoId) {
+        return asignaturaRepository.findByCursoId(cursoId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long contarAlumnosMatriculados(Integer asignaturaId) {
+        return asignaturaRepository.countAlumnosByAsignaturaId(asignaturaId);
+    }
+
     private AsignaturaDTO convertToDTO(Asignatura asignatura) {
         AsignaturaDTO dto = new AsignaturaDTO();
         dto.setId(asignatura.getId());

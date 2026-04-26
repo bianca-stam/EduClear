@@ -42,8 +42,7 @@ public class AsignaturaController {
             @RequestParam Integer profesorId) {
 
         return ResponseEntity.ok(
-                asignaturaService.obtenerCursoIdsPorProfesor(profesorId)
-        );
+                asignaturaService.obtenerCursoIdsPorProfesor(profesorId));
     }
 
     @GetMapping("/curso-ids/alumno")
@@ -51,9 +50,18 @@ public class AsignaturaController {
             @RequestParam Integer alumnoId) {
 
         return ResponseEntity.ok(
-                asignaturaService.obtenerCursoIdsPorAlumno(alumnoId)
-        );
+                asignaturaService.obtenerCursoIdsPorAlumno(alumnoId));
     }
 
+    @GetMapping("/curso/{cursoId}")
+    public ResponseEntity<List<AsignaturaDTO>> getAsignaturasByCurso(@PathVariable Integer cursoId) {
+        return ResponseEntity.ok(asignaturaService.findByCursoId(cursoId));
+    }
+
+    @GetMapping("/{id}/alumnos-count")
+    public ResponseEntity<Long> getAlumnosMatriculados(@PathVariable Integer id) {
+        Long count = asignaturaService.contarAlumnosMatriculados(id);
+        return ResponseEntity.ok(count);
+    }
 
 }

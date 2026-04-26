@@ -11,4 +11,6 @@ public interface AsignaturaService {
     AsignaturaDTO save(Asignatura asignatura);
     List<Integer> obtenerCursoIdsPorProfesor(Integer profesorId);
     List<Integer> obtenerCursoIdsPorAlumno(Integer alumnoId);
+    List<AsignaturaDTO> findByCursoId(Integer cursoId);
+    Long contarAlumnosMatriculados(Integer asignaturaId);
 }
