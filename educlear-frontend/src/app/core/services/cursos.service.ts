@@ -42,7 +42,7 @@ export class CursosService {
       usuarios: this._http.get<UsuarioDTO[]>(`${environment.usuariosUrl}/usuarios`)
     }).pipe(
       map(({ cursos, usuarios }) => {
-        const alumnos = usuarios.filter(u => u.rol === 'ALUMNO');
+        const alumnos = usuarios.filter(u => u.rol === 'alumno');
         return cursos.map(curso => ({
           ...curso,
           alumnos: alumnos.filter(u => u.cursoId === curso.id).length,

@@ -19,23 +19,27 @@
                                 <span class="d-none d-md-block">Temas</span>
                             </a>
                             <ng-template ngbNavContent>
-                                <div class="temas">
-                                    @for (tema of temas(); track tema.id_tema) {
-                                        <div class="tema" >
-                                            <div class="tema_header" (click)="verTema(tema)">
-                                                <div class="tema-info">
-                                                    <h3>{{tema.titulo}}</h3>
+                                @if (isTemaSelected()) {
+                                    <router-outlet></router-outlet>
+                                } @else {
+                                    <div class="temas">
+                                        @for (tema of temas(); track tema.id_tema) {
+                                            <div class="tema" >
+                                                <div class="tema_header" (click)="verTema(tema)">
+                                                    <div class="tema-info">
+                                                        <h3>{{tema.titulo}}</h3>
+                                                    </div>
+                                                    <div class="tema-icon">
+                                                        <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                                                    </div>
                                                 </div>
-                                                <div class="tema-icon">
-                                                    <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                                                <div class="tema_body">
+                                                    <span>{{tema.descripcion}}</span>
                                                 </div>
                                             </div>
-                                            <div class="tema_body">
-                                                <span>{{tema.descripcion}}</span>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
+                                        }
+                                    </div>
+                                }
                             </ng-template>
                         </li>
                         <li [ngbNavItem]="2">

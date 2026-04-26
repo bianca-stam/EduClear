@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {LayoutStoreService} from '@core/services/layout-store.service';
-import {LucideAngularModule} from 'lucide-angular';
+import {LucideAngularModule, LucideUserPlus} from 'lucide-angular';
 import {UserProfile} from '@layouts/components/topbar/components/user-profile/user-profile';
-
+import {AuthService} from '@core/services/auth.service';
 
 @Component({
     selector: 'app-topbar',
@@ -15,7 +15,15 @@ import {UserProfile} from '@layouts/components/topbar/components/user-profile/us
     templateUrl: './topbar.html'
 })
 export class Topbar {
+    private authService = inject(AuthService);
+    protected readonly LucideUserPlus = LucideUserPlus;
+
     constructor(public layout: LayoutStoreService) {
+    }
+
+    get canRegisterUser(): boolean {
+        const user = this.authService.usuarioActual();
+        return user?.rol === 'profesor' || user?.rol === 'admin';
     }
 
     toggleSidebar() {
