@@ -1,22 +1,38 @@
 package org.springframework.boot.materiales_service.service;
 
 import org.springframework.boot.materiales_service.dto.tema.CreateTemaDTO;
+import org.springframework.boot.materiales_service.dto.tema.PromedioTemaDTO;
 import org.springframework.boot.materiales_service.dto.tema.TemaDTO;
 import org.springframework.boot.materiales_service.dto.tema.UpdateTemaDTO;
-import org.springframework.boot.materiales_service.model.Tema;
-import org.springframework.boot.materiales_service.repository.TemaRepository;
+import org.springframework.boot.materiales_service.model.*;
+import org.springframework.boot.materiales_service.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TemaServiceImpl implements TemaService{
+public class TemaServiceImpl implements TemaService {
 
     private final TemaRepository temaRepository;
+    private final TareaRepository tareaRepository;
+    private final ExamenRepository examenRepository;
+    private final EntregaTareaRepository entregaTareaRepository;
+    private final IntentoExamenRepository intentoExamenRepository;
 
-    public TemaServiceImpl(TemaRepository temaRepository) {
+    public TemaServiceImpl(TemaRepository temaRepository,
+                           TareaRepository tareaRepository,
+                           ExamenRepository examenRepository,
+                           EntregaTareaRepository entregaTareaRepository,
+                           IntentoExamenRepository intentoExamenRepository) {
         this.temaRepository = temaRepository;
+        this.tareaRepository = tareaRepository;
+        this.examenRepository = examenRepository;
+        this.entregaTareaRepository = entregaTareaRepository;
+        this.intentoExamenRepository = intentoExamenRepository;
     }
 
     @Override
@@ -79,6 +95,58 @@ public class TemaServiceImpl implements TemaService{
         temaRepository.deleteById(id);
     }
 
+    // ===== PROMEDIO POR ALUMNO =====
+    @Override
+    public List<PromedioTemaDTO> getPromediosPorAlumno(Integer alumnoId) {
+
+        List<Tema> temas = temaRepository.findAll();
+        List<PromedioTemaDTO> resultado = new ArrayList<>();
+
+        for (Tema tema : temas) {
+            List<BigDecimal> calificaciones = new ArrayList<>();
+
+            // 1. Calificaciones de tareas
+            List<Integer> tareaIds = tareaRepository.findByTemaId(tema.getId())
+                    .stream().map(Tarea::getId).collect(Collectors.toList());
+
+            if (!tareaIds.isEmpty()) {
+                entregaTareaRepository.findByTareaIdInAndAlumnoId(tareaIds, alumnoId)
+                        .stream()
+                        .filter(e -> e.getCalificacion() != null)
+                        .map(EntregaTarea::getCalificacion)
+                        .forEach(calificaciones::add);
+            }
+
+            // 2. Calificaciones de exámenes
+            List<Integer> examenIds = examenRepository.findByTemaId(tema.getId())
+                    .stream().map(Examen::getId).collect(Collectors.toList());
+
+            if (!examenIds.isEmpty()) {
+                intentoExamenRepository.findByExamenIdInAndAlumnoId(examenIds, alumnoId)
+                        .stream()
+                        .filter(i -> i.getCalificacionFinal() != null)
+                        .map(IntentoExamen::getCalificacionFinal)
+                        .forEach(calificaciones::add);
+            }
+
+            // 3. Calcular promedio
+            PromedioTemaDTO dto = new PromedioTemaDTO();
+            dto.setTemaId(tema.getId());
+            dto.setTituloTema(tema.getTitulo());
+
+            if (!calificaciones.isEmpty()) {
+                BigDecimal suma = calificaciones.stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                dto.setPromedio(suma.divide(
+                        BigDecimal.valueOf(calificaciones.size()), 2, RoundingMode.HALF_UP));
+            }
+            // Si no hay calificaciones, promedio queda null (omitido por @JsonInclude)
+
+            resultado.add(dto);
+        }
+
+        return resultado;
+    }
 
     // ===== MAPPER =====
     private TemaDTO toDTO(Tema tema) {
@@ -91,6 +159,5 @@ public class TemaServiceImpl implements TemaService{
 
         return dto;
     }
-
-
 }
+

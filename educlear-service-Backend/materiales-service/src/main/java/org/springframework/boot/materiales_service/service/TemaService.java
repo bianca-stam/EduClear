@@ -1,6 +1,7 @@
 package org.springframework.boot.materiales_service.service;
 
 import org.springframework.boot.materiales_service.dto.tema.CreateTemaDTO;
+import org.springframework.boot.materiales_service.dto.tema.PromedioTemaDTO;
 import org.springframework.boot.materiales_service.dto.tema.TemaDTO;
 import org.springframework.boot.materiales_service.dto.tema.UpdateTemaDTO;
 
@@ -13,4 +14,6 @@ public interface TemaService {
     TemaDTO update(Integer id, UpdateTemaDTO dto);
     void delete(Integer id);
 
+    List<PromedioTemaDTO> getPromediosPorAlumno(Integer alumnoId);
 }
+
