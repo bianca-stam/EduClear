@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { map } from 'rxjs';
 
-export type UserRol = 'ALUMNO' | 'PROFESOR' | 'ADMINISTRADOR';
+export type UserRol = 'alumno' | 'profesor' | 'admin';
 
 export interface UsuarioDTO {
   id: number;
@@ -62,6 +62,10 @@ export class AuthService {
         return sesion;
       })
     );
+  }
+
+  register(user: { nombreCompleto: string; email: string; contrasena: string; rol: string }) {
+    return this._http.post<UsuarioDTO>(`${environment.usuariosUrl}/usuarios`, user);
   }
 
   logout() {

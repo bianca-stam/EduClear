@@ -42,6 +42,11 @@ export class Inicio {
       this.currentTitle = asignaturaName;
       this.breadcrumbItems.push({ label: asignaturaName, url: `/cursos/${segments[1]}/${segments[2]}` });
     }
+    if (segments.length >= 4) {
+      const temaName = this.formatName(segments[3]);
+      this.currentTitle = temaName;
+      this.breadcrumbItems.push({ label: temaName, url: `/cursos/${segments[1]}/${segments[2]}/${segments[3]}` });
+    }
   }
 
   formatName(segment: string) {

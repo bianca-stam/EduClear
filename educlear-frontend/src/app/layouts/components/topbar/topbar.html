@@ -36,6 +36,14 @@
 
         <div class="d-flex align-items-center gap-2">
 
+            @if (canRegisterUser) {
+                <div class="topbar-item d-flex align-items-center px-2">
+                    <a routerLink="/auth-2/sign-up" class="text-secondary d-flex align-items-center" title="Registrar nuevo usuario" style="cursor: pointer; text-decoration: none;">
+                        <lucide-angular [img]="LucideUserPlus" class="fs-22"></lucide-angular>
+                    </a>
+                </div>
+            }
+
             <app-user-profile-topbar/>
             
         </div>

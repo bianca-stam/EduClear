@@ -44,28 +44,40 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
         .tema_header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        padding: 20px;
-        .tema-info {
-            flex: 1; /* Esto hace que el texto ocupe el espacio disponible */
-            overflow: hidden;
-        }
-
-        h3 {
-            margin: 0;
-            margin-left: 20px; /* Un margen fijo es más seguro que un % para evitar empujar el texto fuera */
-            white-space: nowrap; /* Evita que el texto baje de línea */
-            overflow: hidden; /* Oculta lo que sobre */
-            text-overflow: ellipsis; /* Añade los "..." si es muy largo */
-        }
-
-        .tema-icon{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+            transition: all 0.3s ease;
             cursor: pointer;
+
+            .tema-info {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            h3 {
+                margin: 0;
+                margin-left: 20px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .tema-icon {
+                transition: all 0.3s ease;
+            }
+
+            &:hover {
+                background-color: #636363;
+                border-radius: 10px 10px 0 0;
+                .tema-icon {
+                    transform: scale(1.3);
+                    color: $primary;
+                }
+            }
         }
-    }
 
     .tema_body{
         display: flex;

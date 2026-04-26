@@ -6,6 +6,7 @@ import { Asignaturas } from './educlear/asignaturas/asignaturas';
 import { cursoSeleccionadoGuard } from '@core/guards/curso-seleccionado.guard';
 import { Asignatura } from './educlear/asignaturas/asignatura/asignatura';
 import { asignaturaSeleccionadaGuard } from '@core/guards/asignatura-seleccionada.guard';
+import { Tema } from './educlear/tema/tema';
 
 export const VIEWS_ROUTES: Routes = [
     {
@@ -91,6 +92,13 @@ export const VIEWS_ROUTES: Routes = [
                 component: Asignatura,
                 canActivate: [asignaturaSeleccionadaGuard],
                 data: {title: "Asignatura"},
+                children: [
+                    {
+                        path: ':nombreTema',
+                        component: Tema,
+                        data: {title: "Tema"},
+                    }
+                ]
             }
         ]
     },
