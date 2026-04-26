@@ -18,7 +18,7 @@ export interface CrearUsuarioPayload {
 export class UsuarioService {
 
   private _http = inject(HttpClient);
-  private readonly BASE_URL = `${environment.usuariosUrl}/usuarios`;
+  private readonly BASE_URL = `${environment.apiUrl}/usuarios`;
 
   getAllUsers(): Observable<UsuarioDTO[]> {
     return this._http.get<UsuarioDTO[]>(this.BASE_URL);

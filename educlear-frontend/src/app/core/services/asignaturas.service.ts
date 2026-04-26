@@ -1,7 +1,8 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { MOCK_ASIGNATURAS, MOCK_TEMAS, MOCK_ARCHIVOS_CONTENIDO, MOCK_EXAMENES, MOCK_TAREAS, MOCK_MATRICULAS } from '../mocks/db-mock';
+import { inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '@/environments/environment.development';
 import { DbAsignatura, DbTema, DbArchivoContenido, DbExamen, DbTarea } from '../models/db-models';
 
 @Injectable({
@@ -9,47 +10,81 @@ import { DbAsignatura, DbTema, DbArchivoContenido, DbExamen, DbTarea } from '../
 })
 export class AsignaturasService {
 
+  private _http = inject(HttpClient);
+  private readonly ASIGNATURAS_URL = `${environment.apiUrl}/asignaturas`;
+  private readonly MATRICULAS_URL = `${environment.apiUrl}/matriculas`;
+  private readonly TEMAS_URL = `${environment.apiUrl}/temas`;
+  private readonly ARCHIVOS_URL = `${environment.apiUrl}/materiales/archivos-contenido`;
+  private readonly EXAMENES_URL = `${environment.apiUrl}/materiales/examenes`;
+  private readonly TAREAS_URL = `${environment.apiUrl}/materiales/tareas`;
+
   asignaturaSeleccionada = signal<DbAsignatura | null>(null);
 
-  // MOCK: Obtener asignaturas por ID de curso
+  // ✅ Endpoint filtrado en backend: GET /api/asignaturas/curso/{cursoId}
   getAsignaturasByCurso(cursoId: number): Observable<DbAsignatura[]> {
-    const asignaturas = MOCK_ASIGNATURAS.filter(a => a.curso_id === cursoId);
-    return of(asignaturas).pipe(delay(300));
+    return this._http.get<any[]>(`${this.ASIGNATURAS_URL}/curso/${cursoId}`).pipe(
+      map(data => data.map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      })))
+    );
   }
 
-  // MOCK: Obtener temas por ID de asignatura
-  getTemasByAsignatura(asignaturaId: number): Observable<DbTema[]> {
-    const temas = MOCK_TEMAS.filter(t => t.asignatura_id === asignaturaId);
-    return of(temas).pipe(delay(300));
-  }
-
-  // MOCK: Obtener archivos por ID de tema
-  getArchivosByTema(temaId: number): Observable<DbArchivoContenido[]> {
-    const archivos = MOCK_ARCHIVOS_CONTENIDO.filter(a => a.tema_id === temaId);
-    return of(archivos).pipe(delay(300));
-  }
-
-  // MOCK: Obtener exámenes por ID de tema
-  getExamenesByTema(temaId: number): Observable<DbExamen[]> {
-    const examenes = MOCK_EXAMENES.filter(e => e.tema_id === temaId);
-    return of(examenes).pipe(delay(300));
-  }
-
-  // MOCK: Obtener tareas por ID de tema
-  getTareasByTema(temaId: number): Observable<DbTarea[]> {
-    const tareas = MOCK_TAREAS.filter(t => t.tema_id === temaId);
-    return of(tareas).pipe(delay(300));
-  }
-
-  // MOCK: Obtener asignaturas del alumno
-  getAsignaturasDelAlumno(alumnoId: number): Observable<DbAsignatura[]> {
-    const asignaturas = MOCK_ASIGNATURAS.filter(a => a.curso_id === alumnoId);
-    return of(asignaturas).pipe(delay(300));
-  }
-
-  // MOCK: Obtener cantidad de alumnos matriculados en una asignatura
+  // ✅ Endpoint filtrado en backend: GET /api/asignaturas/{id}/alumnos-count
   getAlumnosCount(asignaturaId: number): Observable<number> {
-    const count = MOCK_MATRICULAS.filter(m => m.asignatura_id === asignaturaId).length;
-    return of(count).pipe(delay(300));
+    return this._http.get<number>(`${this.ASIGNATURAS_URL}/${asignaturaId}/alumnos-count`);
+  }
+
+  // ✅ Nuevo endpoint: GET /api/asignaturas/curso-ids?profesorId=X
+  getCursoIdsByProfesor(profesorId: number): Observable<number[]> {
+    return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids`, {
+      params: { profesorId }
+    });
+  }
+
+  // ✅ Nuevo endpoint: GET /api/asignaturas/curso-ids/alumno?alumnoId=X
+  getCursoIdsByAlumno(alumnoId: number): Observable<number[]> {
+    return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids/alumno`, {
+      params: { alumnoId }
+    });
+  }
+
+  // Obtener asignaturas del alumno (vía matriculas + asignaturas)
+  getAsignaturasDelAlumno(alumnoId: number): Observable<DbAsignatura[]> {
+    return forkJoin({
+      asignaturas: this._http.get<any[]>(this.ASIGNATURAS_URL),
+      matriculas: this._http.get<any[]>(this.MATRICULAS_URL)
+    }).pipe(
+      map(({ asignaturas, matriculas }) => {
+        const alumnoMatriculas = matriculas
+          .filter(m => m.alumnoId === alumnoId)
+          .map(m => m.asignaturaId);
+
+        return asignaturas
+          .filter(a => alumnoMatriculas.includes(a.id))
+          .map(a => ({
+            id_asignatura: a.id,
+            nombre: a.nombre,
+            curso_id: a.cursoId,
+            profesor_id: a.profesorId
+          }));
+      })
+    );
+  }
+
+  // Obtener temas por ID de asignatura (filtrado en frontend - backend no tiene endpoint filtrado)
+  getTemasByAsignatura(asignaturaId: number): Observable<DbTema[]> {
+    return this._http.get<any[]>(this.TEMAS_URL).pipe(
+      map(data => data
+        .filter(t => t.asignaturaId === asignaturaId)
+        .map(t => ({
+          id_tema: t.id,
+          titulo: t.titulo,
+          descripcion: t.descripcion,
+          asignatura_id: t.asignaturaId
+        })))
+    );
   }
 }

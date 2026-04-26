@@ -55,10 +55,26 @@ spring:
           filters:
             - AuthFilter
 
+        # Matriculas - CON filtro (dentro de asignatura-service)
+        - id: matricula-service
+          uri: http://asignatura-service:8083
+          predicates:
+            - Path=/api/matriculas/**
+          filters:
+            - AuthFilter
+
         # Materiales - CON filtro
         - id: materiales-service
           uri: http://materiales-service:8084
           predicates:
             - Path=/api/materiales/**
+          filters:
+            - AuthFilter
+
+        # Temas (ruta corta) - CON filtro
+        - id: temas-service
+          uri: http://materiales-service:8084
+          predicates:
+            - Path=/api/temas/**
           filters:
             - AuthFilter

@@ -33,9 +33,11 @@
                                                         <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
                                                     </div>
                                                 </div>
-                                                <div class="tema_body">
-                                                    <span>{{tema.descripcion}}</span>
-                                                </div>
+                                                @if (tema.descripcion) {
+                                                    <div class="tema_body">
+                                                        <span>{{tema.descripcion}}</span>
+                                                    </div>
+                                                }
                                             </div>
                                         }
                                     </div>

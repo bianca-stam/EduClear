@@ -1,4 +1,4 @@
-{
+﻿{
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
     "version": 1,
     "newProjectRoot": "projects",
@@ -25,16 +25,12 @@
                             "@angular/localize/init",
                             "polyfills"
                         ],
-                        "stylePreprocessorOptions": {
-                            "sass": {
-                                "silenceDeprecations": [
+                        "stylePreprocessorOptions": { "includePaths": ["src/assets/scss", "node_modules"], "sass": { "silenceDeprecations": [
                                     "color-functions",
                                     "global-builtin",
                                     "import",
                                     "mixed-decls"
-                                ]
-                            }
-                        },
+                                ] } },
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
                         "assets": [
@@ -147,3 +143,4 @@
         "analytics": "9485c36a-7226-4414-9069-c99f2fba6214"
     }
 }
+

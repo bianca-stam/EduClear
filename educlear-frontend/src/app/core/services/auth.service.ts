@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   login(credentials: { correo: string; password: string }) {
-    return this._http.post<UsuarioDTO>(`${environment.usuariosUrl}/usuarios/login`, {
+    return this._http.post<UsuarioDTO>(`${environment.apiUrl}/usuarios/login`, {
       email: credentials.correo,
       contrasena: credentials.password
     }).pipe(
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   register(user: { nombreCompleto: string; email: string; contrasena: string; rol: string }) {
-    return this._http.post<UsuarioDTO>(`${environment.usuariosUrl}/usuarios`, user);
+    return this._http.post<UsuarioDTO>(`${environment.apiUrl}/usuarios`, user);
   }
 
   logout() {
