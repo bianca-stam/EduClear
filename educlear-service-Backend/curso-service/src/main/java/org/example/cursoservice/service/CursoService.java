@@ -14,10 +14,10 @@ public interface CursoService {
 
     void delete(Integer id);
 
-    // Cursos que imparte un profesor
+    List<CursoDto> findByIds(List<Integer> ids);
+
     List<CursoDto> findCursosByProfesor(Integer profesorId);
 
-    // Cursos en los que está matriculado un alumno
     List<CursoDto> findCursosByAlumno(Integer alumnoId);
 
 }

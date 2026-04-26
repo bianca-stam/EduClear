@@ -1,5 +1,6 @@
 package org.example.cursoservice.controller;
 
+import org.example.cursoservice.client.AsignaturaClient;
 import org.example.cursoservice.dto.CreateCursoDto;
 import org.example.cursoservice.dto.CursoDto;
 import org.example.cursoservice.service.CursoService;
@@ -17,6 +18,12 @@ public class CursoController {
 
     @Autowired
     private CursoService cursoService;
+    private final AsignaturaClient asignaturaClient;
+
+    public CursoController(CursoService cursoService,AsignaturaClient asignaturaClient) {
+        this.cursoService = cursoService;
+        this.asignaturaClient=asignaturaClient;
+    }
 
     @GetMapping
     public List<CursoDto> getAll() {
@@ -41,17 +48,13 @@ public class CursoController {
     }
 
     @GetMapping("/profesor/{profesorId}")
-    public ResponseEntity<List<CursoDto>> getCursosByProfesor(
-            @PathVariable Integer profesorId) {
+    public ResponseEntity<List<CursoDto>> getCursosByProfesor(@PathVariable Integer profesorId) {
         return ResponseEntity.ok(cursoService.findCursosByProfesor(profesorId));
     }
 
-
     @GetMapping("/alumno/{alumnoId}")
-    public ResponseEntity<List<CursoDto>> getCursosByAlumno(
-            @PathVariable Integer alumnoId) {
+    public ResponseEntity<List<CursoDto>> getCursosByAlumno(@PathVariable Integer alumnoId) {
         return ResponseEntity.ok(cursoService.findCursosByAlumno(alumnoId));
     }
-
 
 }

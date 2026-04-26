@@ -37,4 +37,23 @@ public class AsignaturaController {
         return new ResponseEntity<>(asignaturaService.save(asignatura), HttpStatus.CREATED);
     }
 
+    @GetMapping("/curso-ids")
+    public ResponseEntity<List<Integer>> getCursoIdsByProfesor(
+            @RequestParam Integer profesorId) {
+
+        return ResponseEntity.ok(
+                asignaturaService.obtenerCursoIdsPorProfesor(profesorId)
+        );
+    }
+
+    @GetMapping("/curso-ids/alumno")
+    public ResponseEntity<List<Integer>> getCursoIdsByAlumno(
+            @RequestParam Integer alumnoId) {
+
+        return ResponseEntity.ok(
+                asignaturaService.obtenerCursoIdsPorAlumno(alumnoId)
+        );
+    }
+
+
 }
