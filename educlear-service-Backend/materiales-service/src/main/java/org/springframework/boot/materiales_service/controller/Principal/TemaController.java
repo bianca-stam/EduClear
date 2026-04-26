@@ -1,56 +1,66 @@
 package org.springframework.boot.materiales_service.controller.Principal;
 
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.materiales_service.dto.tema.request.CreateTemaDTO;
-import org.springframework.boot.materiales_service.dto.tema.request.UpdateTemaDTO;
-import org.springframework.boot.materiales_service.dto.tema.response.TemaDTO;
-import org.springframework.boot.materiales_service.exception.ResourceNotFoundException;
+import org.springframework.boot.materiales_service.dto.tema.CreateTemaDTO;
+import org.springframework.boot.materiales_service.dto.tema.TemaDTO;
+import org.springframework.boot.materiales_service.dto.tema.UpdateTemaDTO;
 import org.springframework.boot.materiales_service.service.TemaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/materiales/temas")
+@RequestMapping("/api/temas")
 public class TemaController {
+    private final TemaService temaService;
 
-    @Autowired
-    private TemaService temaService;
-
-    @GetMapping
-    public List<TemaDTO> getAll() {
-        return temaService.findAll();
+    public TemaController(TemaService temaService) {
+        this.temaService = temaService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TemaDTO> getById(@PathVariable Integer id) {
-        TemaDTO tema = temaService.findById(id);
-        if (tema == null) {
-            throw new ResourceNotFoundException("El tema solicitado no existe.");
-        }
-        return ResponseEntity.ok(tema);
-    }
-
+    // Crear un tema
     @PostMapping
-    public ResponseEntity<TemaDTO> create(@Valid @RequestBody CreateTemaDTO tema) {
-        return new ResponseEntity<>(temaService.save(tema), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody CreateTemaDTO dto) {
+        TemaDTO creado = temaService.create(dto);
+        return new ResponseEntity<>(creado, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<TemaDTO> update(@PathVariable Integer id, @RequestBody UpdateTemaDTO tema) {
-        TemaDTO temaActualizado = temaService.update(id, tema);
-        if (temaActualizado == null) {
-            throw new ResourceNotFoundException("El tema que intentas actualizar ya no esta disponible.");
+    // Obtener todos los temas
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(temaService.findAll());
+    }
+
+    // Obtener un tema por id
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(temaService.findById(id));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
-        return ResponseEntity.ok(temaActualizado);
     }
 
+    // Actualizar un tema
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody UpdateTemaDTO dto) {
+        try {
+            return ResponseEntity.ok(temaService.update(id, dto));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("Error", ex.getMessage()));
+        }
+    }
+
+    // Eliminar un tema
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        temaService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        try {
+            temaService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 }

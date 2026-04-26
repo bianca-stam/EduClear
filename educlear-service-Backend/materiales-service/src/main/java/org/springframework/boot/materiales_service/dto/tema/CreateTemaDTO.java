@@ -1,4 +1,4 @@
-package org.springframework.boot.materiales_service.dto.tema.request;
+package org.springframework.boot.materiales_service.dto.tema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;

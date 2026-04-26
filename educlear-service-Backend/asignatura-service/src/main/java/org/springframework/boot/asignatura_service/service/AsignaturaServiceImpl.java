@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Service
 
-public class AsignaturaServiceImpl implements AsignaturaService{
+public class AsignaturaServiceImpl implements AsignaturaService {
 
     private AsignaturaRepository asignaturaRepository;
 
@@ -36,6 +36,28 @@ public class AsignaturaServiceImpl implements AsignaturaService{
     public AsignaturaDTO save(Asignatura asignatura) {
         Asignatura guardada = asignaturaRepository.save(asignatura);
         return convertToDTO(guardada);
+    }
+
+    @Override
+    public List<Integer> obtenerCursoIdsPorProfesor(Integer profesorId) {
+        return asignaturaRepository.findCursoIdsByProfesorId(profesorId);
+    }
+
+    @Override
+    public List<Integer> obtenerCursoIdsPorAlumno(Integer alumnoId) {
+        return asignaturaRepository.findCursoIdsByAlumnoId(alumnoId);
+    }
+
+    @Override
+    public List<AsignaturaDTO> findByCursoId(Integer cursoId) {
+        return asignaturaRepository.findByCursoId(cursoId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long contarAlumnosMatriculados(Integer asignaturaId) {
+        return asignaturaRepository.countAlumnosByAsignaturaId(asignaturaId);
     }
 
     private AsignaturaDTO convertToDTO(Asignatura asignatura) {
