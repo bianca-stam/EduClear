@@ -8,13 +8,17 @@ Plataforma educativa basada en microservicios, desarrollada con Spring Boot y An
 - **Backend:** Spring Boot 3 (Java 21)
 - **Base de datos:** MariaDB
 - **Contenedores:** Docker + Docker Compose
+- **Despliegue:** Amazon AWS
 
 ## Microservicios
 
 | Servicio | Puerto | Descripción |
 |---|---|---|
-| `usuario-service` | 8080 | Gestión de usuarios |
-| `curso-service` | 8081 | Gestión de cursos |
+| `gateway-educlear` | 8080 | Redirección de puertos |
+| `usuario-service` | 8081 | Gestión de usuarios |
+| `curso-service` | 8082 | Gestión de cursos |
+| `asignatura-service` | 8083 | Gestión de asignaturas |
+| `materiales-service` | 8084 | Gestión de materiales |
 | `frontend` | 80 | Aplicación Angular |
 | `mariadb` | 3306 | Base de datos |
 
