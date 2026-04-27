@@ -1,43 +1,68 @@
 services:
-  # El GATEWAY es el único que expone puertos al exterior (80 o 9000)
   api-gateway:
-    image: tu-usuario-docker/gateway-educlear:latest
+    image: bianca0stam/gateway-educlear:latest
     ports:
-      - "80:8080" # Mapeamos el puerto 80 de la EC2 al 8080 del Gateway
+      - "80:8080"
+    environment:
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
     restart: always
 
   usuario-service:
-    # Usaremos la imagen ya compilada en Docker Hub o ECR
-    image: tu-usuario-docker/usuario-service:latest 
+    image: bianca0stam/usuario-service:latest
     environment:
-      # Estos valores apuntarán al Endpoint de AWS RDS en el .env de la EC2
-      DB_HOST: ${AWS_RDS_ENDPOINT} 
+      DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/dbeduclear?sslMode=trust
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
     restart: always
 
   curso-service:
-    image: tu-usuario-docker/curso-service:latest
+    image: bianca0stam/curso-service:latest
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/dbeduclear?sslMode=trust
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
     restart: always
 
   asignatura-service:
-    image: tu-usuario-docker/asignatura-service:latest
+    image: bianca0stam/asignatura-service:latest
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/dbeduclear?sslMode=trust
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
     restart: always
 
   materiales-service:
-    image: tu-usuario-docker/materiales-service:latest
+    image: bianca0stam/materiales-service:latest
     environment:
       DB_HOST: ${AWS_RDS_ENDPOINT}
       DB_PORT: 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/dbeduclear?sslMode=trust
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
     restart: always
 
   frontend:
-    image: tu-usuario-docker/frontend-tfg:latest
+    image: bianca0stam/educlear-frontend:latest
     ports:
-      - "80:80"
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     restart: always
