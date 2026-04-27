@@ -74,16 +74,20 @@ docker compose down
 Una vez arrancado, la aplicación estará disponible en:
 
 - **Frontend** → http://localhost
-- **Datos de prueba:**
-  Profesor:
-      - email: profesor@educlear.com
-      - contraseña: 123
-  Alumno:
-      - email: ana@educlear.com
-      - contraseña: 123
-  Alumno:
-      - email: luis@educlear.com
-      - contraseña: 123 
+- 
+## Datos de prueba
+
+Rol profesor: 
+- email: profesor@educlear.com
+- contraseña: 123
+
+Rol alumno:
+- email: ana@educlear.com
+- contraseña: 123
+  
+Rol alumno:
+- email: luis@educlear.com
+- contraseña: 123 
 
 ## Comandos útiles
 
