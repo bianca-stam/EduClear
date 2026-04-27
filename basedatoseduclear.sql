@@ -150,7 +150,8 @@ CREATE TABLE archivos_entrega (
 INSERT INTO usuarios (email, contrasena, rol, nombre_completo) VALUES
 ('profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Carlos Docente'),
 ('ana@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Ana Estudiante'),
-('luis@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Luis Alumno');
+('luis@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Luis Alumno'),
+('admin@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'admin', 'Admnistrador');
 
 -- 2. CURSOS
 INSERT INTO cursos (nombre, descripcion) VALUES

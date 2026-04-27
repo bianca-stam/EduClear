@@ -1,3 +1,8 @@
+x-db-env: &db-env
+  DB_NAME: ${DB_NAME}
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+
 services:
   api-gateway:
       build: ./educlear-service-Backend/gateway-educlear
@@ -5,30 +10,22 @@ services:
   usuario-service:
     build: ./educlear-service-Backend/usuario-service
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env
 
   curso-service:
     build: ./educlear-service-Backend/curso-service
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env
 
   asignatura-service:
     build: ./educlear-service-Backend/asignatura-service
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env
 
   materiales-service:
     build: ./educlear-service-Backend/materiales-service
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env
 
   frontend:
     build: ./educlear-frontend
