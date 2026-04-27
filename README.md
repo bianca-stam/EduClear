@@ -50,7 +50,7 @@ DB_PASSWORD=contraseña_para_este_usuario
 
 ### 3. Arranca el proyecto
 
-Abre la app de Docker Desktop, espera a que arranque y escribe el siguiente comando en la raíz del proyecto:
+Abre la app de **Docker Desktop**, espera a que arranque y escribe el siguiente comando en la raíz del proyecto:
 
 ```bash
 docker compose up --build
@@ -115,18 +115,31 @@ docker compose build usuario-service --no-cache
 
 ```
 EduClear/
-├── docker-compose.yml
-├── .env                          ← no se sube a GitHub
-├── .env.example                  ← plantilla para configurar el entorno
-├── educlear-frontend/            ← aplicación Angular
+├── docker-compose.yml               ← archivo base
+├── docker-compose.prod.yml          ← para producción 
+├── docker-compose.override.yml      ← para desarrollo
+│
+├── .env.example                     ← plantilla para configurar el entorno
+│
+├── educlear-frontend/               ← aplicación Angular
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── src/
-└── educlear-service-Backend/
-    ├── usuario-service/          ← microservicio de usuarios
+│
+└── educlear-service-Backend/    ← aplicación Spring Boot
+    ├── asignatura-service/      ← microservicio de asignatura
     │   ├── Dockerfile
     │   └── src/
-    └── curso-service/            ← microservicio de cursos
-        ├── Dockerfile
-        └── src/
+    ├── curso-service/           ← microservicio de curso
+    │   ├── Dockerfile
+    │   └── src/
+    ├── gateway-service/         ← gateway 
+    │   ├── Dockerfile
+    │   └── src/
+    ├── materiales-service/      ← microservicio de materiales
+    │   ├── Dockerfile
+    │   └── src/
+    └── usuario-service/         ← microservicio de usuario
+    		├── Dockerfile
+    		└── src/
 ```
