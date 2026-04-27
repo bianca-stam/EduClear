@@ -1,3 +1,10 @@
+x-db-env-local: &db-env-local
+  DB_HOST: mariadb
+  DB_PORT: 3306
+  DB_NAME: ${DB_NAME}
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+
 services:
   mariadb:
     image: mariadb:11
@@ -24,7 +31,6 @@ services:
     volumes:
       - ./educlear-service-Backend/gateway-educlear:/app
     entrypoint: mvn spring-boot:run
-    # El gateway depende de que los servicios estén listos (opcional)
     depends_on:
       - usuario-service
       - curso-service
@@ -32,21 +38,15 @@ services:
       - materiales-service
 
   usuario-service:
-    # Usamos la etapa de 'build' del Dockerfile porque contiene Maven
     build:
       context: ./educlear-service-Backend/usuario-service
       target: build
     ports:
       - "${PORT_USUARIO}:8081"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: 3306 # Puerto interno de la red Docker
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env-local
     volumes:
       - ./educlear-service-Backend/usuario-service:/app
-    # Este comando arranca Spring Boot y queda escuchando cambios en el código
     entrypoint: mvn spring-boot:run
     depends_on:
       mariadb:
@@ -59,11 +59,7 @@ services:
     ports:
       - "${PORT_CURSO}:8082"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env-local
     volumes:
       - ./educlear-service-Backend/curso-service:/app
     entrypoint: mvn spring-boot:run
@@ -78,11 +74,7 @@ services:
     ports:
       - "${PORT_ASIGNATURA}:8083"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env-local
     volumes:
       - ./educlear-service-Backend/asignatura-service:/app
     entrypoint: mvn spring-boot:run
@@ -97,11 +89,7 @@ services:
     ports:
       - "${PORT_MATERIALES}:8084"
     environment:
-      DB_HOST: mariadb
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      <<: *db-env-local
     volumes:
       - ./educlear-service-Backend/materiales-service:/app
     entrypoint: mvn spring-boot:run
@@ -117,14 +105,8 @@ services:
         - "${PORT_FRONTEND}:80"
       volumes:
         - ./educlear-frontend:/app
-        # Este volumen anónimo evita que los node_modules de tu Windows 
-        # sobrescriban a los del contenedor, evitando conflictos de SO
         - /app/node_modules
-      # Instalamos el CLI, las dependencias y arrancamos
-      entrypoint: >
-        sh -c "npm install -g @angular/cli && 
-              npm install --legacy-peer-deps && 
-              npx ng serve --host 0.0.0.0 --port 80 --disable-host-check --poll 2000"
+      command: npx ng serve --host 0.0.0.0 --port 80 --disable-host-check --poll 2000
 
 volumes:
   mariadb_data:
