@@ -87,7 +87,9 @@ Rol alumno:
   
 Rol alumno:
 - email: luis@educlear.com
-- contraseña: 123 
+- contraseña: 123
+
+Para crear un nuevo usuario, iniciar sesión con el perfil de profesor y desde la pantalla de inicio (cursos) darle a agregar usuario (arriba a la derecha).
 
 ## Comandos útiles
 
