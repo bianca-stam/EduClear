@@ -34,49 +34,13 @@ export class CursosService {
     return this._http.get<CursoDTO>(`${this.BASE_URL}/${id}`);
   }
 
-  getCursosConAlumnos(): Observable<CursoConAlumnos[]> {
-    return forkJoin({
-      cursos: this._http.get<CursoDTO[]>(this.BASE_URL),
-      usuarios: this._http.get<UsuarioDTO[]>(`${environment.apiUrl}/usuarios`)
-    }).pipe(
-      map(({ cursos, usuarios }) => {
-        const alumnos = usuarios.filter(u => u.rol === 'alumno');
-        return cursos.map(curso => ({
-          ...curso,
-          alumnos: alumnos.filter(u => u.cursoId === curso.id).length,
-          listaAlumnos: alumnos.filter(u => u.cursoId === curso.id)
-        }));
-      })
-    );
-  }
-
   getCursosDelAlumno(alumnoId: number): Observable<DbCurso[]> {
-    return forkJoin({
-      matriculas: this._http.get<any[]>(`${environment.apiUrl}/matriculas`),
-      asignaturas: this._http.get<any[]>(`${environment.apiUrl}/asignaturas`),
-      cursos: this._http.get<CursoDTO[]>(this.BASE_URL)
-    }).pipe(
-      map(({ matriculas, asignaturas, cursos }) => {
-        // 1. Obtenemos los IDs de las asignaturas donde está matriculado el alumno
-        const idsAsignaturasMatriculadas = matriculas
-          .filter(m => m.alumnoId === alumnoId)
-          .map(m => m.asignaturaId);
-
-        // 2. Obtenemos los IDs de los cursos a los que pertenecen esas asignaturas
-        const idsCursosDelAlumno = asignaturas
-          .filter(asig => idsAsignaturasMatriculadas.includes(asig.id))
-          .map(asig => asig.cursoId);
-
-        // 3. Filtramos la lista maestra de cursos
-        const idsUnicos = [...new Set(idsCursosDelAlumno)];
-        return cursos
-          .filter(curso => idsUnicos.includes(curso.id))
-          .map(curso => ({
-            id_curso: curso.id,
-            nombre: curso.nombre,
-            descripcion: curso.descripcion || ''
-          }));
-      })
+    return this._http.get<any[]>(`${this.BASE_URL}/alumno/${alumnoId}`).pipe(
+      map(cursos => cursos.map(curso => ({
+        id_curso: curso.id,
+        nombre: curso.nombre,
+        descripcion: curso.descripcion || ''
+      })))
     );
   }
 }

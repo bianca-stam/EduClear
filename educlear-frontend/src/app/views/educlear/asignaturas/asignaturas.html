@@ -11,26 +11,47 @@
     </div>
 </div>
 <div class="asignaturas-main">
-    @for (asignatura of asignaturas(); track $index) {
-        <div class="asignatura" (click)="verAsignatura(asignatura)">
-            <div class="img-asignatura">
-                
-            </div>
-            <div class="info-asignatura">
-                <ul>
-                    <li>
-                        <h3>{{asignatura.nombre}}</h3>
-                    </li>
-                    <li>
-                        <p>Profesor: {{asignatura.profesor}}</p>
-                    </li>
-                    <li>
-                        <p>Alumnos: {{asignatura.alumnos}}</p>
-                    </li>
-                </ul>
-            </div>
-        </div>  
+    @if (isLoading()) {
+        <div class="cursos-estado">
+            <lucide-icon [img]="loader" class="spin" [size]="32" />
+            <p>Cargando asignaturas...</p>
+        </div>
     }
 
+    @if (errorMsg()) {
+        <div class="cursos-estado cursos-error">
+            <lucide-icon [img]="alertCircle" [size]="32" />
+            <p>{{ errorMsg() }}</p>
+        </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+        @for (asignatura of asignaturas(); track $index) {
+            <div class="asignatura" (click)="verAsignatura(asignatura)">
+                <div class="img-asignatura">
+                    
+                </div>
+                <div class="info-asignatura">
+                    <ul>
+                        <li>
+                            <h3>{{asignatura.nombre}}</h3>
+                        </li>
+                        <li>
+                            <p>Profesor: {{asignatura.profesor}}</p>
+                        </li>
+                        <li>
+                            <p>Alumnos: {{asignatura.alumnos}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>  
+        }
+
+        @if (asignaturas().length === 0) {
+            <div class="cursos-estado">
+                <p>No se encontraron asignaturas con "{{ terminoBusqueda() }}"</p>
+            </div>
+        }
+    }
 </div>
 

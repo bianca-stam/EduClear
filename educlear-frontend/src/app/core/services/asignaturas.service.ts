@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@/environments/environment.development';
-import { DbAsignatura, DbTema, DbArchivoContenido, DbExamen, DbTarea } from '../models/db-models';
+import { DbAsignatura, DbCalificacionesAlumno, DbTema } from '../models/db-models';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,6 @@ export class AsignaturasService {
 
   asignaturaSeleccionada = signal<DbAsignatura | null>(null);
 
-  // ✅ Endpoint filtrado en backend: GET /api/asignaturas/curso/{cursoId}
   getAsignaturasByCurso(cursoId: number): Observable<DbAsignatura[]> {
     return this._http.get<any[]>(`${this.ASIGNATURAS_URL}/curso/${cursoId}`).pipe(
       map(data => data.map(a => ({
@@ -32,26 +31,22 @@ export class AsignaturasService {
     );
   }
 
-  // ✅ Endpoint filtrado en backend: GET /api/asignaturas/{id}/alumnos-count
   getAlumnosCount(asignaturaId: number): Observable<number> {
     return this._http.get<number>(`${this.ASIGNATURAS_URL}/${asignaturaId}/alumnos-count`);
   }
 
-  // ✅ Nuevo endpoint: GET /api/asignaturas/curso-ids?profesorId=X
   getCursoIdsByProfesor(profesorId: number): Observable<number[]> {
     return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids`, {
       params: { profesorId }
     });
   }
 
-  // ✅ Nuevo endpoint: GET /api/asignaturas/curso-ids/alumno?alumnoId=X
   getCursoIdsByAlumno(alumnoId: number): Observable<number[]> {
     return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids/alumno`, {
       params: { alumnoId }
     });
   }
 
-  // Obtener asignaturas del alumno (vía matriculas + asignaturas)
   getAsignaturasDelAlumno(alumnoId: number): Observable<DbAsignatura[]> {
     return forkJoin({
       asignaturas: this._http.get<any[]>(this.ASIGNATURAS_URL),
@@ -85,6 +80,18 @@ export class AsignaturasService {
           descripcion: t.descripcion,
           asignatura_id: t.asignaturaId
         })))
+    );
+  }
+
+  getPromedioCalificacionesPorAlumno(alumnoId: number, asignaturaId: number): Observable<any[]> {
+    return forkJoin({
+      temas: this.getTemasByAsignatura(asignaturaId),
+      promedios: this._http.get<any[]>(`${this.TEMAS_URL}/alumno/${alumnoId}/promedios`)
+    }).pipe(
+      map(({ temas, promedios }) => {
+        const temaIds = temas.map(t => t.id_tema);
+        return promedios.filter(p => temaIds.includes(p.temaId));
+      })
     );
   }
 }

@@ -6,54 +6,76 @@
 </div>
 <div class="tema-main">
 
-    @for (examen of examenes(); track $index) {
-        <div class="entrega item">
-            <div class="entrega-icon">
-                <lucide-icon [img]="clipboardPen" class="app-search-icon text-muted" />
-            </div>
-            <div class="entrega-info">
-                <h4>{{ examen.titulo }}</h4>
-                <p>{{ examen.descripcion }}</p>
-                <div class="tarea-item footer">
-                    <p>Apertura: <span class="cierre">{{ examen.fecha_apertura | date:'dd/MM/yyyy HH:mm' }} </span></p>
-                    <p>Cierre: <span class="cierre">{{ examen.fecha_cierre | date:'dd/MM/yyyy HH:mm' }} </span></p>
-                </div>
-            </div>
-            <div class="arrow-icon">
-                <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
-            </div>
+    @if (isLoading()) {
+        <div class="cursos-estado">
+            <lucide-icon [img]="loader" class="spin" [size]="32" />
+            <p>Cargando recursos del tema...</p>
         </div>
     }
-    @for (tarea of entregas(); track $index) {
-        <div class="entrega item">
-            <div class="entrega-icon">
-                <lucide-icon [img]="fileUp" class="app-search-icon text-muted" />
-            </div>
-            <div class="entrega-info">
-                <h4>{{ tarea.titulo }}</h4>
-                <p>{{ tarea.descripcion }}</p>
-                <div class="tarea-item footer">
-                    <p>Cierre: <span class = "cierre">{{ tarea.fecha_cierre | date:'dd/MM/yyyy HH:mm' }} </span></p>
-                </div>
-            </div>
-            <div class="arrow-icon">
-                <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
-            </div>
+
+    @if (errorMsg()) {
+        <div class="cursos-estado cursos-error">
+            <lucide-icon [img]="alertCircle" [size]="32" />
+            <p>{{ errorMsg() }}</p>
         </div>
     }
-    @for (material of materiales(); track $index) {
-        <div class="material item" style="cursor: pointer;" (click)="abrirMaterial(material)">
-            <div class="material-icon">
-                <lucide-icon [img]="fileText" class="app-search-icon" />
+
+    @if (!isLoading() && !errorMsg()) {
+        @for (examen of examenes(); track $index) {
+            <div class="entrega item" (click)="verExamen(examen)">
+                <div class="entrega-icon">
+                    <lucide-icon [img]="clipboardPen" class="app-search-icon text-muted" />
+                </div>
+                <div class="entrega-info">
+                    <h4>{{ examen.titulo }}</h4>
+                    <p>{{ examen.descripcion }}</p>
+                    <div class="tarea-item footer">
+                        <p>Apertura: <span class="cierre">{{ examen.fecha_apertura | date:'dd/MM/yyyy HH:mm' }} </span></p>
+                        <p>Cierre: <span class="cierre">{{ examen.fecha_cierre | date:'dd/MM/yyyy HH:mm' }} </span></p>
+                    </div>
+                </div>
+                <div class="arrow-icon">
+                    <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                </div>
             </div>
-            <div class="material-info">
-                <h4>{{ material.nombre_archivo }}</h4>
-                <p>{{ material.tipo_mime }}</p>
+        }
+        @for (tarea of entregas(); track $index) {
+            <div class="entrega item" (click)="verTarea(tarea)">
+                <div class="entrega-icon">
+                    <lucide-icon [img]="fileUp" class="app-search-icon text-muted" />
+                </div>
+                <div class="entrega-info">
+                    <h4>{{ tarea.titulo }}</h4>
+                    <p>{{ tarea.descripcion }}</p>
+                    <div class="tarea-item footer">
+                        <p>Cierre: <span class = "cierre">{{ tarea.fecha_cierre | date:'dd/MM/yyyy HH:mm' }} </span></p>
+                    </div>
+                </div>
+                <div class="arrow-icon">
+                    <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
+                </div>
             </div>
-            <div class="arrow-icon">
-                <lucide-icon [img]="arrowRight" class="app-search-icon" />
+        }
+        @for (material of materiales(); track $index) {
+            <div class="material item" style="cursor: pointer;" (click)="abrirMaterial(material)">
+                <div class="material-icon">
+                    <lucide-icon [img]="fileText" class="app-search-icon" />
+                </div>
+                <div class="material-info">
+                    <h4>{{ material.nombre_archivo }}</h4>
+                    <p>{{ material.tipo_mime }}</p>
+                </div>
+                <div class="arrow-icon">
+                    <lucide-icon [img]="arrowRight" class="app-search-icon" />
+                </div>
             </div>
-        </div>
+        }
+
+        @if (examenes().length === 0 && entregas().length === 0 && materiales().length === 0) {
+            <div class="cursos-estado">
+                <p>No hay recursos disponibles en este tema</p>
+            </div>
+        }
     }
 
 </div>

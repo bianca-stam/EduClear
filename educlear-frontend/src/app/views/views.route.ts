@@ -97,6 +97,16 @@ export const VIEWS_ROUTES: Routes = [
                         path: ':nombreTema',
                         component: Tema,
                         data: {title: "Tema"},
+                    },
+                    {
+                        path: ':nombreTema/tarea/:nombreTarea',
+                        loadComponent: () => import('./educlear/entregas/tareas/tareas').then(m => m.Tareas),
+                        data: {title: "Tarea"},
+                    },
+                    {
+                        path: ':nombreTema/examen/:nombreExamen',
+                        loadComponent: () => import('./educlear/entregas/examenes/examenes').then(m => m.Examenes),
+                        data: {title: "Examen"},
                     }
                 ]
             }

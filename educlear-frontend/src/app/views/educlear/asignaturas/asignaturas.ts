@@ -4,7 +4,7 @@ import { DbAsignatura } from '@core/models/db-models';
 import { AsignaturasService } from '@core/services/asignaturas.service';
 import { CursosService } from '@core/services/cursos.service';
 import { UsuarioService } from '@core/services/usuario.service';
-import { LucideAngularModule, Search } from "lucide-angular";
+import { LucideAngularModule, Search, AlertCircle, Loader } from "lucide-angular";
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 
@@ -22,11 +22,16 @@ export interface AsignaturaVista extends DbAsignatura {
 export class Asignaturas implements OnInit {
 
   search = Search;
+  alertCircle = AlertCircle;
+  loader = Loader;
 
   private asignaturasService = inject(AsignaturasService);
   private cursoService = inject(CursosService);
   private usuarioService = inject(UsuarioService);
   private router = inject(Router);
+
+  isLoading = signal(true);
+  errorMsg = signal<string | null>(null);
 
   asignaturasRaw = signal<AsignaturaVista[]>([]);
   terminoBusqueda = signal<string>('');
@@ -67,9 +72,12 @@ export class Asignaturas implements OnInit {
     ).subscribe({
       next: (data) => {
         this.asignaturasRaw.set(data);
+        this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error al cargar asignaturas:', error);
+        this.errorMsg.set('No se pudieron cargar las asignaturas. Verifica que el servidor esté activo.');
+        this.isLoading.set(false);
       }
     });
   }

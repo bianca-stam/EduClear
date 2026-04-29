@@ -1,0 +1,28 @@
+<div class="tareas-header">
+    <div class="title">
+        <h2>{{ titulo() }}</h2>
+        <p>{{ descripcion() }}</p>
+    </div>
+</div>
+<div class="tareas-main">
+
+    @if (isLoading()) {
+        <div class="tareas-estado">
+            <lucide-icon [img]="loader" class="spin" [size]="32" />
+            <p>Cargando recursos de la tarea...</p>
+        </div>
+    }
+
+    @if (errorMsg()) {
+        <div class="tareas-estado tareas-error">
+            <lucide-icon [img]="alertCircle" [size]="32" />
+            <p>{{ errorMsg() }}</p>
+        </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+        
+    }
+
+</div>
+
