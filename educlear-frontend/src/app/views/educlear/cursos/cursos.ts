@@ -37,20 +37,6 @@ export class Cursos implements OnInit {
   });
 
   ngOnInit() {
-    // this.cursosService.getCursosDelAlumno().subscribe({
-    //   next: (data) => {
-    //     this.cursosRaw.set(data);
-    //     this.isLoading.set(false);
-    //   },
-    //   error: (err) => {
-    //     this.errorMsg.set('No se pudieron cargar los cursos. Verifica que el servidor esté activo.');
-    //     this.isLoading.set(false);
-    //     console.error('Error al cargar cursos:', err);
-    //   }
-    // });
-
-
-    // using mock data
     this.cursosService.getCursosDelAlumno(this.authService.usuarioActual()!.id).subscribe({
       next: (data) => {
         this.cursosRaw.set(data);
@@ -70,6 +56,8 @@ export class Cursos implements OnInit {
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
       .replace(/\s+/g, '-');
     this.router.navigate(['/cursos', nombreUrl]);
   }

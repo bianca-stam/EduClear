@@ -92,8 +92,96 @@
 
     
 
-        
+    }
+}
+
+.calificaciones-container {
+    padding: 20px 0;
+    width: 100%;
+
+    .calificaciones-grid {
+        display: grid;
+        grid-template-columns: 1fr 150px; // Tema (flexible) y Promedio (fijo)
+        width: 100%;
+        border: 2px solid $primary; // Borde exterior (opcional, para cerrar la tabla)
+        border-radius: 8px;
+        overflow: hidden;
+
+        .grid-header {
+            background-color: rgba($primary, 0.1);
+            color: $white;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid $primary;
+            font-size: 1.5rem; // Tamaño de cabecera aumentado
+            
+            &:first-child {
+                border-right: 2px solid $primary; // Borde interior vertical
+                text-align: left;
+            }
+        }
+
+        .grid-cell {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid $primary; // Borde interior horizontal
+            font-size: 1.3rem; // Tamaño de celdas aumentado
+
+            &.tema-nombre {
+                border-right: 1px solid $primary; // Borde interior vertical
+                color: $white;
+                font-weight: 500;
+            }
+
+            &.promedio {
+                justify-content: center;
+                font-weight: bold;
+                font-size: 2.2rem; // El promedio se verá muy grande y destacado
+
+                &.text-primary {
+                    color: $primary !important;
+                }
+
+                &.text-secondary {
+                    color: $secondary !important; // Bootstrap secondary (grisáceo)
+                }
+            }
+        }
+
+        // Eliminar el borde inferior de la última fila
+        .grid-cell:nth-last-child(-n+2) {
+            border-bottom: none;
+        }
+    }
+}
+
+.cursos-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 40px 0;
+    gap: 12px;
+    color: #aaa;
+
+    p {
+        margin: 0;
+        font-size: 0.95rem;
     }
 
-    
+    &.cursos-error {
+        color: #e57373;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
 }

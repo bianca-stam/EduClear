@@ -1,0 +1,45 @@
+.tareas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.tareas-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    margin: 15px 0;
+    gap: 15px;
+}
+
+.tareas-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 40px 0;
+    gap: 12px;
+    color: #aaa;
+
+    p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    &.tareas-error {
+        color: #e57373;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}

@@ -108,3 +108,11 @@ export interface DbArchivoEntrega {
   tipo_mime: string;
   peso_bytes: number;
 }
+
+// Respustas de ciertas llamadas a la API
+
+export interface DbCalificacionesAlumno {
+  promedio: number | null;
+  temaId: number;
+  tituloTema: string;
+}

@@ -11,9 +11,7 @@ import {Component, Input, type OnChanges, type SimpleChanges} from '@angular/cor
                     [class]="'strong-bar ' + (i < passwordStrength ? 'bar-active-' + passwordStrength : '')"></div>
             }
         </div>
-        <p class="text-muted fs-xs mb-0">
-            Use 8+ characters with letters, numbers & symbols.
-        </p>`
+        `
 })
 export class PasswordStrengthBar implements OnChanges {
     @Input() password: string = '';

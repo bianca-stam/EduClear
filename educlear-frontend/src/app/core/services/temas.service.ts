@@ -16,6 +16,8 @@ export class TemasService {
   private _http = inject(HttpClient);
 
   temaSeleccionado = signal<DbTema | null>(null);
+  tareaSeleccionada = signal<DbTarea | null>(null);
+  examenSeleccionado = signal<DbExamen | null>(null);
 
     // Obtener archivos por ID de tema (filtrado en frontend)
   getArchivosByTema(temaId: number): Observable<DbArchivoContenido[]> {

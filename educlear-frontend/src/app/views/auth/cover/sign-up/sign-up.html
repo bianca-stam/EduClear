@@ -65,9 +65,9 @@
 
                             <form [formGroup]="loginForm" (ngSubmit)="signUp()" class="mt-4">
                                 <div class="mb-3">
-                                    <label for="userName" class="form-label">Nombre <span class="text-danger">*</span></label>
+                                    <label for="userName" class="form-label">Nombre</label>
                                     <div class="app-search">
-                                        <input type="text" class="form-control" id="userName" placeholder="Geneva Denian" required formControlName="nombreCompleto">
+                                        <input type="text" class="form-control" id="userName"  required formControlName="nombreCompleto">
       <lucide-angular
                                         [img]="LucideCircleUser"
                                         class="app-search-icon text-muted"
@@ -76,9 +76,9 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="userEmail" class="form-label">Correo <span class="text-danger">*</span></label>
+                                    <label for="userEmail" class="form-label">Correo</label>
                                     <div class="app-search">
-                                        <input type="email" class="form-control" id="userEmail" placeholder="you@example.com" required formControlName="correo">
+                                        <input type="email" class="form-control" id="userEmail" required formControlName="correo">
                                          <lucide-angular
                                         [img]="LucideMail"
                                         class="app-search-icon text-muted"
@@ -112,7 +112,7 @@
                             </div>
 
                             <div class="mb-3">
-                                    <label for="userRole" class="form-label">Rol <span class="text-danger">*</span></label>
+                                    <label for="userRole" class="form-label">Rol</label>
                                     <div class="app-search">
                                         <select choicesSelect [options]="{searchEnabled:false}" class="form-control" id="userRole" formControlName="rol" required>
                                             <option value="alumno">Alumno</option>
