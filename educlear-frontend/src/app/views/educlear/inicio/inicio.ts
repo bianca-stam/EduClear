@@ -48,12 +48,9 @@ export class Inicio {
       this.breadcrumbItems.push({ label: temaName, url: `/cursos/${segments[1]}/${segments[2]}/${segments[3]}` });
     }
     if (segments.length >= 6) {
-      // The 5th segment is the type (tarea/examen) and the 6th is the name
-      const typeName = segments[4]; // 'tarea' or 'examen'
+      const typeName = segments[4];
       const entregaName = this.formatName(segments[5]);
       this.currentTitle = entregaName;
-      // We can also push the type (e.g. Tareas) into breadcrumb, or directly the item.
-      // Usually it's better to just push the delivery item
       this.breadcrumbItems.push({ label: entregaName, url: `/cursos/${segments[1]}/${segments[2]}/${segments[3]}/${segments[4]}/${segments[5]}` });
     }
   }

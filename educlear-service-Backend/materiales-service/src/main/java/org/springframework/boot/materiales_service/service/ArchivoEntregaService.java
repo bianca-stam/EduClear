@@ -9,6 +9,7 @@ import java.util.List;
 public interface ArchivoEntregaService {
     List<ArchivoEntregaDTO> findAll();
     ArchivoEntregaDTO findById(Integer id);
+    List<ArchivoEntregaDTO> findByEntregaId(Integer entregaId);
     ArchivoEntregaDTO save(CreateArchivoEntregaDTO archivoEntrega);
     ArchivoEntregaDTO update(Integer id, UpdateArchivoEntregaDTO archivoEntrega);
     void delete(Integer id);

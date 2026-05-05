@@ -1,27 +1,170 @@
-<div class="examenes-header">
-    <div class="title">
-        <h2>{{ titulo() }}</h2>
-        <p>{{ descripcion() }}</p>
+@if (isLoading()) {
+    <div class="examenes-estado">
+        <lucide-icon [img]="loader" class="spin" [size]="32" />
+        <p>Cargando recursos del examen...</p>
     </div>
-</div>
-<div class="examenes-main">
+} @else if (errorMsg()) {
+    <div class="examenes-estado examenes-error">
+        <lucide-icon [img]="alertCircle" [size]="32" />
+        <p>{{ errorMsg() }}</p>
+    </div>
+} @else {
+    @if (modoExamen()) {
+    <div class="examen-layout">
+        <!-- Panel Izquierdo: Pregunta y Opciones -->
+        <div class="examen-pregunta-container">
+            @if (preguntas().length > 0) {
+                <div class="pregunta-header">
+                    <h3>Pregunta {{ preguntaActualIndex() + 1 }} de {{ preguntas().length }}</h3>
+                    <p class="pregunta-texto">{{ preguntaActual().texto_pregunta }}</p>
+                </div>
+                <div class="opciones-container">
+                    <div class="opcion-card" [class.selected]="respuestas().get(preguntaActual().id_pregunta) === 'A'" (click)="seleccionarOpcion('A')">
+                        <span class="letra">A</span> <span class="texto">{{ preguntaActual().opcion_a }}</span>
+                        @if (respuestas().get(preguntaActual().id_pregunta) === 'A') { <lucide-icon [img]="check" class="check-icon" /> }
+                    </div>
+                    <div class="opcion-card" [class.selected]="respuestas().get(preguntaActual().id_pregunta) === 'B'" (click)="seleccionarOpcion('B')">
+                        <span class="letra">B</span> <span class="texto">{{ preguntaActual().opcion_b }}</span>
+                        @if (respuestas().get(preguntaActual().id_pregunta) === 'B') { <lucide-icon [img]="check" class="check-icon" /> }
+                    </div>
+                    <div class="opcion-card" [class.selected]="respuestas().get(preguntaActual().id_pregunta) === 'C'" (click)="seleccionarOpcion('C')">
+                        <span class="letra">C</span> <span class="texto">{{ preguntaActual().opcion_c }}</span>
+                        @if (respuestas().get(preguntaActual().id_pregunta) === 'C') { <lucide-icon [img]="check" class="check-icon" /> }
+                    </div>
+                    <div class="opcion-card" [class.selected]="respuestas().get(preguntaActual().id_pregunta) === 'D'" (click)="seleccionarOpcion('D')">
+                        <span class="letra">D</span> <span class="texto">{{ preguntaActual().opcion_d }}</span>
+                        @if (respuestas().get(preguntaActual().id_pregunta) === 'D') { <lucide-icon [img]="check" class="check-icon" /> }
+                    </div>
+                </div>
+                <div class="navegacion-botones">
+                    <button class="btn btn-outline-primary" [disabled]="preguntaActualIndex() === 0" (click)="preguntaAnterior()">
+                        <lucide-icon [img]="chevronLeft" [size]="20" class="me-2" /> Pregunta anterior
+                    </button>
+                    <button class="btn btn-outline-primary" [disabled]="preguntaActualIndex() === preguntas().length - 1" (click)="siguientePregunta()">
+                        Siguiente pregunta <lucide-icon [img]="chevronRight" [size]="20" class="ms-2" />
+                    </button>
+                </div>
+            } @else {
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <p>No hay preguntas en este examen.</p>
+                </div>
+            }
+        </div>
 
-    @if (isLoading()) {
-        <div class="examenes-estado">
-            <lucide-icon [img]="loader" class="spin" [size]="32" />
-            <p>Cargando recursos del examen...</p>
+        <!-- Panel Derecho: Control -->
+        <div class="examen-panel-control">
+            <div class="reloj-container">
+                <h4>Tiempo Restante</h4>
+                <p class="tiempo">{{ tiempoRestanteExamen() }}</p>
+            </div>
+            
+            <div class="matriz-container">
+                <h4>Navegación</h4>
+                <div class="matriz-grid">
+                    @for (q of preguntas(); track q.id_pregunta; let i = $index) {
+                        <div class="matriz-item" 
+                             [class.respondida]="respuestas().has(q.id_pregunta)"
+                             [class.actual]="preguntaActualIndex() === i"
+                             (click)="irAPregunta(i)">
+                            <div class="numero">{{ i + 1 }}</div>
+                            <div class="marca"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button class="btn btn-secondary w-100 fw-bold py-3 mt-auto" [disabled]="isSubmitting()" (click)="abrirConfirmacion()">
+                @if (isSubmitting()) {
+                    <lucide-icon [img]="loader" class="spin me-2" [size]="20" /> Enviando...
+                } @else {
+                    Terminar intento
+                }
+            </button>
+        </div>
+    </div>
+
+    @if (mostrarConfirmacion()) {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Confirmar envío</h3>
+                <p>¿Seguro que quieres enviar el examen?</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pregunta</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (q of preguntas(); track q.id_pregunta; let i = $index) {
+                                <tr>
+                                    <td>Pregunta {{ i + 1 }}</td>
+                                    <td>
+                                        @if (respuestas().has(q.id_pregunta)) {
+                                            <span class="estado-guardada">Respuesta guardada</span>
+                                        } @else {
+                                            <span class="estado-vacia">No respondida</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+    
+                <div class="modal-actions">
+                    <button class="btn btn-primary" (click)="cerrarConfirmacion()">Cancelar</button>
+                    <button class="btn btn-secondary" (click)="terminarIntento()" [disabled]="isSubmitting()">
+                        @if (isSubmitting()) {
+                            <lucide-icon [img]="loader" class="spin me-2" [size]="20" /> Enviando...
+                        } @else {
+                            Enviar
+                        }
+                    </button>
+                </div>
+            </div>
         </div>
     }
 
-    @if (errorMsg()) {
-        <div class="examenes-estado examenes-error">
-            <lucide-icon [img]="alertCircle" [size]="32" />
-            <p>{{ errorMsg() }}</p>
+} @else {
+    <div class="examenes-header">
+        <div class="title">
+            <h2>{{ titulo() }}</h2>
+            <h4>Apertura: {{ fechaAperturaFormat() }}</h4>
+            <h4 style="color: var(--ins-secondary)">Cierre: {{ fechaCierreFormat() }}</h4>
         </div>
-    }
-
-    @if (!isLoading() && !errorMsg()) {
+        <div class="estado-entrega">
+            <h3>Calificación:</h3>
+            <p [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">{{ calificacionTexto() }}</p>
+        </div>
+    </div>
+    <div class="examenes-main">
+        <h3>Descripción</h3>
+        <p>{{ descripcion() }}</p>
         
-    }
-
-</div>
+        @if (false) {
+            <div class="alert w-100 mt-3 d-flex align-items-center p-3" style="background-color: transparent; border: 2px solid var(--ins-primary); border-radius: 12px;">
+                <lucide-icon [img]="check" class="me-3" [size]="24" style="color: var(--ins-primary);" />
+                <div>
+                    <h5 class="mb-1 fw-bold" style="color: var(--ins-primary);">Examen completado</h5>
+                    <p class="mb-0 text-white">Ya has realizado tu único intento para este examen.</p>
+                </div>
+            </div>
+        } @else if (false) {
+            <div class="alert w-100 mt-3 d-flex align-items-center p-3" style="background-color: transparent; border: 2px solid var(--ins-secondary); border-radius: 12px;">
+                <lucide-icon [img]="alertCircle" class="me-3" [size]="24" style="color: var(--ins-secondary);" />
+                <div>
+                    <h5 class="mb-1 fw-bold" style="color: var(--ins-secondary);">El examen ha vencido</h5>
+                    <p class="mb-0 text-white">El tiempo límite para realizar este examen ha terminado.</p>
+                </div>
+            </div>
+        } @else {
+            <button class="btn btn-primary fw-semibold py-2 mt-3" (click)="empezarIntento()">
+                Empezar intento (Modo de Pruebas)
+            </button>
+        }
+    </div>
+}
+}

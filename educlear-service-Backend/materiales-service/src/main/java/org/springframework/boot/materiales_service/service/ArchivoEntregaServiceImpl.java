@@ -25,6 +25,13 @@ public class ArchivoEntregaServiceImpl implements ArchivoEntregaService {
     }
 
     @Override
+    public List<ArchivoEntregaDTO> findByEntregaId(Integer entregaId) {
+        return archivoEntregaRepository.findByEntregaId(entregaId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ArchivoEntregaDTO findById(Integer id) {
         return archivoEntregaRepository.findById(id)
                 .map(this::convertToDTO)

@@ -81,6 +81,7 @@ export class FileUploader {
     dropzoneConfig: DropzoneConfigInterface = {
         url: 'https://httpbin.org/post',
         maxFilesize: 50,
+        maxFiles: 1,
         clickable: true,
         addRemoveLinks: true,
         previewsContainer: false,
@@ -108,12 +109,12 @@ export class FileUploader {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
             const dataUrl = e.target?.result as string;
-            this.uploadedFiles.push({
+            this.uploadedFiles = [{
                 name: file.name,
                 size: file.size,
                 type: file.type,
                 dataURL: dataUrl,
-            });
+            }];
         };
         reader.readAsDataURL(file);
     }
