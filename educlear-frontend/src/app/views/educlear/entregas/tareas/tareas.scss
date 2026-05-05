@@ -1,12 +1,14 @@
 .tareas-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     width: 100%;
 }
 
 .tareas-main {
     display: flex;
+    background-color: var(--ins-body-bg);
+    border-radius: 16px;
+    padding: 20px;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
@@ -42,4 +44,33 @@
 
 .spin {
     animation: spin 1s linear infinite;
+}
+
+.uploader-container {
+    background-color: var(--ins-card-bg);
+
+    ::ng-deep {
+        .dropzone.dz-wrapper {
+            background-color: var(--ins-body-bg) !important;
+            border-color: var(--ins-primary) !important;
+            color: #ccc !important;
+        }
+
+        .card {
+            background-color: var(--ins-body-bg) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .bg-light {
+            background-color: var(--ins-card-bg) !important;
+        }
+
+        h4 {
+            color: #ddd !important;
+        }
+        
+        .text-muted {
+            color: #aaa !important;
+        }
+    }
 }

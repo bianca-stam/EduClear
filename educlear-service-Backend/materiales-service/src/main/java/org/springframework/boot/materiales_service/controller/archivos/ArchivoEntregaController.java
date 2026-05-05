@@ -25,6 +25,11 @@ public class ArchivoEntregaController {
         return archivoEntregaService.findAll();
     }
 
+    @GetMapping("/entrega/{entregaId}")
+    public ResponseEntity<List<ArchivoEntregaDTO>> getByEntregaId(@PathVariable Integer entregaId) {
+        return ResponseEntity.ok(archivoEntregaService.findByEntregaId(entregaId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ArchivoEntregaDTO> getById(@PathVariable Integer id) {
         ArchivoEntregaDTO archivoEntrega = archivoEntregaService.findById(id);

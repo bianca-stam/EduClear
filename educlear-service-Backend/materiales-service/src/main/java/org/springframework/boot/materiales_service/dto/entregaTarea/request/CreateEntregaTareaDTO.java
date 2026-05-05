@@ -21,6 +21,5 @@ public class CreateEntregaTareaDTO {
     @NotNull
     private EstadoEntrega estadoEntrega;
 
-    @NotNull
     private BigDecimal calificacion;
 }

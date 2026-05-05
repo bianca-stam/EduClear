@@ -1,28 +1,91 @@
-<div class="tareas-header">
-    <div class="title">
-        <h2>{{ titulo() }}</h2>
-        <p>{{ descripcion() }}</p>
+@if (isLoading()) {
+    <div class="tareas-estado">
+        <lucide-icon [img]="loader" class="spin" [size]="32" />
+        <p>Cargando recursos de la tarea...</p>
     </div>
-</div>
-<div class="tareas-main">
-
-    @if (isLoading()) {
-        <div class="tareas-estado">
-            <lucide-icon [img]="loader" class="spin" [size]="32" />
-            <p>Cargando recursos de la tarea...</p>
+} @else if (errorMsg()) {
+    <div class="tareas-estado tareas-error">
+        <lucide-icon [img]="alertCircle" [size]="32" />
+        <p>{{ errorMsg() }}</p>
+    </div>
+} @else {
+    <div class="tareas-header">
+        <div class="title">
+            <h2>{{ titulo() }}</h2>
+            <h4>Apertura: {{ fechaAperturaFormat() }}</h4>
+            <h4 style="color: var(--ins-secondary)">Cierre: {{ fechaCierreFormat() }}</h4>
         </div>
-    }
-
-    @if (errorMsg()) {
-        <div class="tareas-estado tareas-error">
-            <lucide-icon [img]="alertCircle" [size]="32" />
-            <p>{{ errorMsg() }}</p>
+        <div class="estado-entrega">
+            <h3>Calificacion:</h3>
+            <p [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">{{ calificacionTexto() }}</p>
+            <h3>Tiempo restante:</h3>
+            <p style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">{{ tiempoRestante() }}</p>
         </div>
-    }
+    </div>
+    <div class="tareas-main">
+        <h3>Descripcion</h3>
+        <p>{{ descripcion()}}</p>
+        <button [disabled]="estaCalificada() || estaVencida()" (click)="toggleUploader()" class="btn btn-primary fw-semibold py-2 mb-3">
+            {{ textoBotonEntrega() }}
+        </button>
 
-    @if (!isLoading() && !errorMsg()) {
-        
-    }
-
-</div>
-
+        @if (mostrarUploader()) {
+            <div class="w-100 mt-2 rounded-3 p-3 uploader-container">
+                <FileUploader #uploader />
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <button [disabled]="isSubmitting() || !uploader.uploadedFiles || uploader.uploadedFiles.length === 0" (click)="enviarEntrega(uploader)" class="btn btn-secondary fw-semibold py-2 px-4 d-flex align-items-center">
+                    @if (isSubmitting()) {
+                        <lucide-icon [img]="loader" class="spin me-2" [size]="20"></lucide-icon>
+                        Enviando...
+                    } @else {
+                        Enviar Entrega
+                    }
+                </button>
+            </div>
+        } @else {
+            <table style="width: 100%; background-color: var(--ins-card-bg); border-collapse: collapse; margin-bottom: 20px; border-radius: 16px; overflow: hidden;">
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; width: 30%;">Estado de la entrega</td>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                            <span [style.color]="(estadoTexto() === 'Entregado') ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
+                                {{ estadoTexto() }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Calificacion</td>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                            <span [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
+                                {{ calificacionTexto() }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Archivo de entrega</td>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                            @if (archivoEntrega()) {
+                                <button (click)="abrirArchivo()" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 m-0">
+                                    <lucide-icon [img]="fileText" [size]="18"></lucide-icon>
+                                    {{ archivoEntrega().nombre_archivo }}
+                                    <lucide-icon [img]="externalLink" [size]="14"></lucide-icon>
+                                </button>
+                            } @else {
+                                <span class="text-muted">Ningún archivo subido</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Tiempo restante</td>
+                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                            <span style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">
+                                {{ tiempoRestante() }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+}
