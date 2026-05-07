@@ -1,0 +1,180 @@
+.card {
+    min-height: 600px;
+}
+
+@keyframes tabFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "../../../../assets/scss/variables";
+
+.container-fluid {
+    animation: tabFadeIn 0.4s ease-in-out;
+}
+
+.item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    gap: 15px;
+    cursor: pointer;
+    transition: $transition-base;
+    border: 3px solid transparent;
+    border-radius: $border-radius;
+    margin-bottom: 1rem;
+
+    & > :nth-child(2) {
+        flex: 1;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        
+        h4 {
+            transition: $transition-base;
+            margin-bottom: 4px;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+
+    ::ng-deep lucide-icon {
+        transition: $transition-base;
+        svg {
+            width: 32px !important;
+            height: 32px !important;
+            stroke-width: 1.5;
+            transition: $transition-base;
+        }
+    }
+
+    &:hover {
+        box-shadow: $box-shadow;
+        
+        .arrow-icon lucide-icon {
+            transform: scale(1.2);
+        }
+    }
+}
+
+.entrega{
+    border-top: 3px solid $secondary;
+    
+    ::ng-deep .entrega-icon lucide-icon svg, ::ng-deep .arrow-icon lucide-icon svg {
+        color: $secondary !important;
+        stroke: $secondary !important;
+    }
+
+    &:hover {
+        border: 3px solid $secondary;
+        border-top: 3px solid $secondary;
+
+        h4 {
+            color: $secondary;
+        }
+    }
+
+    &.examen {
+        border-top: 3px solid $primary;
+        
+        ::ng-deep .entrega-icon lucide-icon svg, ::ng-deep .arrow-icon lucide-icon svg {
+            color: $primary !important;
+            stroke: $primary !important;
+        }
+
+        &:hover {
+            border: 3px solid $primary;
+            border-top: 3px solid $primary;
+
+            h4 {
+                color: $primary;
+            }
+        }
+        
+        .cierre {
+            color: $primary;
+        }
+    }
+}
+
+.cierre {
+    color: $secondary;
+}
+
+.tarea-item.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    border: 0;
+}
+
+::ng-deep .evento-calendario-naranja {
+    background-color: $secondary !important;
+    border-color: $secondary !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+::ng-deep .evento-calendario-azul {
+    background-color: $primary !important;
+    border-color: $primary !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.cursos-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 40px 0;
+    gap: 12px;
+    color: #aaa;
+
+    p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    &.cursos-error {
+        color: #e57373;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+::ng-deep .fc {
+    // Tonos de gris del proyecto
+    --fc-border-color: #454545;
+    --fc-neutral-bg-color: #565656;
+    
+    // Bordes generales
+    th, td, .fc-scrollgrid {
+        border-color: #454545 !important;
+    }
+
+    // Cabecera (días de la semana)
+    .fc-col-header-cell {
+        background-color: #565656 !important;
+        color: #ffffff;
+    }
+    
+    // Enlaces dentro de la cabecera (texto de los días)
+    .fc-col-header-cell-cushion {
+        color: #ffffff !important;
+        padding: 10px;
+    }
+}
