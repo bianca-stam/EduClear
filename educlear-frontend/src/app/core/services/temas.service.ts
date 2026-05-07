@@ -1,4 +1,4 @@
-import { environment } from '@/environments/environment.development';
+import { environment } from '@/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { DbArchivoContenido, DbAsignatura, DbExamen, DbTarea, DbTema } from '@core/models/db-models';
