@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 import {LayoutStoreService} from '@core/services/layout-store.service';
 import {LucideAngularModule, LucideUserPlus} from 'lucide-angular';
 import {UserProfile} from '@layouts/components/topbar/components/user-profile/user-profile';
@@ -9,6 +9,7 @@ import {AuthService} from '@core/services/auth.service';
     selector: 'app-topbar',
     imports: [
         RouterLink,
+        RouterLinkActive,
         LucideAngularModule,
         UserProfile,
     ],

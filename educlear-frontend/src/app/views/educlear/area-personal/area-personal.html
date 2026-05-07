@@ -1,0 +1,82 @@
+<div class="container-fluid">
+
+    <app-page-title [title]="'Área personal'" [breadcrumbs]="[{ label: 'Área personal', url: '/area-personal' }]" />
+
+    @if (isLoading()) {
+        <div class="card">
+            <div class="card-body">
+                <div class="cursos-estado">
+                    <lucide-icon [img]="loader" class="spin" [size]="32" />
+                    <p>Cargando área personal...</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (errorMsg()) {
+        <div class="card">
+            <div class="card-body">
+                <div class="cursos-estado cursos-error">
+                    <lucide-icon [img]="alertCircle" [size]="32" />
+                    <p>{{ errorMsg() }}</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+        
+        <!-- PENDIENTES -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="title mb-4">
+                    <h2>Pendientes</h2>
+                </div>
+
+                @if (agrupaciones().length === 0) {
+                    <div class="cursos-estado">
+                        <p>No tienes tareas ni exámenes pendientes.</p>
+                    </div>
+                }
+
+                <div>
+                    @for (agrupacion of agrupaciones(); track agrupacion.asignatura_nombre) {
+                        <h3 class="text-white mt-4 mb-3">{{ agrupacion.curso_nombre }} - {{ agrupacion.asignatura_nombre }}</h3>
+
+                        @for (item of agrupacion.items; track item.id + item.tipo) {
+                            <div class="entrega item" [class.examen]="item.tipo === 'examen'" (click)="navegarA(item)">
+                                <div class="entrega-icon">
+                                    <lucide-icon [img]="item.tipo === 'examen' ? clipboardPen : fileUp" class="app-search-icon" />
+                                </div>
+                                <div class="entrega-info">
+                                    <h4>{{ item.titulo }}</h4>
+                                    <p>{{ item.descripcion }}</p>
+                                    <div class="tarea-item footer">
+                                        <p>Apertura: <span class="cierre">{{ item.fecha_apertura | date:'dd/MM/yyyy HH:mm' }} </span></p>
+                                        <p>Cierre: <span class="cierre">{{ item.fecha_cierre | date:'dd/MM/yyyy HH:mm' }} </span></p>
+                                    </div>
+                                </div>
+                                <div class="arrow-icon">
+                                    <lucide-icon [img]="arrowRight" class="app-search-icon" />
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- CALENDARIO -->
+        <div class="card">
+            <div class="card-body">
+                <div class="title mb-4">
+                    <h2>Calendario</h2>
+                </div>
+                <full-calendar [options]="calendarOptions"></full-calendar>
+            </div>
+        </div>
+    }
+
+</div>
+
+
