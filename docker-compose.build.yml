@@ -1,0 +1,16 @@
+services:
+  gateway:
+    build: ./educlear-service-Backend/gateway-educlear
+    image: bianca0stam/gateway-educlear:latest
+  usuario:
+    build: ./educlear-service-Backend/usuario-service
+    image: bianca0stam/usuario-service:latest
+  curso:
+    build: ./educlear-service-Backend/curso-service
+    image: bianca0stam/curso-service:latest
+  asignatura:
+    build: ./educlear-service-Backend/asignatura-service
+    image: bianca0stam/asignatura-service:latest
+  materiales:
+    build: ./educlear-service-Backend/materiales-service
+    image: bianca0stam/materiales-service:latest

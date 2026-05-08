@@ -2,47 +2,38 @@ x-spring-prod: &spring-prod
   environment:
     DB_HOST: ${AWS_RDS_ENDPOINT}
     DB_PORT: 3306
-    DB_NAME: ${DB_NAME:-dbeduclear} # Usa la variable, o 'dbeduclear' por defecto
+    DB_NAME: ${DB_NAME:-dbeduclear}
     DB_USER: ${DB_USER}
     DB_PASSWORD: ${DB_PASSWORD}
-    
     SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/${DB_NAME:-dbeduclear}?sslMode=trust
     SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
-    
-    SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+    SPRING_JPA_HIBERNATE_DDL_AUTO: update
     SPRING_JPA_SHOW_SQL: "false"
 
 services:
   api-gateway:
-    image: bianca0stam/gateway-educlear:latest
     ports:
       - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
+    <<: *spring-prod
     restart: always
 
   usuario-service:
-    image: bianca0stam/usuario-service:latest
-    <<: *spring-prod 
+    <<: *spring-prod
     restart: always
 
   curso-service:
-    image: bianca0stam/curso-service:latest
     <<: *spring-prod
     restart: always
 
   asignatura-service:
-    image: bianca0stam/asignatura-service:latest
     <<: *spring-prod
     restart: always
 
   materiales-service:
-    image: bianca0stam/materiales-service:latest
     <<: *spring-prod
     restart: always
 
   frontend:
-    image: bianca0stam/educlear-frontend:latest
     ports:
       - "80:80"
     volumes:
