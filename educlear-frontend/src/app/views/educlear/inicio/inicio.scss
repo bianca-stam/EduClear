@@ -1,3 +1,12 @@
-.card{
+.card {
     min-height: 600px;
+}
+
+@keyframes tabFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.container-fluid {
+    animation: tabFadeIn 0.4s ease-in-out;
 }

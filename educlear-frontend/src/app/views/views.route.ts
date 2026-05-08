@@ -112,4 +112,9 @@ export const VIEWS_ROUTES: Routes = [
             }
         ]
     },
+    {
+        path: 'area-personal',
+        loadComponent: () => import('./educlear/area-personal/area-personal').then(m => m.AreaPersonal),
+        data: {title: "Área personal"}
+    }
 ];

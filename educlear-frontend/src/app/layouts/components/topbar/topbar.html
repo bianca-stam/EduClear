@@ -11,7 +11,7 @@
           <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="small logo"></span>
         </span>
     </a>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 me-auto ms-3">
             <div class="logo-topbar">
                 <a routerLink="/" class="logo-light">
                     <span class="logo-lg">
@@ -31,6 +31,15 @@
                     </span>
                 </a>
             </div>
+
+            <ul class="nav nav-tabs nav-bordered mb-0" style="border-bottom: none;">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/cursos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Cursos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/area-personal" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Área personal</a>
+                </li>
+            </ul>
 
         </div>
 
