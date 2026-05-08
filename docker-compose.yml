@@ -5,27 +5,27 @@ x-db-env: &db-env
 
 services:
   api-gateway:
-      build: ./educlear-service-Backend/gateway-educlear
+    image: bianca0stam/gateway-educlear:latest
 
   usuario-service:
-    build: ./educlear-service-Backend/usuario-service
+    image: bianca0stam/usuario-service:latest
     environment:
       <<: *db-env
 
   curso-service:
-    build: ./educlear-service-Backend/curso-service
+    image: bianca0stam/curso-service:latest
     environment:
       <<: *db-env
 
   asignatura-service:
-    build: ./educlear-service-Backend/asignatura-service
+    image: bianca0stam/asignatura-service:latest
     environment:
       <<: *db-env
 
   materiales-service:
-    build: ./educlear-service-Backend/materiales-service
+    image: bianca0stam/materiales-service:latest
     environment:
       <<: *db-env
 
   frontend:
-    build: ./educlear-frontend
+    image: bianca0stam/educlear-frontend:latest

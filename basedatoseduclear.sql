@@ -146,84 +146,121 @@ CREATE TABLE archivos_entrega (
     FOREIGN KEY (entrega_id) REFERENCES entregas_tarea(id_entrega_tarea) ON DELETE CASCADE
 );
 
--- 1. USUARIOS (1 Profesor y 2 Alumnos)
-INSERT INTO usuarios (email, contrasena, rol, nombre_completo) VALUES
-('profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Carlos Docente'),
-('ana@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Ana Estudiante'),
-('luis@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Luis Alumno'),
-('admin@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'admin', 'Admnistrador');
+-- 1. USUARIOS
+TRUNCATE TABLE usuarios;
+INSERT INTO usuarios (id_usuario, email, contrasena, rol, nombre_completo) VALUES
+(1, 'admin@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'admin', 'Super Administrador'),
+(2, 'profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Marcos López (DAM)'),
+(3, 'profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Beatriz Sanz (ASIR)'),
+(4, 'ana@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Ana García'),
+(5, 'luis@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Luis Ruiz'),
+(6, 'elena@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Elena Belmonte'),
+(7, 'juan@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Juan Naranjo');
 
 -- 2. CURSOS
-INSERT INTO cursos (nombre, descripcion) VALUES
-('Desarrollo Web 1º', 'Primer año de ciclo formativo'),
-('Diseño Gráfico 2º', 'Segundo año, especialización'),
-('Marketing Digital', 'Curso intensivo de marketing');
+TRUNCATE TABLE cursos;
+INSERT INTO cursos (id_curso, nombre, descripcion) VALUES
+(1, '1º Desarrollo de Aplicaciones Multiplataforma (DAM)', 'Ciclo formativo centrado en el desarrollo de software para diversos dispositivos y sistemas.'),
+(2, '1º Administración de Sistemas Informáticos en Red (ASIR)', 'Especialidad en configuración, administración y mantenimiento de sistemas y redes.');
 
--- 3. ASIGNATURAS (Vinculadas a los cursos y al Profesor Carlos [ID 1])
-INSERT INTO asignaturas (nombre, curso_id, profesor_id) VALUES
-('Programación Básica', 1, 1),
-('Bases de Datos', 1, 1),
-('Experiencia de Usuario (UX)', 2, 1);
+-- 3. ASIGNATURAS (4 por curso)
+TRUNCATE TABLE asignaturas;
+INSERT INTO asignaturas (id_asignatura, nombre, curso_id, profesor_id) VALUES
+-- Curso 1 (DAM) - Profesor Marcos
+(1, 'Programación Java', 1, 2),
+(2, 'Bases de Datos SQL', 1, 2),
+(3, 'Lenguajes de Marcas', 1, 2),
+(4, 'Entornos de Desarrollo', 1, 2),
+-- Curso 2 (ASIR) - Profesora Beatriz
+(5, 'Implantación de Sistemas Operativos', 2, 3),
+(6, 'Planificación y Administración de Redes', 2, 3),
+(7, 'Fundamentos de Hardware', 2, 3),
+(8, 'Gestión de Bases de Datos', 2, 3);
 
--- 4. MATRÍCULAS (Ana [ID 2] y Luis [ID 3] se matriculan en algunas asignaturas)
+-- 4. MATRÍCULAS
+TRUNCATE TABLE matriculas_asignatura;
 INSERT INTO matriculas_asignatura (asignatura_id, alumno_id) VALUES
-(1, 2), -- Ana en Programación
-(1, 3), -- Luis en Programación
-(2, 2); -- Ana en Bases de Datos
+(1,4),(2,4),(3,4),(4,4), -- Ana en DAM
+(1,5),(2,5),(3,5),(4,5), -- Pablo en DAM
+(5,6),(6,6),(7,6),(8,6), -- Elena en ASIR
+(5,7),(6,7),(7,7),(8,7); -- Juan en ASIR
 
--- 5. TEMAS
-INSERT INTO temas (titulo, descripcion, asignatura_id) VALUES
-('Tema 1: Lógica Básica', 'Conceptos de variables y bucles', 1),
-('Tema 2: Funciones', 'Reutilización de código', 1),
-('Tema 1: Modelo Relacional', 'Tablas y claves', 2);
+-- 5. TEMAS (3 por asignatura = 24 temas)
+TRUNCATE TABLE temas;
+INSERT INTO temas (id_tema, titulo, descripcion, asignatura_id) VALUES
+-- DAM: Programación
+(1, 'Introducción a Java', 'Sintaxis básica y tipos de datos.', 1),
+(2, 'Estructuras de Control', 'Bucles y condicionales.', 1),
+(3, 'Programación Orientada a Objetos', 'Clases, objetos y herencia.', 1),
+-- DAM: BBDD
+(4, 'Modelo Relacional', 'Conceptos de tablas y relaciones.', 2),
+(5, 'Lenguaje SQL DDL', 'Creación y modificación de tablas.', 2),
+(6, 'Consultas DML', 'SELECT, INSERT, UPDATE y DELETE.', 2),
+-- ASIR: ISO
+(7, 'Arquitectura de SO', 'Kernel, procesos y memoria.', 5),
+(8, 'Sistemas Windows', 'Administración de Windows Server.', 5),
+(9, 'Sistemas Linux', 'Gestión de usuarios y permisos en Bash.', 5),
+-- ASIR: Redes
+(10, 'Modelo OSI y TCP/IP', 'Capas de red y protocolos.', 6),
+(11, 'Direccionamiento IPv4', 'Subnetting y máscaras de red.', 6),
+(12, 'Configuración de Switches', 'VLANs y seguridad de puerto.', 6);
+-- (Se pueden añadir más temas siguiendo el patrón hasta el 24)
 
--- 6. ARCHIVOS DE CONTENIDO (Teoría subida por el profesor)
+-- 6. ARCHIVOS DE CONTENIDO (2 PDFs por tema)
+TRUNCATE TABLE archivos_contenido;
 INSERT INTO archivos_contenido (tema_id, nombre_archivo, tipo_mime, peso_bytes, archivo_blob) VALUES
-(1, 'diapositivas_logica.pdf', 'application/pdf', 1048576, 0x00),
-(2, 'ejercicios_funciones.pdf', 'application/pdf', 512000, 0x00),
-(3, 'esquema_tablas.png', 'image/png', 256000, 0x00);
+(1, 'Introduccion_Java.pdf', 'application/pdf', 1024, 0x00),
+(1, 'Ejercicios_Sintaxis.pdf', 'application/pdf', 2048, 0x00),
+(9, 'Comandos_Linux.pdf', 'application/pdf', 5000, 0x00),
+(9, 'Gestion_Permisos.pdf', 'application/pdf', 3500, 0x00),
+(10, 'Capas_OSI.pdf', 'application/pdf', 8000, 0x00),
+(10, 'Protocolos_Red.pdf', 'application/pdf', 12000, 0x00);
 
--- 7. EXÁMENES
-INSERT INTO examenes (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
-(1, 'Test Inicial de Lógica', '10 preguntas básicas', '2026-05-01 08:00:00', '2026-05-01 23:59:00'),
-(2, 'Examen de Funciones', 'Test sobre parámetros y retornos', '2026-05-15 08:00:00', '2026-05-15 10:00:00'),
-(3, 'Prueba de SQL', 'Conceptos teóricos de BBDD', '2026-06-01 08:00:00', '2026-06-01 23:59:00');
+-- 7. TAREAS (2 por tema)
+TRUNCATE TABLE tareas;
+INSERT INTO tareas (id_tema, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
+(1, 'Práctica 1: Hola Mundo', 'Escribe tu primer programa en Java.', '2026-05-01', '2026-05-15'),
+(1, 'Práctica 2: Variables', 'Uso de int, double y String.', '2026-05-01', '2026-05-15'),
+(9, 'Laboratorio: Permisos Bash', 'Configura un entorno con 3 usuarios.', '2026-05-10', '2026-05-20'),
+(9, 'Script de Respaldo', 'Crea un .sh para comprimir /etc.', '2026-05-10', '2026-05-20');
 
--- 8. PREGUNTAS (Para el primer examen [ID 1])
+-- 8. EXÁMENES (1 por tema)
+TRUNCATE TABLE examenes;
+INSERT INTO examenes (id_tema, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
+(1, 'Examen Parcial: Java Básico', 'Conceptos de sintaxis.', '2026-05-20 09:00', '2026-05-20 11:00'),
+(9, 'Test de Comandos Linux', 'Evaluación de administración Shell.', '2026-05-25 10:00', '2026-05-25 12:00'),
+(10, 'Prueba de Redes: OSI', 'Preguntas sobre capas físicas y lógicas.', '2026-06-01 08:00', '2026-06-01 10:00');
+
+-- 9. PREGUNTAS
+TRUNCATE TABLE preguntas;
 INSERT INTO preguntas (examen_id, texto_pregunta, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta) VALUES
-(1, '¿Qué es una variable?', 'Un color', 'Un espacio en memoria', 'Un animal', 'Un coche', 'B'),
-(1, '¿Para qué sirve un IF?', 'Para crear bucles', 'Para evaluar una condición', 'Para imprimir texto', 'Para borrar la base de datos', 'B'),
-(1, '¿Cuál es el símbolo de asignación común?', '==', '===', '=', '!=', 'C');
+(1, '¿Qué comando compila un archivo Java?', 'java', 'javac', 'jar', 'exe', 'B'),
+(2, '¿Qué comando cambia el dueño de un archivo?', 'chmod', 'chown', 'ls', 'cd', 'B');
 
--- 9. INTENTOS DE EXAMEN
-INSERT INTO intentos_examen (examen_id, alumno_id, fecha_inicio, fecha_envio, calificacion_final, estado) VALUES
-(1, 2, '2026-05-01 09:00:00', '2026-05-01 09:45:00', 8.50, 'calificado'), -- Ana hizo el examen y lo entregó
-(1, 3, '2026-05-01 10:00:00', '2026-05-01 10:50:00', 6.00, 'calificado'), -- Luis también
-(2, 2, '2026-05-15 08:10:00', NULL, NULL, 'en_curso'); -- Ana está haciendo el segundo examen ahora mismo
-
--- 10. RESPUESTAS ALUMNO (Lo que marcó Ana [Intento ID 1] en sus 3 preguntas)
-INSERT INTO respuestas_alumno (intento_id, pregunta_id, opcion_seleccionada) VALUES
-(1, 1, 'B'), -- Correcta
-(1, 2, 'B'), -- Correcta
-(1, 3, 'A'); -- Se equivocó en esta
-
--- 11. TAREAS
-INSERT INTO tareas (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
-(1, 'Calculadora Básica', 'Sube el código de tu calculadora', '2026-05-01 00:00:00', '2026-05-07 23:59:59'),
-(2, 'Refactorización', 'Mejora el código usando funciones', '2026-05-08 00:00:00', '2026-05-14 23:59:59'),
-(3, 'Diseño de BBDD', 'Crea el esquema de una tienda', '2026-05-15 00:00:00', '2026-05-21 23:59:59');
-
--- 12. ENTREGAS DE TAREA
+-- 10. CASUÍSTICA DE ENTREGAS Y EXÁMENES
+-- Ana (DAM) ha entregado todo y tiene buena nota
 INSERT INTO entregas_tarea (tarea_id, alumno_id, estado_entrega, calificacion) VALUES
-(1, 2, 'enviado', 9.00), -- Ana entregó y sacó un 9
-(1, 3, 'enviado', 7.50), -- Luis entregó y sacó un 7.5
-(2, 2, 'borrador', NULL); -- Ana ha subido un archivo pero aún no le ha dado al botón de entrega final
+(1, 4, 'enviado', 9.50),
+(2, 4, 'enviado', 8.75);
 
--- 13. ARCHIVOS DE ENTREGA (Los archivos que subieron los alumnos)
-INSERT INTO archivos_entrega (entrega_id, nombre_archivo, tipo_mime, peso_bytes, archivo_blob) VALUES
-(1, 'calculadora_ana.zip', 'application/zip', 2048000, 0x00),
-(2, 'calculadora_luis_v2.zip', 'application/zip', 2150000, 0x00),
-(3, 'intento_refactor_ana.js', 'text/javascript', 5000, 0x00);
+-- Pablo (DAM) tiene una en borrador y otra enviada
+INSERT INTO entregas_tarea (tarea_id, alumno_id, estado_entrega, calificacion) VALUES
+(1, 5, 'enviado', 5.00),
+(2, 5, 'borrador', NULL);
+
+-- Elena (ASIR) entregó pero no está calificado
+INSERT INTO entregas_tarea (tarea_id, alumno_id, estado_entrega, calificacion) VALUES
+(3, 6, 'enviado', NULL);
+
+-- Juan (ASIR) no ha entregado nada (no se inserta o estado no_entregado)
+INSERT INTO entregas_tarea (tarea_id, alumno_id, estado_entrega, calificacion) VALUES
+(3, 7, 'no_entregado', NULL);
+
+-- Intentos de examen
+INSERT INTO intentos_examen (examen_id, alumno_id, fecha_inicio, fecha_envio, calificacion_final, estado) VALUES
+(1, 4, '2026-05-20 09:05:00', '2026-05-20 10:30:00', 10.00, 'calificado'), -- Ana perfecta
+(1, 5, '2026-05-20 09:10:00', '2026-05-20 11:00:00', 3.50, 'calificado'),  -- Pablo suspendió
+(2, 6, '2026-05-25 10:00:00', NULL, NULL, 'en_curso');
 
 SET FOREIGN_KEY_CHECKS=1;
 

@@ -3,8 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 COPY . .
-RUN npm run build
+RUN npx ng build --configuration production
 
 FROM nginx:alpine
-COPY --from=build /app/dist/ubold-ng/browser /usr/share/nginx/html
+COPY --from=build /app/dist/ubold-ng /usr/share/nginx/html
 EXPOSE 80

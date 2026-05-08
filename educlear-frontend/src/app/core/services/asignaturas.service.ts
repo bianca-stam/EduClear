@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from '@/environments/environment.development';
+import { environment } from '@/environments/environment';
 import { DbAsignatura, DbCalificacionesAlumno, DbTema } from '../models/db-models';
 
 @Injectable({
