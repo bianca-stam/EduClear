@@ -28,8 +28,17 @@
 
     @if (!isLoading() && !errorMsg()) {
         @for (curso of cursos(); track curso.id_curso) {
-            <div class="curso" (click)="verCurso(curso)">
-                <h3>{{ curso.nombre }}</h3>
+            <div class="curso-row">
+                <div class="curso" (click)="verCurso(curso)">
+                    <h3>{{ curso.nombre }}</h3>
+                </div>
+                @if (esAdminOProfesor()) {
+                    <div class="topbar-item d-flex align-items-center px-2">
+                        <a class="text-primary d-flex align-items-center" title="Editar curso" style="cursor: pointer; text-decoration: none;" (click)="$event.stopPropagation()">
+                            <lucide-angular [img]="pencil" class="fs-22"></lucide-angular>
+                        </a>
+                    </div>
+                }
             </div>
         }
         @if (cursos().length === 0) {

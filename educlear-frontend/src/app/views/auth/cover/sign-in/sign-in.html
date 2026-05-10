@@ -35,11 +35,19 @@
                                         id="userEmail"
                                         required
                                         formControlName="correo"
+                                        [class.is-invalid]="form.correo.invalid && form.correo.touched"
                                     />
                                     <lucide-angular
                                         [img]="LucideCircleUser"
                                         class="app-search-icon text-muted"
                                     />
+                                </div>
+                                <div class="text-secondary small mt-1" [style.visibility]="(form.correo.invalid && form.correo.touched) ? 'visible' : 'hidden'">
+                                    @if (form.correo.errors?.['email']) {
+                                        El formato del correo es inválido
+                                    } @else {
+                                        El correo es requerido
+                                    }
                                 </div>
                             </div>
 
@@ -54,12 +62,16 @@
                                         id="userPassword"
                                         required
                                         formControlName="password"
+                                        [class.is-invalid]="form.password.invalid && form.password.touched"
                                     />
                                       <lucide-angular
                                         [img]="LucideKeyRound"
                                         class="app-search-icon text-muted"
                                     />
                                    
+                                </div>
+                                <div class="text-secondary small mt-1 mb-2" [style.visibility]="(form.password.invalid && form.password.touched) ? 'visible' : 'hidden'">
+                                    La contraseña es requerida
                                 </div>
                             </div>
 
@@ -71,7 +83,7 @@
                                 <button
                                     type="submit"
                                     class="btn btn-primary fw-bold py-2"
-                                    [disabled]="isLoading()"
+                                    [disabled]="isLoading() || loginForm.invalid"
                                 >
                                     @if (isLoading()) {
                                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -84,9 +96,9 @@
                         </form>
                     </div>
 
-                    <p class="text-center text-muted mt-auto mb-0">
+                    <p class="text-center mt-auto mb-0" style="min-height: 24px;">
                         @if ( errorMessage()) {
-                        <span class="fw-semibold">{{errorMessage()}}</span>
+                        <span class="text-secondary fw-semibold">{{errorMessage()}}</span>
                         }
                     </p>
                     

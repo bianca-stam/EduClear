@@ -1,14 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CursoConAlumnos, CursosService } from '@core/services/cursos.service';
-import { LucideAngularModule, Search, AlertCircle, Loader } from "lucide-angular";
-import { CommonModule } from '@angular/common';
+import { CursosService } from '@core/services/cursos.service';
+import { LucideAngularModule, Search, AlertCircle, Loader, LucidePencil } from "lucide-angular";
 import { AuthService } from '@core/services/auth.service';
 import { DbCurso } from '@core/models/db-models';
 
 @Component({
   selector: 'app-cursos',
-  imports: [LucideAngularModule, CommonModule],
+  imports: [LucideAngularModule],
   templateUrl: './cursos.html',
   styleUrl: './cursos.scss'
 })
@@ -16,6 +15,12 @@ export class Cursos implements OnInit {
   search = Search;
   alertCircle = AlertCircle;
   loader = Loader;
+  pencil = LucidePencil;
+
+  esAdminOProfesor = computed(() => {
+    const rol = this.authService.usuarioActual()?.rol;
+    return rol === 'admin' || rol === 'profesor';
+  });
 
   private router = inject(Router);
   private cursosService = inject(CursosService);
@@ -37,7 +42,21 @@ export class Cursos implements OnInit {
   });
 
   ngOnInit() {
-    this.cursosService.getCursosDelAlumno(this.authService.usuarioActual()!.id).subscribe({
+    const usuario = this.authService.usuarioActual()!;
+    let cursos$;
+
+    switch (usuario.rol) {
+      case 'profesor':
+        cursos$ = this.cursosService.getCursosDelProfesor(usuario.id);
+        break;
+      case 'admin':
+        cursos$ = this.cursosService.getAllCursos();
+        break;
+      default: // alumno
+        cursos$ = this.cursosService.getCursosDelAlumno(usuario.id);
+    }
+
+    cursos$.subscribe({
       next: (data) => {
         this.cursosRaw.set(data);
         this.isLoading.set(false);

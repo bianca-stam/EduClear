@@ -56,7 +56,17 @@ export class Inicio {
   }
 
   formatName(segment: string) {
-    const decoded = decodeURIComponent(segment);
-    return decoded.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    try {
+      const decoded = decodeURIComponent(segment);
+      // Reemplazar guiones por espacios, eliminar todo lo que no sea letra, número o espacio
+      const clean = decoded
+        .replace(/-/g, ' ')
+        .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]/g, '')
+        .trim();
+      // Title Case: primera letra de cada palabra en mayúscula
+      return clean.replace(/\b\w/g, l => l.toUpperCase());
+    } catch {
+      return segment.replace(/-/g, ' ').replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]/g, '').trim();
+    }
   }
 }

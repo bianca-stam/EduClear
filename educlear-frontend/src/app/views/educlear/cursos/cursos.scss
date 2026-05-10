@@ -22,10 +22,17 @@
     gap: 15px;
 }
 
+.curso-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
 .curso {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: 75%;
     height: 100%;
     background-color: #565656;
@@ -37,13 +44,13 @@
 
     h3 {
         margin: 0;
-        margin-left: 15%;
     }
 
     &:hover {
         background-color: #666666;
     }
 }
+
 
 .alumnos-badge {
     font-size: 0.8rem;
