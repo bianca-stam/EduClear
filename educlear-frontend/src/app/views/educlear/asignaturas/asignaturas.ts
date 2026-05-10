@@ -85,10 +85,22 @@ export class Asignaturas implements OnInit {
   verAsignatura(asignatura: any) {
     this.asignaturasService.asignaturaSeleccionada.set(asignatura);
     
-    const nombreUrl = asignatura.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+    const nombreUrl = asignatura.nombre
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, '-');
     
     const cursoNombre = this.cursoService.cursoSeleccionado()?.nombre || '';
-    const cursoUrl = cursoNombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+    const cursoUrl = cursoNombre
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, '-');
     this.router.navigate(['/cursos', cursoUrl, nombreUrl]);
   }
 

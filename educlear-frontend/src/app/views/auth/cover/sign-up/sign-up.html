@@ -67,29 +67,39 @@
                                 <div class="mb-3">
                                     <label for="userName" class="form-label">Nombre</label>
                                     <div class="app-search">
-                                        <input type="text" class="form-control" id="userName"  required formControlName="nombreCompleto">
-      <lucide-angular
-                                        [img]="LucideCircleUser"
-                                        class="app-search-icon text-muted"
-                                    /> 
+                                        <input type="text" class="form-control" id="userName" required formControlName="nombreCompleto" [class.is-invalid]="form.nombreCompleto.invalid && form.nombreCompleto.touched">
+                                        <lucide-angular
+                                            [img]="LucideCircleUser"
+                                            class="app-search-icon text-muted"
+                                        /> 
+                                    </div>
+                                    <div class="text-secondary small mt-1" [style.visibility]="(form.nombreCompleto.invalid && form.nombreCompleto.touched) ? 'visible' : 'hidden'">
+                                        El nombre es requerido (mínimo 3 caracteres)
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="userEmail" class="form-label">Correo</label>
                                     <div class="app-search">
-                                        <input type="email" class="form-control" id="userEmail" required formControlName="correo">
-                                         <lucide-angular
-                                        [img]="LucideMail"
-                                        class="app-search-icon text-muted"
-                                    />
+                                        <input type="email" class="form-control" id="userEmail" required formControlName="correo" [class.is-invalid]="form.correo.invalid && form.correo.touched">
+                                        <lucide-angular
+                                            [img]="LucideMail"
+                                            class="app-search-icon text-muted"
+                                        />
+                                    </div>
+                                    <div class="text-secondary small mt-1" [style.visibility]="(form.correo.invalid && form.correo.touched) ? 'visible' : 'hidden'">
+                                        @if (form.correo.errors?.['email']) {
+                                            El formato del correo es inválido
+                                        } @else {
+                                            El correo es requerido
+                                        }
                                     </div>
                                 </div>
 
                                  <div class="mb-3" data-password="bar">
                                 <label for="userPassword" class="form-label"
                                     >Contraseña
-                                    <span class="text-danger">*</span></label
+                                    <span class="text-secondary">*</span></label
                                 >
                                 <div class="app-search">
                                     <input
@@ -99,11 +109,15 @@
                                         placeholder="••••••••"
                                         required
                                         formControlName="password"
+                                        [class.is-invalid]="form.password.invalid && form.password.touched"
                                     />
                                     <lucide-angular
                                         [img]="LucideKeyRound"
                                         class="app-search-icon text-muted"
                                     />
+                                </div>
+                                <div class="text-secondary small mt-1 mb-2" [style.visibility]="(form.password.invalid && form.password.touched) ? 'visible' : 'hidden'">
+                                    La contraseña es requerida (mínimo 3 caracteres)
                                 </div>
                                 <app-password-strength-bar
                                     [password]="form.password.value"
@@ -131,7 +145,7 @@
                                     <button
                                         type="submit"
                                         class="btn btn-primary fw-bold py-2"
-                                        [disabled]="isLoading()"
+                                        [disabled]="isLoading() || loginForm.invalid"
                                     >
                                         @if (isLoading()) {
                                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

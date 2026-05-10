@@ -26,16 +26,28 @@ export class CursosService {
 
   cursoSeleccionado = signal<DbCurso | null>(null);
 
-  getAllCursos(): Observable<CursoDTO[]> {
-    return this._http.get<CursoDTO[]>(this.BASE_URL);
-  }
-
-  getCursoById(id: number): Observable<CursoDTO> {
-    return this._http.get<CursoDTO>(`${this.BASE_URL}/${id}`);
-  }
-
   getCursosDelAlumno(alumnoId: number): Observable<DbCurso[]> {
     return this._http.get<any[]>(`${this.BASE_URL}/alumno/${alumnoId}`).pipe(
+      map(cursos => cursos.map(curso => ({
+        id_curso: curso.id,
+        nombre: curso.nombre,
+        descripcion: curso.descripcion || ''
+      })))
+    );
+  }
+
+  getCursosDelProfesor(profesorId: number): Observable<DbCurso[]> {
+    return this._http.get<any[]>(`${this.BASE_URL}/profesor/${profesorId}`).pipe(
+      map(cursos => cursos.map(curso => ({
+        id_curso: curso.id,
+        nombre: curso.nombre,
+        descripcion: curso.descripcion || ''
+      })))
+    );
+  }
+
+  getAllCursos(): Observable<DbCurso[]> {
+    return this._http.get<any[]>(this.BASE_URL).pipe(
       map(cursos => cursos.map(curso => ({
         id_curso: curso.id,
         nombre: curso.nombre,
