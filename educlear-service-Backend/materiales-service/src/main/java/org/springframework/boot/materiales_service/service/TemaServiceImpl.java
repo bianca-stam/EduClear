@@ -24,10 +24,10 @@ public class TemaServiceImpl implements TemaService {
     private final IntentoExamenRepository intentoExamenRepository;
 
     public TemaServiceImpl(TemaRepository temaRepository,
-                           TareaRepository tareaRepository,
-                           ExamenRepository examenRepository,
-                           EntregaTareaRepository entregaTareaRepository,
-                           IntentoExamenRepository intentoExamenRepository) {
+            TareaRepository tareaRepository,
+            ExamenRepository examenRepository,
+            EntregaTareaRepository entregaTareaRepository,
+            IntentoExamenRepository intentoExamenRepository) {
         this.temaRepository = temaRepository;
         this.tareaRepository = tareaRepository;
         this.examenRepository = examenRepository;
@@ -148,6 +148,67 @@ public class TemaServiceImpl implements TemaService {
         return resultado;
     }
 
+    @Override
+    public List<PromedioTemaDTO> getPromediosPorAlumnoYAsignatura(Integer alumnoId, Integer asignaturaId) {
+
+        // 🔹 SOLO temas de la asignatura
+        List<Tema> temas = temaRepository.findByAsignaturaId(asignaturaId);
+
+        List<PromedioTemaDTO> resultado = new ArrayList<>();
+
+        for (Tema tema : temas) {
+            List<BigDecimal> calificaciones = new ArrayList<>();
+
+            // 1. TAREAS
+            List<Integer> tareaIds = tareaRepository.findByTemaId(tema.getId())
+                    .stream()
+                    .map(Tarea::getId)
+                    .collect(Collectors.toList());
+
+            if (!tareaIds.isEmpty()) {
+                entregaTareaRepository.findByTareaIdInAndAlumnoId(tareaIds, alumnoId)
+                        .stream()
+                        .filter(e -> e.getCalificacion() != null)
+                        .map(EntregaTarea::getCalificacion)
+                        .forEach(calificaciones::add);
+            }
+
+            // 2. EXÁMENES
+            List<Integer> examenIds = examenRepository.findByTemaId(tema.getId())
+                    .stream()
+                    .map(Examen::getId)
+                    .collect(Collectors.toList());
+
+            if (!examenIds.isEmpty()) {
+                intentoExamenRepository.findByExamenIdInAndAlumnoId(examenIds, alumnoId)
+                        .stream()
+                        .filter(i -> i.getCalificacionFinal() != null)
+                        .map(IntentoExamen::getCalificacionFinal)
+                        .forEach(calificaciones::add);
+            }
+
+            // 3. PROMEDIO
+            PromedioTemaDTO dto = new PromedioTemaDTO();
+            dto.setTemaId(tema.getId());
+            dto.setTituloTema(tema.getTitulo());
+
+            if (!calificaciones.isEmpty()) {
+                BigDecimal suma = calificaciones.stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                dto.setPromedio(
+                        suma.divide(
+                                BigDecimal.valueOf(calificaciones.size()),
+                                2,
+                                RoundingMode.HALF_UP));
+            }
+
+            resultado.add(dto);
+        }
+
+        return resultado;
+    }
+
     // ===== MAPPER =====
     private TemaDTO toDTO(Tema tema) {
 
@@ -160,4 +221,3 @@ public class TemaServiceImpl implements TemaService {
         return dto;
     }
 }
-
