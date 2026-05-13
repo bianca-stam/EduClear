@@ -1,6 +1,7 @@
 package org.springframework.boot.asignatura_service.controller;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.service.AsignaturaService;
 import org.springframework.boot.asignatura_service.model.Asignatura;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,24 @@ public class AsignaturaController {
     public ResponseEntity<Long> getAlumnosMatriculados(@PathVariable Integer id) {
         Long count = asignaturaService.contarAlumnosMatriculados(id);
         return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/alumno/{alumnoId}")
+    public ResponseEntity<List<AsignaturaDTO>> getAsignaturasByAlumno(@PathVariable Integer alumnoId) {
+        return ResponseEntity.ok(asignaturaService.findByAlumnoId(alumnoId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AsignaturaDTO> update(
+            @PathVariable Integer id,
+            @RequestBody UpdateAsignaturaDTO dto) {
+        return ResponseEntity.ok(asignaturaService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        asignaturaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

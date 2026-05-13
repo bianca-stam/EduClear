@@ -37,4 +37,12 @@ public class MatriculaAsignaturaServiceImpl implements MatriculaAsignaturaServic
         dto.setAlumnoId(matricula.getAlumnoId());
         return dto;
     }
+
+    @Override
+    public List<Integer> getAsignaturaIdsByAlumno(Integer alumnoId) {
+        return repository.findByAlumnoId(alumnoId)
+                .stream()
+                .map(MatriculaAsignatura::getAsignaturaId)
+                .collect(Collectors.toList());
+    }
 }

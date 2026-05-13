@@ -62,9 +62,15 @@ public class ExamenServiceImpl implements ExamenService {
                 .orElse(null);
     }
 
-    @Override
     public void delete(Integer id) {
         examenRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ExamenDTO> findByTemaId(Integer temaId) {
+        return examenRepository.findByTemaId(temaId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private ExamenDTO convertToDTO(Examen examen) {

@@ -20,9 +20,9 @@ public class CursoController {
     private CursoService cursoService;
     private final AsignaturaClient asignaturaClient;
 
-    public CursoController(CursoService cursoService,AsignaturaClient asignaturaClient) {
+    public CursoController(CursoService cursoService, AsignaturaClient asignaturaClient) {
         this.cursoService = cursoService;
-        this.asignaturaClient=asignaturaClient;
+        this.asignaturaClient = asignaturaClient;
     }
 
     @GetMapping
@@ -45,6 +45,15 @@ public class CursoController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         cursoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CursoDto> update(@PathVariable Integer id, @RequestBody CreateCursoDto dto) {
+        try {
+            return ResponseEntity.ok(cursoService.update(id, dto));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/profesor/{profesorId}")

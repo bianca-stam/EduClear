@@ -40,10 +40,12 @@ public class ArchivoContenidoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ArchivoContenidoDTO> update(@PathVariable Integer id, @RequestBody UpdateArchivoContenidoDTO archivoContenido) {
+    public ResponseEntity<ArchivoContenidoDTO> update(@PathVariable Integer id,
+            @RequestBody UpdateArchivoContenidoDTO archivoContenido) {
         ArchivoContenidoDTO archivoActualizado = archivoContenidoService.update(id, archivoContenido);
         if (archivoActualizado == null) {
-            throw new ResourceNotFoundException("El archivo de contenido que intentas actualizar ya no esta disponible.");
+            throw new ResourceNotFoundException(
+                    "El archivo de contenido que intentas actualizar ya no esta disponible.");
         }
         return ResponseEntity.ok(archivoActualizado);
     }
@@ -52,5 +54,10 @@ public class ArchivoContenidoController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         archivoContenidoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/tema/{temaId}")
+    public ResponseEntity<List<ArchivoContenidoDTO>> getByTemaId(@PathVariable Integer temaId) {
+        return ResponseEntity.ok(archivoContenidoService.findByTemaId(temaId));
     }
 }

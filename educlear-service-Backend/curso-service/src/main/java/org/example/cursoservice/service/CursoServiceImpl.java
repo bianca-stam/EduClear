@@ -26,7 +26,6 @@ public class CursoServiceImpl implements CursoService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public CursoDto findById(Integer id) {
         return cursoRepository.findById(id)
@@ -48,7 +47,8 @@ public class CursoServiceImpl implements CursoService {
 
     @Override
     public List<CursoDto> findByIds(List<Integer> ids) {
-        if (ids == null || ids.isEmpty()) return List.of();
+        if (ids == null || ids.isEmpty())
+            return List.of();
         return cursoRepository.findByIdIn(ids)
                 .stream()
                 .map(this::convertToDTO)
@@ -67,6 +67,19 @@ public class CursoServiceImpl implements CursoService {
         return findByIds(cursoIds);
     }
 
+    @Override
+    public CursoDto update(Integer id, CreateCursoDto dto) {
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado con id: " + id));
+        if (dto.getNombre() != null && !dto.getNombre().isBlank()) {
+            curso.setNombre(dto.getNombre());
+        }
+        if (dto.getDescripcion() != null) {
+            curso.setDescripcion(dto.getDescripcion());
+        }
+        return convertToDTO(cursoRepository.save(curso));
+    }
+
     private CursoDto convertToDTO(Curso curso) {
         CursoDto dto = new CursoDto();
         dto.setId(curso.getId());
@@ -81,6 +94,5 @@ public class CursoServiceImpl implements CursoService {
         curso.setDescripcion(dto.getDescripcion());
         return curso;
     }
-
 
 }

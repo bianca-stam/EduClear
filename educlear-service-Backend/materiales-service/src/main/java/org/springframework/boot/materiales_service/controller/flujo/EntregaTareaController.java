@@ -53,4 +53,9 @@ public class EntregaTareaController {
         entregaTareaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/alumno/{alumnoId}/tarea/{tareaId}/existe")
+    public ResponseEntity<Boolean> existsByAlumnoIdAndTareaId(@PathVariable Integer alumnoId, @PathVariable Integer tareaId) {
+        return ResponseEntity.ok(entregaTareaService.existsByAlumnoIdAndTareaId(alumnoId, tareaId));
+    }
 }

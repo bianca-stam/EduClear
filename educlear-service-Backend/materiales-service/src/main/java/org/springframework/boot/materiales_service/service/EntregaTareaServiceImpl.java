@@ -59,9 +59,13 @@ public class EntregaTareaServiceImpl implements EntregaTareaService {
                 .orElse(null);
     }
 
-    @Override
     public void delete(Integer id) {
         entregaTareaRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByAlumnoIdAndTareaId(Integer alumnoId, Integer tareaId) {
+        return entregaTareaRepository.existsByAlumnoIdAndTareaId(alumnoId, tareaId);
     }
 
     private EntregaTareaDTO convertToDTO(EntregaTarea entregaTarea) {

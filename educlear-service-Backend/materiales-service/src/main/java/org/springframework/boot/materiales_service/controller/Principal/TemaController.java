@@ -64,9 +64,23 @@ public class TemaController {
         }
     }
 
-    // Promedio de calificaciones por tema de un alumno
+    // Devuelve promedio de calificaciones por tema de un alumno
     @GetMapping("/alumno/{alumnoId}/promedios")
     public ResponseEntity<?> getPromediosPorAlumno(@PathVariable Integer alumnoId) {
         return ResponseEntity.ok(temaService.getPromediosPorAlumno(alumnoId));
+    }
+
+    // Devuelve promedio de calificaciones por tema de una asignatura de un alumno
+    @GetMapping("/alumno/{alumnoId}/asignatura/{asignaturaId}/promedios")
+    public ResponseEntity<?> getPromediosPorAlumnoYAsignatura(@PathVariable Integer alumnoId,
+            @PathVariable Integer asignaturaId) {
+        return ResponseEntity.ok(
+                temaService.getPromediosPorAlumnoYAsignatura(alumnoId, asignaturaId));
+    }
+
+    // Obtener los temas de una asignatura
+    @GetMapping("/asignatura/{asignaturaId}")
+    public ResponseEntity<?> getTemasPorAsignatura(@PathVariable Integer asignaturaId) {
+        return ResponseEntity.ok(temaService.findByAsignaturaId(asignaturaId));
     }
 }

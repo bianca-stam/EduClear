@@ -53,4 +53,9 @@ public class ExamenController {
         examenService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/tema/{temaId}")
+    public ResponseEntity<List<ExamenDTO>> getByTemaId(@PathVariable Integer temaId) {
+        return ResponseEntity.ok(examenService.findByTemaId(temaId));
+    }
 }

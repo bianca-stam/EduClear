@@ -12,4 +12,5 @@ public interface EntregaTareaService {
     EntregaTareaDTO save(CreateEntregaTareaDTO entregaTarea);
     EntregaTareaDTO update(Integer id, UpdateEntregaTareaDTO entregaTarea);
     void delete(Integer id);
+    boolean existsByAlumnoIdAndTareaId(Integer alumnoId, Integer tareaId);
 }

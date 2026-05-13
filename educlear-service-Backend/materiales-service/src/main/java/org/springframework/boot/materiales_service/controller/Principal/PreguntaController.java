@@ -53,4 +53,9 @@ public class PreguntaController {
         preguntaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/examen/{examenId}")
+    public ResponseEntity<List<PreguntaDTO>> getByExamenId(@PathVariable Integer examenId) {
+        return ResponseEntity.ok(preguntaService.findByExamenId(examenId));
+    }
 }

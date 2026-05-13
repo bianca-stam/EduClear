@@ -12,4 +12,5 @@ public interface ArchivoContenidoService {
     ArchivoContenidoDTO save(CreateArchivoContenidoDTO archivoContenido);
     ArchivoContenidoDTO update(Integer id, UpdateArchivoContenidoDTO archivoContenido);
     void delete(Integer id);
+    List<ArchivoContenidoDTO> findByTemaId(Integer temaId);
 }

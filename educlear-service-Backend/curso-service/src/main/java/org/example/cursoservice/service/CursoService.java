@@ -20,4 +20,6 @@ public interface CursoService {
 
     List<CursoDto> findCursosByAlumno(Integer alumnoId);
 
+    CursoDto update(Integer id, CreateCursoDto dto);
+
 }

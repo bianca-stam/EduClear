@@ -151,7 +151,7 @@ TRUNCATE TABLE usuarios;
 INSERT INTO usuarios (id_usuario, email, contrasena, rol, nombre_completo) VALUES
 (1, 'admin@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'admin', 'Super Administrador'),
 (2, 'profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Marcos López (DAM)'),
-(3, 'profesor@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Beatriz Sanz (ASIR)'),
+(3, 'profesor1@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'profesor', 'Beatriz Sanz (ASIR)'),
 (4, 'ana@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Ana García'),
 (5, 'luis@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Luis Ruiz'),
 (6, 'elena@educlear.com', '$2a$10$JrlV6xm5KVZVVxwzCRW8yOJ8KnYB2KeoUIRBHJdX0UNrqrW.fAdTa', 'alumno', 'Elena Belmonte'),
@@ -218,7 +218,7 @@ INSERT INTO archivos_contenido (tema_id, nombre_archivo, tipo_mime, peso_bytes, 
 
 -- 7. TAREAS (2 por tema)
 TRUNCATE TABLE tareas;
-INSERT INTO tareas (id_tema, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
+INSERT INTO tareas (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
 (1, 'Práctica 1: Hola Mundo', 'Escribe tu primer programa en Java.', '2026-05-01', '2026-05-15'),
 (1, 'Práctica 2: Variables', 'Uso de int, double y String.', '2026-05-01', '2026-05-15'),
 (9, 'Laboratorio: Permisos Bash', 'Configura un entorno con 3 usuarios.', '2026-05-10', '2026-05-20'),
@@ -226,7 +226,7 @@ INSERT INTO tareas (id_tema, titulo, descripcion, fecha_apertura, fecha_cierre) 
 
 -- 8. EXÁMENES (1 por tema)
 TRUNCATE TABLE examenes;
-INSERT INTO examenes (id_tema, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
+INSERT INTO examenes (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
 (1, 'Examen Parcial: Java Básico', 'Conceptos de sintaxis.', '2026-05-20 09:00', '2026-05-20 11:00'),
 (9, 'Test de Comandos Linux', 'Evaluación de administración Shell.', '2026-05-25 10:00', '2026-05-25 12:00'),
 (10, 'Prueba de Redes: OSI', 'Preguntas sobre capas físicas y lógicas.', '2026-06-01 08:00', '2026-06-01 10:00');

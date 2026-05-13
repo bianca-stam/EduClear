@@ -62,9 +62,15 @@ public class TareaServiceImpl implements TareaService {
                 .orElse(null);
     }
 
-    @Override
     public void delete(Integer id) {
         tareaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<TareaDTO> findByTemaId(Integer temaId) {
+        return tareaRepository.findByTemaId(temaId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private TareaDTO convertToDTO(Tarea tarea) {
