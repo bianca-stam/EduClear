@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface EntregaTareaRepository extends JpaRepository<EntregaTarea, Integer> {
     List<EntregaTarea> findByTareaIdInAndAlumnoId(List<Integer> tareaIds, Integer alumnoId);
+    boolean existsByAlumnoIdAndTareaId(Integer alumnoId, Integer tareaId);
 }

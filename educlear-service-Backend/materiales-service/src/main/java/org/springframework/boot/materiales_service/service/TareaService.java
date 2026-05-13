@@ -12,4 +12,5 @@ public interface TareaService {
     TareaDTO save(CreateTareaDTO tarea);
     TareaDTO update(Integer id, UpdateTareaDTO tarea);
     void delete(Integer id);
+    List<TareaDTO> findByTemaId(Integer temaId);
 }

@@ -68,9 +68,15 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .orElse(null);
     }
 
-    @Override
     public void delete(Integer id) {
         preguntaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PreguntaDTO> findByExamenId(Integer examenId) {
+        return preguntaRepository.findByExamenId(examenId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private PreguntaDTO convertToDTO(Pregunta pregunta) {

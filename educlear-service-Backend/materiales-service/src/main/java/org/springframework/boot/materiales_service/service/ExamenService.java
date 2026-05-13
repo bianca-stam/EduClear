@@ -12,4 +12,5 @@ public interface ExamenService {
     ExamenDTO save(CreateExamenDTO examen);
     ExamenDTO update(Integer id, UpdateExamenDTO examen);
     void delete(Integer id);
+    List<ExamenDTO> findByTemaId(Integer temaId);
 }

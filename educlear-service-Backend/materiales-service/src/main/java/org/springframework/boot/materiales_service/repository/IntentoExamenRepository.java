@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IntentoExamenRepository extends JpaRepository<IntentoExamen, Integer> {
     List<IntentoExamen> findByExamenIdInAndAlumnoId(List<Integer> examenIds, Integer alumnoId);
+    boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
 }

@@ -53,4 +53,9 @@ public class TareaController {
         tareaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/tema/{temaId}")
+    public ResponseEntity<List<TareaDTO>> getByTemaId(@PathVariable Integer temaId) {
+        return ResponseEntity.ok(tareaService.findByTemaId(temaId));
+    }
 }

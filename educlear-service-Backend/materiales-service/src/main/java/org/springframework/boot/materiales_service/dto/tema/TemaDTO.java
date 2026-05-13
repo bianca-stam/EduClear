@@ -9,7 +9,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TemaDTO {
 
-    private Integer id;
+    private Integer idTema;
     private String titulo;
     private String descripcion;
     private Integer asignaturaId;

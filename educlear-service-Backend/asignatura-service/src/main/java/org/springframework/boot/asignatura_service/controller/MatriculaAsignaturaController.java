@@ -30,4 +30,10 @@ public class MatriculaAsignaturaController {
         MatriculaAsignaturaDTO nuevaMatricula = service.guardar(matricula);
         return new ResponseEntity<>(nuevaMatricula, HttpStatus.CREATED);
     }
-}
+
+    // IDs de asignaturas en las que un alumno está matriculado
+    @GetMapping("/alumno/{alumnoId}/asignaturas")
+    public ResponseEntity<List<Integer>> getAsignaturaIdsByAlumno(@PathVariable Integer alumnoId) {
+        return ResponseEntity.ok(service.getAsignaturaIdsByAlumno(alumnoId));
+    }
+}

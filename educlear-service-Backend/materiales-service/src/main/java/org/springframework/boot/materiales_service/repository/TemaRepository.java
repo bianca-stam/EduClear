@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface TemaRepository extends JpaRepository<Tema, Integer> {
     List<Tema> findByAsignaturaId(Integer asignaturaId);
+
+    List<Tema> findByAsignaturaIdIn(List<Integer> asignaturasIds);
 }
