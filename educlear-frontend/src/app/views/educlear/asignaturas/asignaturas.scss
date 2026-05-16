@@ -9,8 +9,10 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 10px;
     width: 100%;
 }
+
 
 .asignaturas-main {
     display: flex;
@@ -23,6 +25,7 @@
 }
 
 .asignatura{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -42,17 +45,21 @@
         background-color: #fff;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease; /* Transición suave para la imagen */
+        transition: all 0.3s ease;
     }
 
-    transition: all 0.3s ease; /* Transición suave para la tarjeta */
+    transition: all 0.3s ease;
 
     &:hover {
-        transform: translateY(-5px); /* Eleva la tarjeta un poco */
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra más fuerte */
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
         .img-asignatura {
-            filter: brightness(0.8); /* Sombrea la imagen oscureciéndola */
+            filter: brightness(0.8);
+        }
+
+        .asignatura-acciones {
+            opacity: 1;
         }
     }
 
@@ -68,10 +75,26 @@
         h3,p{
             margin: 0;
         }
-
-        
     }
+}
 
+// ── Botones de acción en tarjeta ───────────────────────────────────────────
+.asignatura-acciones {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.icon-hover {
+    transition: all 0.3s ease;
+    &:hover {
+        color: #ffffff !important;
+        transform: scale(1.1);
+    }
 }
 
 .cursos-estado {
@@ -101,4 +124,4 @@
 
 .spin {
     animation: spin 1s linear infinite;
-}
+}

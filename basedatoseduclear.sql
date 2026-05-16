@@ -219,6 +219,7 @@ INSERT INTO archivos_contenido (tema_id, nombre_archivo, tipo_mime, peso_bytes, 
 -- 7. TAREAS (2 por tema)
 TRUNCATE TABLE tareas;
 INSERT INTO tareas (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
+INSERT INTO tareas (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
 (1, 'Práctica 1: Hola Mundo', 'Escribe tu primer programa en Java.', '2026-05-01', '2026-05-15'),
 (1, 'Práctica 2: Variables', 'Uso de int, double y String.', '2026-05-01', '2026-05-15'),
 (9, 'Laboratorio: Permisos Bash', 'Configura un entorno con 3 usuarios.', '2026-05-10', '2026-05-20'),
@@ -226,6 +227,7 @@ INSERT INTO tareas (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) 
 
 -- 8. EXÁMENES (1 por tema)
 TRUNCATE TABLE examenes;
+INSERT INTO examenes (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
 INSERT INTO examenes (tema_id, titulo, descripcion, fecha_apertura, fecha_cierre) VALUES
 (1, 'Examen Parcial: Java Básico', 'Conceptos de sintaxis.', '2026-05-20 09:00', '2026-05-20 11:00'),
 (9, 'Test de Comandos Linux', 'Evaluación de administración Shell.', '2026-05-25 10:00', '2026-05-25 12:00'),

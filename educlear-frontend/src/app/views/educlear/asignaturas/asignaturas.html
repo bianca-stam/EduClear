@@ -8,6 +8,11 @@
                 placeholder="Buscar asignatura..." (input)="buscarAsignatura($event.target.value)">
             <lucide-icon [img]="search" class="app-search-icon text-muted" />
         </div>
+        @if (esAdminOProfesor()) {
+            <button class="btn btn-primary fw-semibold py-2" (click)="nuevaAsignatura()">
+                Nueva asignatura
+            </button>
+        }
     </div>
 </div>
 <div class="asignaturas-main">
@@ -44,6 +49,24 @@
                         </li>
                     </ul>
                 </div>
+                @if (puedeEditarAsignatura(asignatura)) {
+                    <div class="asignatura-acciones d-flex align-items-center" (click)="$event.stopPropagation()">
+                        <div class="topbar-item d-flex align-items-center px-2">
+                            <a (click)="editarAsignatura($event, asignatura)" class="text-primary d-flex align-items-center icon-hover" title="Editar asignatura" style="cursor: pointer; text-decoration: none;">
+                                <lucide-icon [img]="pencil" [size]="22"></lucide-icon>
+                            </a>
+                        </div>
+                        <div class="topbar-item d-flex align-items-center px-2">
+                            <a (click)="eliminarAsignatura($event, asignatura)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar asignatura" style="cursor: pointer; text-decoration: none;">
+                                @if (eliminandoId() === asignatura.id_asignatura) {
+                                    <lucide-icon [img]="loader" [size]="22" class="spin"></lucide-icon>
+                                } @else {
+                                    <lucide-icon [img]="trash" [size]="22"></lucide-icon>
+                                }
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>  
         }
 
@@ -55,3 +78,10 @@
     }
 </div>
 
+<app-confirm-modal
+    [isOpen]="mostrarModalConfirmacion()"
+    [message]="'¿Estás seguro de que quieres eliminar la asignatura'"
+    [itemName]="itemAEliminar()?.nombre || ''"
+    (confirm)="confirmarEliminacion()"
+    (cancel)="cerrarConfirmacion()"
+></app-confirm-modal>

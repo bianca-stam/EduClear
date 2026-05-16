@@ -47,39 +47,36 @@ export class AsignaturasService {
     });
   }
 
-  getAsignaturasDelAlumno(alumnoId: number): Observable<DbAsignatura[]> {
-    return forkJoin({
-      asignaturas: this._http.get<any[]>(this.ASIGNATURAS_URL),
-      matriculas: this._http.get<any[]>(this.MATRICULAS_URL)
-    }).pipe(
-      map(({ asignaturas, matriculas }) => {
-        const alumnoMatriculas = matriculas
-          .filter(m => m.alumnoId === alumnoId)
-          .map(m => m.asignaturaId);
-
-        return asignaturas
-          .filter(a => alumnoMatriculas.includes(a.id))
-          .map(a => ({
-            id_asignatura: a.id,
-            nombre: a.nombre,
-            curso_id: a.cursoId,
-            profesor_id: a.profesorId
-          }));
-      })
+  getAlumnosByAsignatura(asignaturaId: number): Observable<number[]> {
+    return this._http.get<any[]>(this.MATRICULAS_URL).pipe(
+      map(matriculas => matriculas
+        .filter(m => m.asignaturaId === asignaturaId)
+        .map(m => m.alumnoId)
+      )
     );
   }
 
-  // Obtener temas por ID de asignatura (filtrado en frontend - backend no tiene endpoint filtrado)
+  /** Usa el endpoint directo del backend: GET /asignaturas/alumno/{alumnoId} */
+  getAsignaturasDelAlumno(alumnoId: number): Observable<DbAsignatura[]> {
+    return this._http.get<any[]>(`${this.ASIGNATURAS_URL}/alumno/${alumnoId}`).pipe(
+      map(data => data.map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      })))
+    );
+  }
+
+  /** Usa el endpoint filtrado del backend: GET /temas/asignatura/{asignaturaId} */
   getTemasByAsignatura(asignaturaId: number): Observable<DbTema[]> {
-    return this._http.get<any[]>(this.TEMAS_URL).pipe(
-      map(data => data
-        .filter(t => t.asignaturaId === asignaturaId)
-        .map(t => ({
-          id_tema: t.id,
-          titulo: t.titulo,
-          descripcion: t.descripcion,
-          asignatura_id: t.asignaturaId
-        })))
+    return this._http.get<any[]>(`${this.TEMAS_URL}/asignatura/${asignaturaId}`).pipe(
+      map(data => data.map(t => ({
+        id_tema: t.idTema,
+        titulo: t.titulo,
+        descripcion: t.descripcion,
+        asignatura_id: t.asignaturaId
+      })))
     );
   }
 
@@ -92,6 +89,52 @@ export class AsignaturasService {
         const temaIds = temas.map(t => t.id_tema);
         return promedios.filter(p => temaIds.includes(p.temaId));
       })
+    );
+  }
+
+  /** Usa el endpoint directo: GET /temas/alumno/{alumnoId}/asignatura/{asignaturaId}/promedios */
+  getPromediosPorAlumnoYAsignatura(alumnoId: number, asignaturaId: number): Observable<DbCalificacionesAlumno[]> {
+    return this._http.get<DbCalificacionesAlumno[]>(
+      `${this.TEMAS_URL}/alumno/${alumnoId}/asignatura/${asignaturaId}/promedios`
+    );
+  }
+
+  // ── Escritura (admin/profesor) ─────────────────────────────────────────────
+
+  crearAsignatura(payload: { nombre: string; cursoId: number; profesorId: number }): Observable<DbAsignatura> {
+    return this._http.post<any>(this.ASIGNATURAS_URL, payload).pipe(
+      map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      }))
+    );
+  }
+
+  editarAsignatura(id: number, payload: { nombre: string; profesorId: number }): Observable<DbAsignatura> {
+    return this._http.put<any>(`${this.ASIGNATURAS_URL}/${id}`, payload).pipe(
+      map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      }))
+    );
+  }
+
+  eliminarAsignatura(id: number): Observable<void> {
+    return this._http.delete<void>(`${this.ASIGNATURAS_URL}/${id}`);
+  }
+
+  getAsignaturaById(id: number): Observable<DbAsignatura> {
+    return this._http.get<any>(`${this.ASIGNATURAS_URL}/${id}`).pipe(
+      map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      }))
     );
   }
 }

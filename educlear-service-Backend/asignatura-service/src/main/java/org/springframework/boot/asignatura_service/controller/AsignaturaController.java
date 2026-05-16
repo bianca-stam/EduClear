@@ -2,6 +2,7 @@ package org.springframework.boot.asignatura_service.controller;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.service.AsignaturaService;
 import org.springframework.boot.asignatura_service.model.Asignatura;
 import org.springframework.http.HttpStatus;
