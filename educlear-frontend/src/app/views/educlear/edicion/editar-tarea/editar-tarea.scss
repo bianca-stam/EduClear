@@ -1,0 +1,7 @@
+.icon-hover {
+    transition: all 0.3s ease;
+    &:hover {
+        color: #ffffff !important;
+        transform: scale(1.1);
+    }
+}

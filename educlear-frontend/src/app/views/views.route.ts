@@ -7,6 +7,7 @@ import { cursoSeleccionadoGuard } from '@core/guards/curso-seleccionado.guard';
 import { Asignatura } from './educlear/asignaturas/asignatura/asignatura';
 import { asignaturaSeleccionadaGuard } from '@core/guards/asignatura-seleccionada.guard';
 import { Tema } from './educlear/tema/tema';
+import { adminProfesorGuard } from '@core/guards/admin-profesor.guard';
 
 export const VIEWS_ROUTES: Routes = [
     {
@@ -116,5 +117,61 @@ export const VIEWS_ROUTES: Routes = [
         path: 'area-personal',
         loadComponent: () => import('./educlear/area-personal/area-personal').then(m => m.AreaPersonal),
         data: {title: "Área personal"}
+    },
+    {
+        path: 'edicion',
+        canActivate: [adminProfesorGuard],
+        children: [
+            {
+                path: 'curso/nuevo',
+                loadComponent: () => import('./educlear/edicion/editar-curso/editar-curso').then(m => m.EditarCurso),
+                data: {title: "Nuevo curso"}
+            },
+            {
+                path: 'curso/:id',
+                loadComponent: () => import('./educlear/edicion/editar-curso/editar-curso').then(m => m.EditarCurso),
+                data: {title: "Editar curso"}
+            },
+            {
+                path: 'asignatura/nueva',
+                loadComponent: () => import('./educlear/edicion/editar-asignatura/editar-asignatura').then(m => m.EditarAsignatura),
+                data: {title: "Nueva asignatura"}
+            },
+            {
+                path: 'asignatura/:id',
+                loadComponent: () => import('./educlear/edicion/editar-asignatura/editar-asignatura').then(m => m.EditarAsignatura),
+                data: {title: "Editar asignatura"}
+            },
+            {
+                path: 'tema/nuevo',
+                loadComponent: () => import('./educlear/edicion/editar-tema/editar-tema').then(m => m.EditarTema),
+                data: {title: "Nuevo tema"}
+            },
+            {
+                path: 'tema/:id',
+                loadComponent: () => import('./educlear/edicion/editar-tema/editar-tema').then(m => m.EditarTema),
+                data: {title: "Editar tema"}
+            },
+            {
+                path: 'tarea/nueva',
+                loadComponent: () => import('./educlear/edicion/editar-tarea/editar-tarea').then(m => m.EditarTarea),
+                data: {title: "Nueva tarea"}
+            },
+            {
+                path: 'tarea/:id',
+                loadComponent: () => import('./educlear/edicion/editar-tarea/editar-tarea').then(m => m.EditarTarea),
+                data: {title: "Editar tarea"}
+            },
+            {
+                path: 'examen/nuevo',
+                loadComponent: () => import('./educlear/edicion/editar-examen/editar-examen').then(m => m.EditarExamen),
+                data: {title: "Nuevo examen"}
+            },
+            {
+                path: 'examen/:id',
+                loadComponent: () => import('./educlear/edicion/editar-examen/editar-examen').then(m => m.EditarExamen),
+                data: {title: "Editar examen"}
+            }
+        ]
     }
 ];

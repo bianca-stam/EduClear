@@ -1,0 +1,161 @@
+<div class="container-fluid">
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <app-page-title [title]="tituloHeader()" [hideBreadcrumbs]="true" [breadcrumbs]="[{ label: 'Asignaturas', url: '/asignaturas' }, { label: tituloHeader(), url: '' }]" />
+
+    <!-- ── Cargando datos en modo edición ───────────────────────────────────── -->
+    @if (isLoadingData()) {
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="ec-estado">
+                    <lucide-icon [img]="loader" [size]="32" class="spin" />
+                    <p>Cargando datos...</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!isLoadingData()) {
+        <!-- ── Formulario ─────────────────────────────────────────────────────── -->
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="title mb-4 d-flex align-items-center gap-2">
+                    <a (click)="volver()" class="text-primary d-flex align-items-center icon-hover" title="Volver" style="cursor: pointer; text-decoration: none;">
+                        <lucide-icon [img]="arrowLeft" [size]="22"></lucide-icon>
+                    </a>
+                    <h2 style="margin: 0;">Datos de la asignatura</h2>
+                </div>
+
+                <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="nombre-asig" class="form-label">Nombre de la asignatura <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="nombre-asig"
+                                formControlName="nombre"
+                                placeholder="Ej: Matemáticas Avanzadas"
+                                autocomplete="off"
+                                [class.is-invalid]="campoNombreInvalido()"
+                            />
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoNombreInvalido() ? 'visible' : 'hidden'">
+                            @if (form.get('nombre')?.hasError('minlength')) {
+                                Mínimo 3 caracteres
+                            } @else {
+                                El nombre es obligatorio
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Profesor -->
+                    <div class="mb-3">
+                        <label for="profesor-asig" class="form-label">Profesor asignado <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            @if (profesores().length > 0) {
+                                <select choicesSelect [options]="opcionesProfesor()" id="profesor-asig" class="form-control" formControlName="profesorId" [class.is-invalid]="campoProfesorInvalido()">
+                                </select>
+                            } @else {
+                                <select class="form-control" disabled>
+                                    <option>Cargando profesores...</option>
+                                </select>
+                            }
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoProfesorInvalido() ? 'visible' : 'hidden'">
+                            Debes seleccionar un profesor
+                        </div>
+                    </div>
+
+                    <!-- Feedback global -->
+                    @if (errorMsg()) {
+                        <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                            <lucide-icon [img]="alertCircle" [size]="16" />
+                            <div>{{ errorMsg() }}</div>
+                        </div>
+                    }
+                    @if (exitoMsg()) {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
+                            <lucide-icon [img]="checkCircle" [size]="16" />
+                            <div>{{ exitoMsg() }}</div>
+                        </div>
+                    }
+
+                    <!-- Botón guardar -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-primary fw-semibold py-2" (click)="volver()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-secondary fw-semibold py-2" [disabled]="isGuardando()">
+                            @if (isGuardando()) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Guardando...
+                            } @else {
+                                {{ modoEdicion() ? 'Guardar cambios' : 'Crear asignatura' }}
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ── Sección temas (solo en modo edición) ───────────────────────────── -->
+        @if (modoEdicion()) {
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="title mb-4 d-flex align-items-center justify-content-between">
+                        <h2 style="margin: 0;">Temas de la asignatura</h2>
+                        <button class="btn btn-secondary fw-semibold py-2" (click)="nuevoTema()">
+                            Añadir tema
+                        </button>
+                    </div>
+
+                    @if (isLoadingTemas()) {
+                        <div class="ec-estado">
+                            <lucide-icon [img]="loader" [size]="32" class="spin" />
+                            <p>Cargando temas...</p>
+                        </div>
+                    } @else if (temas().length === 0) {
+                        <div class="ec-estado">
+                            <p>Esta asignatura no tiene temas todavía.</p>
+                        </div>
+                    } @else {
+                        <div class="ec-temas-lista">
+                            @for (tema of temas(); track tema.id_tema) {
+                                <div class="ec-tema-row">
+                                    <div class="ec-tema-info">
+                                        <span class="ec-tema-nombre">{{ tema.titulo }}</span>
+                                        @if (tema.descripcion) {
+                                            <span class="ec-tema-desc">{{ tema.descripcion }}</span>
+                                        }
+                                    </div>
+                                    <div class="ec-tema-acciones d-flex align-items-center" style="gap: 12px;">
+                                        <a (click)="editarTema(tema)" class="text-primary d-flex align-items-center icon-hover" title="Editar tema" style="cursor: pointer; text-decoration: none;">
+                                            <lucide-icon [img]="pencil" [size]="16"></lucide-icon>
+                                        </a>
+                                        <a (click)="eliminarTema(tema)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar tema" style="cursor: pointer; text-decoration: none;">
+                                            @if (eliminandoTemaId() === tema.id_tema) {
+                                                <lucide-icon [img]="loader" [size]="16" class="spin"></lucide-icon>
+                                            } @else {
+                                                <lucide-icon [img]="trash" [size]="16"></lucide-icon>
+                                            }
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+
+    <app-confirm-modal
+        [isOpen]="mostrarModalConfirmacion()"
+        [message]="'¿Seguro que quieres eliminar el tema'"
+        [itemName]="itemAEliminar()?.titulo || ''"
+        (confirm)="confirmarEliminacion()"
+        (cancel)="cerrarConfirmacion()"
+    ></app-confirm-modal>
+</div>

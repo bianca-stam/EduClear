@@ -16,6 +16,7 @@ export interface BreadcrumbItem {
                 <h4 class="fs-xl fw-bold m-0">{{ title }}</h4>
             </div>
 
+            @if (!hideBreadcrumbs) {
             <div class="text-end">
                 <ol class="breadcrumb m-0 py-0">
                     @if (breadcrumbs && breadcrumbs.length > 0) {
@@ -50,6 +51,7 @@ export interface BreadcrumbItem {
                     }
                 </ol>
             </div>
+            }
         </div>
     `
 })
@@ -57,4 +59,5 @@ export class PageTitle {
     @Input() title: string = 'Welcome!';
     @Input() subTitle: string | null = null;
     @Input() breadcrumbs?: BreadcrumbItem[] = [];
+    @Input() hideBreadcrumbs: boolean = false;
 }

@@ -8,6 +8,11 @@
                 placeholder="Buscar curso..." (input)="buscarCurso($any($event.target).value)">
             <lucide-icon [img]="search" class="app-search-icon text-muted" />
         </div>
+        @if (esAdminOProfesor()) {
+            <button class="btn btn-primary fw-semibold py-2" (click)="navegarACrear()">
+                Nuevo curso
+            </button>
+        }
     </div>
 </div>
 
@@ -33,19 +38,33 @@
                     <h3>{{ curso.nombre }}</h3>
                 </div>
                 @if (esAdminOProfesor()) {
-                    <div class="topbar-item d-flex align-items-center px-2">
-                        <a class="text-primary d-flex align-items-center" title="Editar curso" style="cursor: pointer; text-decoration: none;" (click)="$event.stopPropagation()">
-                            <lucide-angular [img]="pencil" class="fs-22"></lucide-angular>
-                        </a>
+                    <div class="curso-acciones">
+                        <div class="topbar-item d-flex align-items-center px-2">
+                            <a (click)="navegarAEditar($event, curso)" class="text-primary d-flex align-items-center icon-hover" title="Editar curso" style="cursor: pointer; text-decoration: none;">
+                                <lucide-angular [img]="pencil" class="fs-22"></lucide-angular>
+                            </a>
+                        </div>
+                        <div class="topbar-item d-flex align-items-center px-2">
+                            <a (click)="confirmarEliminar($event, curso)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar curso" style="cursor: pointer; text-decoration: none;">
+                                <lucide-angular [img]="trash" class="fs-22"></lucide-angular>
+                            </a>
+                        </div>
                     </div>
                 }
             </div>
         }
         @if (cursos().length === 0) {
             <div class="cursos-estado">
-                <p>No se encontraron cursos con "{{ terminoBusqueda() }}"</p>
+                <p>No se encontraron cursos{{ terminoBusqueda() ? ' con "' + terminoBusqueda() + '"' : '' }}</p>
             </div>
         }
     }
 </div>
 
+<app-confirm-modal
+    [isOpen]="mostrarModalConfirmacion()"
+    [message]="'¿Estás seguro de que quieres eliminar el curso'"
+    [itemName]="itemAEliminar()?.nombre || ''"
+    (confirm)="ejecutarEliminacion()"
+    (cancel)="cerrarConfirmacion()"
+></app-confirm-modal>

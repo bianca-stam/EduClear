@@ -1,0 +1,245 @@
+<div class="container-fluid">
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <app-page-title [title]="tituloHeader()" [hideBreadcrumbs]="true" [breadcrumbs]="[{ label: 'Temas', url: '/temas' }, { label: tituloHeader(), url: '' }]" />
+
+    <!-- ── Estado: cargando datos ─────────────────────────────────────────────── -->
+    @if (isLoadingData()) {
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="ec-estado">
+                    <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                    <p>Cargando tema…</p>
+                </div>
+            </div>
+        </div>
+    } @else {
+
+        <!-- ── Card: formulario ─────────────────────────────────────────────── -->
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="title mb-4 d-flex align-items-center gap-2">
+                    <a (click)="volver()" class="text-primary d-flex align-items-center icon-hover" title="Volver" style="cursor: pointer; text-decoration: none;">
+                        <lucide-icon [img]="arrowLeft" [size]="22"></lucide-icon>
+                    </a>
+                    <h2 style="margin: 0;">Información del tema</h2>
+                </div>
+
+                <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="tema-titulo" class="form-label">Título <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="tema-titulo"
+                                formControlName="titulo"
+                                placeholder="Ej. Introducción a la programación orientada a objetos"
+                                autocomplete="off"
+                                [class.is-invalid]="campoTituloInvalido()"
+                            />
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoTituloInvalido() ? 'visible' : 'hidden'">
+                            El título es obligatorio (mínimo 3 caracteres)
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="tema-descripcion" class="form-label">Descripción <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <textarea
+                                class="form-control"
+                                id="tema-descripcion"
+                                formControlName="descripcion"
+                                rows="4"
+                                placeholder="Describe brevemente los objetivos y contenido de este tema…"
+                                [class.is-invalid]="campoDescripcionInvalido()"
+                            ></textarea>
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoDescripcionInvalido() ? 'visible' : 'hidden'">
+                            La descripción es obligatoria (mínimo 5 caracteres)
+                        </div>
+                    </div>
+
+                    <!-- Alerts de feedback -->
+                    @if (errorMsg()) {
+                        <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" id="alert-error-tema" role="alert">
+                            <lucide-icon [img]="alertCircle" [size]="16"></lucide-icon>
+                            <div>{{ errorMsg() }}</div>
+                        </div>
+                    }
+                    @if (exitoMsg()) {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-3" id="alert-exito-tema" role="alert">
+                            <lucide-icon [img]="checkCircle" [size]="16"></lucide-icon>
+                            <div>{{ exitoMsg() }}</div>
+                        </div>
+                    }
+
+                    <!-- Botón guardar -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-primary fw-semibold py-2" (click)="volver()">
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn btn-secondary fw-semibold py-2"
+                            id="btn-guardar-tema"
+                            [disabled]="form.invalid || isGuardando()"
+                        >
+                            @if (isGuardando()) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>Guardando…</span>
+                            } @else {
+                                <span>Guardar tema</span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ── Card: contenidos (solo en modo edición) ─────────────────────── -->
+        @if (modoEdicion()) {
+
+            <!-- Archivos -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="title mb-4">
+                        <h2 style="margin: 0;">Archivos</h2>
+                    </div>
+
+                    @if (isLoadingContenidos() && archivosUpload().length === 0) {
+                        <div class="ec-estado">
+                            <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                            <p>Cargando archivos...</p>
+                        </div>
+                    } @else {
+                        <div class="w-100 mt-2 mb-4 rounded-3 p-3 uploader-container" style="background-color: var(--ins-body-bg);">
+                            <FileUploader 
+                                #uploader 
+                                [uploadedFiles]="archivosUpload()" 
+                                [maxFiles]="50"
+                                (fileAddedEvent)="onFileAdded($event)"
+                                (fileRemoved)="onFileRemoved($event)"
+                            />
+                            @if (isSubmittingFiles()) {
+                                <div class="d-flex justify-content-center align-items-center mt-3 text-primary">
+                                    <lucide-icon [img]="loader" class="spin me-2" [size]="20"></lucide-icon>
+                                    <span>Subiendo archivo...</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Tareas -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="title mb-4 d-flex justify-content-between align-items-center">
+                        <h2 style="margin: 0;">Tareas</h2>
+                        <button class="btn btn-secondary fw-semibold py-2" (click)="irANuevaTarea()">
+                            Añadir tarea
+                        </button>
+                    </div>
+
+                    @if (isLoadingContenidos() && tareas().length === 0) {
+                        <div class="ec-estado">
+                            <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                            <p>Cargando tareas...</p>
+                        </div>
+                    } @else {
+                        @if (tareas().length === 0) {
+                            <div class="ec-estado">
+                                <p>No hay tareas en este tema.</p>
+                            </div>
+                        } @else {
+                            <div class="ec-contenido-lista">
+                                @for (tarea of tareas(); track tarea.id_tarea) {
+                                    <div class="ec-contenido-row">
+                                        <div class="ec-contenido-info">
+                                            <div class="ec-contenido-icon ec-contenido-icon--tarea">
+                                                <lucide-icon [img]="fileText" [size]="20"></lucide-icon>
+                                            </div>
+                                            <div class="ec-contenido-texto">
+                                                <span class="ec-contenido-nombre">{{ tarea.titulo }}</span>
+                                                <span class="ec-contenido-fecha">Cierre: {{ tarea.fecha_cierre | date:'dd/MM/yyyy HH:mm' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap: 12px;">
+                                            <a (click)="editarTarea(tarea.id_tarea)" class="text-primary d-flex align-items-center icon-hover" title="Editar tarea" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="pencil" [size]="16"></lucide-icon>
+                                            </a>
+                                            <a (click)="eliminarTarea(tarea.id_tarea, tarea.titulo)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar tarea" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="trash" [size]="16"></lucide-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Exámenes -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="title mb-4 d-flex justify-content-between align-items-center">
+                        <h2 style="margin: 0;">Exámenes</h2>
+                        <button class="btn btn-secondary fw-semibold py-2" (click)="irANuevoExamen()">
+                            Añadir examen
+                        </button>
+                    </div>
+
+                    @if (isLoadingContenidos() && examenes().length === 0) {
+                        <div class="ec-estado">
+                            <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                            <p>Cargando exámenes...</p>
+                        </div>
+                    } @else {
+                        @if (examenes().length === 0) {
+                            <div class="ec-estado">
+                                <p>No hay exámenes en este tema.</p>
+                            </div>
+                        } @else {
+                            <div class="ec-contenido-lista">
+                                @for (examen of examenes(); track examen.id_examen) {
+                                    <div class="ec-contenido-row">
+                                        <div class="ec-contenido-info">
+                                            <div class="ec-contenido-icon ec-contenido-icon--examen">
+                                                <lucide-icon [img]="fileText" [size]="20"></lucide-icon>
+                                            </div>
+                                            <div class="ec-contenido-texto">
+                                                <span class="ec-contenido-nombre">{{ examen.titulo }}</span>
+                                                <span class="ec-contenido-fecha">Cierre: {{ examen.fecha_cierre | date:'dd/MM/yyyy HH:mm' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap: 12px;">
+                                            <a (click)="editarExamen(examen.id_examen)" class="text-primary d-flex align-items-center icon-hover" title="Editar examen" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="pencil" [size]="16"></lucide-icon>
+                                            </a>
+                                            <a (click)="eliminarExamen(examen.id_examen, examen.titulo)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar examen" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="trash" [size]="16"></lucide-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+
+    <app-confirm-modal
+        [isOpen]="mostrarModalConfirmacion()"
+        [message]="modalMessage"
+        [itemName]="itemAEliminar()?.nombre || ''"
+        (confirm)="confirmarEliminacion()"
+        (cancel)="cerrarConfirmacion()"
+    ></app-confirm-modal>
+</div>

@@ -9,7 +9,32 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 12px;
     width: 100%;
+}
+
+.btn-nuevo-curso {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #f7971e, #e05c00);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    &:active {
+        transform: translateY(0);
+    }
 }
 
 .cursos-main {
@@ -25,32 +50,89 @@
 .curso-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
 }
 
 .curso {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    width: 75%;
-    height: 100%;
+    flex: 1;
     background-color: #565656;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px 25px;
+    padding: 18px 25px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    min-height: 64px;
 
     h3 {
         margin: 0;
     }
 
-    &:hover {
-        background-color: #666666;
+    .curso-descripcion {
+        margin: 4px 0 0;
+        font-size: 0.82rem;
+        color: #bbb;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
+.curso-acciones {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+
+    a {
+        transition: all 0.3s ease;
+        &:hover {
+            color: #ffffff !important;
+            transform: scale(1.1);
+        }
+    }
+}
+
+.btn-accion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
+
+    &.btn-editar {
+        background-color: rgba(90, 160, 255, 0.15);
+        color: #5aa0ff;
+
+        &:hover {
+            background-color: rgba(90, 160, 255, 0.28);
+        }
+    }
+
+    &.btn-eliminar {
+        background-color: rgba(229, 115, 115, 0.15);
+        color: #e57373;
+
+        &:hover {
+            background-color: rgba(229, 115, 115, 0.28);
+        }
+
+        &.cargando {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}
 
 .alumnos-badge {
     font-size: 0.8rem;
