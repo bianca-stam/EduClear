@@ -10,18 +10,36 @@ import { DbArchivoEntrega, DbEntregaTarea } from '@core/models/db-models';
 export class TareasService {
   private _http = inject(HttpClient);
   private readonly ENTREGAS_URL = `${environment.apiUrl}/materiales/entregas-tarea`;
+  private readonly ARCHIVOS_ENTREGA_URL = `${environment.apiUrl}/materiales/archivos-entrega`;
+
+  /** Comprueba si ya existe una entrega del alumno para la tarea (endpoint filtrado del backend) */
+  existeEntrega(alumnoId: number, tareaId: number): Observable<boolean> {
+    return this._http.get<boolean>(
+      `${this.ENTREGAS_URL}/alumno/${alumnoId}/tarea/${tareaId}/existe`
+    );
+  }
 
   getEntrega(tareaId: number, alumnoId: number): Observable<DbEntregaTarea | undefined> {
     return this._http.get<any[]>(this.ENTREGAS_URL).pipe(
       map(entregas => entregas.map(e => ({
         id_entrega_tarea: e.id,
-
-
         tarea_id: e.tareaId,
         alumno_id: e.alumnoId,
         estado_entrega: e.estadoEntrega,
         calificacion: e.calificacion
       })).find(e => e.tarea_id === tareaId && e.alumno_id === alumnoId))
+    );
+  }
+
+  getAllEntregas(): Observable<DbEntregaTarea[]> {
+    return this._http.get<any[]>(this.ENTREGAS_URL).pipe(
+      map(entregas => entregas.map(e => ({
+        id_entrega_tarea: e.id,
+        tarea_id: e.tareaId,
+        alumno_id: e.alumnoId,
+        estado_entrega: e.estadoEntrega,
+        calificacion: e.calificacion
+      })))
     );
   }
 
@@ -50,22 +68,22 @@ export class TareasService {
   }
 
   subirArchivoEntrega(data: any): Observable<any> {
-    return this._http.post<any>(`${environment.apiUrl}/materiales/archivos-entrega`, data);
+    return this._http.post<any>(this.ARCHIVOS_ENTREGA_URL, data);
   }
 
   actualizarArchivoEntrega(id: number, data: any): Observable<any> {
-    return this._http.patch<any>(`${environment.apiUrl}/materiales/archivos-entrega/${id}`, data);
+    return this._http.patch<any>(`${this.ARCHIVOS_ENTREGA_URL}/${id}`, data);
   }
 
   getArchivosEntrega(entregaId: number): Observable<DbArchivoEntrega[]> {
-    return this._http.get<any[]>(`${environment.apiUrl}/materiales/archivos-entrega/entrega/${entregaId}`).pipe(
+    return this._http.get<any[]>(`${this.ARCHIVOS_ENTREGA_URL}/entrega/${entregaId}`).pipe(
       map(archivos => archivos.map(a => ({
         id_archivo_tarea: a.id,
         entrega_id: a.entregaId,
         nombre_archivo: a.nombreArchivo,
         tipo_mime: a.tipoMime,
         peso_bytes: a.pesoBytes,
-        archivo_blob: a.archivoBlob // Assuming frontend might use this
+        archivo_blob: a.archivoBlob
       })))
     );
   }

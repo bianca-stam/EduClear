@@ -7,4 +7,6 @@ import java.util.List;
 public interface MatriculaAsignaturaService {
     List<MatriculaAsignaturaDTO> obtenerTodas();
     MatriculaAsignaturaDTO guardar(MatriculaAsignatura matricula);
+    List<Integer> getAsignaturaIdsByAlumno(Integer alumnoId);
+    List<Integer> getAlumnoIdsByAsignatura(Integer asignaturaId);
 }

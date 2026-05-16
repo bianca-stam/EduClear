@@ -1,6 +1,13 @@
-<div class="asignatura-header">
+<div class="asignatura-header d-flex justify-content-between align-items-center">
     <div class="title">
         <h2>{{asignaturaSeleccionada()?.nombre}}</h2>
+    </div>
+    <div class="asignaturas-buscador">
+        @if (puedeEditarAsignatura()) {
+            <button class="btn btn-primary fw-semibold py-2" (click)="nuevoTema()">
+                Nuevo tema
+            </button>
+        }
     </div>
 </div>
 <div class="asignatura-main">
@@ -48,9 +55,19 @@
                                                             <lucide-icon [img]="arrowRight" class="app-search-icon text-muted" />
                                                         </div>
                                                     </div>
-                                                    @if (tema.descripcion) {
-                                                        <div class="tema_body">
+                                                    @if (tema.descripcion || puedeEditarAsignatura()) {
+                                                        <div class="tema_body d-flex justify-content-between align-items-center">
                                                             <span>{{tema.descripcion}}</span>
+                                                            @if (puedeEditarAsignatura()) {
+                                                                <div class="tema-acciones d-flex align-items-center" style="gap: 12px;">
+                                                                    <a (click)="editarTema($event, tema)" class="text-primary d-flex align-items-center icon-hover" title="Editar tema" style="cursor: pointer; text-decoration: none;">
+                                                                        <lucide-icon [img]="pencil" [size]="22"></lucide-icon>
+                                                                    </a>
+                                                                    <a (click)="eliminarTema($event, tema)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar tema" style="cursor: pointer; text-decoration: none;">
+                                                                        <lucide-icon [img]="trash" [size]="22"></lucide-icon>
+                                                                    </a>
+                                                                </div>
+                                                            }
                                                         </div>
                                                     }
                                                 </div>
@@ -69,32 +86,73 @@
                                     <span class="d-none d-md-block">Calificaciones</span>
                                 </a>
                                 <ng-template ngbNavContent>
-                                    <div class="calificaciones-container">
-                                        <div class="calificaciones-grid">
-                                            <!-- Header -->
-                                            <div class="grid-header">Tema</div>
-                                            <div class="grid-header">Promedio</div>
+                                    @if (puedeEditarAsignatura()) {
+                                        <div class="calificaciones-container profesor-view">
+                                            <div class="calificaciones-grid-profesor">
+                                                <!-- Header -->
+                                                <div class="grid-header">Tarea</div>
+                                                <div class="grid-header">Alumno</div>
+                                                <div class="grid-header text-center">Archivo</div>
+                                                <div class="grid-header text-center">Calificación</div>
+                                                <div class="grid-header text-center">Acciones</div>
 
-                                            <!-- Filas -->
-                                            @for (promedio of promedios(); track promedio.temaId) {
-                                                <div class="grid-cell tema-nombre">{{ promedio.tituloTema }}</div>
-                                                @if (promedio.promedio != null) {
-                                                    <div class="grid-cell promedio" [class.text-primary]="promedio.promedio >= 5" [class.text-secondary]="promedio.promedio < 5">
-                                                        {{ promedio.promedio | number:'1.1-2' }}
+                                                <!-- Filas -->
+                                                @for (entrega of entregasProfesor(); track entrega.id_entrega_tarea) {
+                                                    <div class="grid-cell tarea-nombre">{{ entrega.tareaNombre }}</div>
+                                                    <div class="grid-cell alumno-nombre">{{ entrega.alumnoNombre }}</div>
+                                                    <div class="grid-cell text-center d-flex justify-content-center align-items-center">
+                                                        <a (click)="descargarArchivo(entrega.id_entrega_tarea)" class="text-primary d-flex align-items-center icon-hover" title="Descargar archivo" style="cursor: pointer; text-decoration: none;">
+                                                            <lucide-icon [img]="fileDown" [size]="24"></lucide-icon>
+                                                        </a>
                                                     </div>
-                                                } @else {
-                                                    <div class="grid-cell promedio text-muted fst-italic fs-4">
-                                                        Sin calificar
+                                                    <div class="grid-cell calificacion-input d-flex justify-content-center align-items-center">
+                                                        <input type="number" class="form-control text-center" style="width: 80px;" min="1" max="10" [(ngModel)]="entrega.nuevaNota" />
+                                                    </div>
+                                                    <div class="grid-cell text-center d-flex justify-content-center align-items-center">
+                                                        <button class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center gap-2" (click)="guardarNota(entrega)" [disabled]="savingGrade() === entrega.id_entrega_tarea">
+                                                            @if (savingGrade() === entrega.id_entrega_tarea) {
+                                                                <lucide-icon [img]="loader" class="spin" [size]="16" />
+                                                            } @else {
+                                                                <lucide-icon [img]="save" [size]="16"></lucide-icon> Guardar
+                                                            }
+                                                        </button>
                                                     </div>
                                                 }
-                                            }
-                                            @if (promedios().length === 0) {
-                                                <div class="cursos-estado" style="grid-column: span 2;">
-                                                    <p>No hay calificaciones disponibles</p>
-                                                </div>
-                                            }
+                                                @if (entregasProfesor().length === 0) {
+                                                    <div class="cursos-estado" style="grid-column: span 5;">
+                                                        <p>No hay entregas pendientes de calificación</p>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
+                                    } @else {
+                                        <div class="calificaciones-container">
+                                            <div class="calificaciones-grid">
+                                                <!-- Header -->
+                                                <div class="grid-header">Tema</div>
+                                                <div class="grid-header">Promedio</div>
+
+                                                <!-- Filas -->
+                                                @for (promedio of promedios(); track promedio.temaId) {
+                                                    <div class="grid-cell tema-nombre">{{ promedio.tituloTema }}</div>
+                                                    @if (promedio.promedio != null) {
+                                                        <div class="grid-cell promedio" [class.text-primary]="promedio.promedio >= 5" [class.text-secondary]="promedio.promedio < 5">
+                                                            {{ promedio.promedio | number:'1.1-2' }}
+                                                        </div>
+                                                    } @else {
+                                                        <div class="grid-cell promedio text-muted fst-italic fs-4">
+                                                            Sin calificar
+                                                        </div>
+                                                    }
+                                                }
+                                                @if (promedios().length === 0) {
+                                                    <div class="cursos-estado" style="grid-column: span 2;">
+                                                        <p>No hay calificaciones disponibles</p>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
                                 </ng-template>
                             </li>
                         </ul>
@@ -109,3 +167,10 @@
     }
 </div>
 
+<app-confirm-modal
+    [isOpen]="mostrarModalConfirmacion()"
+    [message]="'¿Estás seguro de que quieres eliminar el tema'"
+    [itemName]="itemAEliminar()?.titulo || ''"
+    (confirm)="confirmarEliminacion()"
+    (cancel)="cerrarConfirmacion()"
+></app-confirm-modal>

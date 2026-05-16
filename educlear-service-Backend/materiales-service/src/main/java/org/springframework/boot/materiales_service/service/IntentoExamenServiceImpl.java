@@ -70,6 +70,11 @@ public class IntentoExamenServiceImpl implements IntentoExamenService {
         intentoExamenRepository.deleteById(id);
     }
 
+    @Override
+    public boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId) {
+        return intentoExamenRepository.existsByAlumnoIdAndExamenId(alumnoId, examenId);
+    }
+
     private IntentoExamenDTO convertToDTO(IntentoExamen intentoExamen) {
         IntentoExamenDTO dto = new IntentoExamenDTO();
         dto.setId(intentoExamen.getId());

@@ -1,8 +1,10 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { TemasService } from '@core/services/temas.service';
 import { TareasService } from '@core/services/tareas.service';
 import { AuthService } from '@core/services/auth.service';
+import { AsignaturasService } from '@core/services/asignaturas.service';
+import { UsuarioService } from '@core/services/usuario.service';
 import { DbEntregaTarea } from '@core/models/db-models';
 import { AlertCircle, ArrowRight, ClipboardPen, FileText, FileUp, Loader, LucideAngularModule, ExternalLink } from 'lucide-angular';
 import { FileUploader } from '@app/components/file-uploader';
@@ -18,6 +20,8 @@ export class Tareas implements OnInit {
   private temaService = inject(TemasService);
   private tareasService = inject(TareasService);
   private authService = inject(AuthService);
+  private asignaturasService = inject(AsignaturasService);
+  private usuarioService = inject(UsuarioService);
   
   arrowRight = ArrowRight;
   clipboardPen = ClipboardPen;
@@ -38,6 +42,13 @@ export class Tareas implements OnInit {
 
   entrega = signal<DbEntregaTarea | undefined>(undefined);
   archivoEntrega = signal<any | undefined>(undefined);
+
+  esProfesor = computed(() => {
+    const rol = this.authService.usuarioActual()?.rol;
+    return rol === 'profesor' || rol === 'admin';
+  });
+
+  estadoAlumnos = signal<{ alumnoNombre: string; entregado: boolean; calificacion: number | null | string }[]>([]);
 
   toggleUploader() {
     this.mostrarUploader.set(!this.mostrarUploader());
@@ -133,7 +144,47 @@ export class Tareas implements OnInit {
     const tareaId = this.tarea()?.id_tarea;
     const usuarioId = this.authService.usuarioActual()?.id;
 
-    if (tareaId && usuarioId) {
+    if (!tareaId || !usuarioId) {
+      this.isLoading.set(false);
+      return;
+    }
+
+    if (this.esProfesor()) {
+      this.isLoading.set(true);
+      const asignaturaId = this.temaService.temaSeleccionado()?.asignatura_id;
+      
+      if (!asignaturaId) {
+        this.isLoading.set(false);
+        return;
+      }
+
+      forkJoin({
+        alumnosIds: this.asignaturasService.getAlumnosByAsignatura(asignaturaId),
+        usuarios: this.usuarioService.getAllUsers(),
+        entregas: this.tareasService.getAllEntregas()
+      }).subscribe({
+        next: ({ alumnosIds, usuarios, entregas }) => {
+          const entregasTarea = entregas.filter(e => e.tarea_id === tareaId);
+          const estado = alumnosIds.map(alumnoId => {
+            const usuario = usuarios.find(u => u.id === alumnoId);
+            const entrega = entregasTarea.find(e => e.alumno_id === alumnoId && e.estado_entrega === 'enviado');
+            
+            return {
+              alumnoNombre: usuario?.username || 'Desconocido',
+              entregado: !!entrega,
+              calificacion: entrega?.calificacion ?? null
+            };
+          });
+          this.estadoAlumnos.set(estado);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMsg.set('Error al cargar la información de los alumnos');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
       this.isLoading.set(true);
       this.tareasService.getEntrega(tareaId, usuarioId).subscribe({
         next: (entrega) => {
@@ -147,7 +198,7 @@ export class Tareas implements OnInit {
                 this.isLoading.set(false);
               },
               error: (err) => {
-                console.error('Error loading files:', err);
+                console.error('Error cargando archivos', err);
                 this.isLoading.set(false);
               }
             });
@@ -161,8 +212,6 @@ export class Tareas implements OnInit {
           this.isLoading.set(false);
         }
       });
-    } else {
-      this.isLoading.set(false);
     }
   }
 

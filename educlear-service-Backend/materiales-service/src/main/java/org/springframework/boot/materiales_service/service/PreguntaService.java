@@ -12,4 +12,5 @@ public interface PreguntaService {
     PreguntaDTO save(CreatePreguntaDTO pregunta);
     PreguntaDTO update(Integer id, UpdatePreguntaDTO pregunta);
     void delete(Integer id);
+    List<PreguntaDTO> findByExamenId(Integer examenId);
 }

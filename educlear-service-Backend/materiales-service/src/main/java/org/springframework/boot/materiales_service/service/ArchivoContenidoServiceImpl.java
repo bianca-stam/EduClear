@@ -67,6 +67,13 @@ public class ArchivoContenidoServiceImpl implements ArchivoContenidoService {
         archivoContenidoRepository.deleteById(id);
     }
 
+    @Override
+    public List<ArchivoContenidoDTO> findByTemaId(Integer temaId) {
+        return archivoContenidoRepository.findByTemaId(temaId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private ArchivoContenidoDTO convertToDTO(ArchivoContenido archivoContenido) {
         ArchivoContenidoDTO dto = new ArchivoContenidoDTO();
         dto.setId(archivoContenido.getId());

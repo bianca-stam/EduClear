@@ -73,6 +73,13 @@ public class PreguntaServiceImpl implements PreguntaService {
         preguntaRepository.deleteById(id);
     }
 
+    @Override
+    public List<PreguntaDTO> findByExamenId(Integer examenId) {
+        return preguntaRepository.findByExamenId(examenId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private PreguntaDTO convertToDTO(Pregunta pregunta) {
         PreguntaDTO dto = new PreguntaDTO();
         dto.setId(pregunta.getId());

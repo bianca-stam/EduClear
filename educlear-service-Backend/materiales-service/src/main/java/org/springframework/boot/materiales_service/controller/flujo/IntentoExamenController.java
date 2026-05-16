@@ -53,4 +53,9 @@ public class IntentoExamenController {
         intentoExamenService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/alumno/{alumnoId}/examen/{examenId}/existe")
+    public ResponseEntity<Boolean> existsByAlumnoIdAndExamenId(@PathVariable Integer alumnoId, @PathVariable Integer examenId) {
+        return ResponseEntity.ok(intentoExamenService.existsByAlumnoIdAndExamenId(alumnoId, examenId));
+    }
 }

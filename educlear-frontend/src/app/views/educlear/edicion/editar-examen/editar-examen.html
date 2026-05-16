@@ -1,0 +1,210 @@
+<div class="container-fluid">
+    <app-page-title [title]="tituloHeader()" [hideBreadcrumbs]="true" [breadcrumbs]="[{ label: 'Temas', url: '/temas' }, { label: tituloHeader(), url: '' }]" />
+
+    @if (isLoadingData()) {
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="ec-estado">
+                    <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                    <p>Cargando examen…</p>
+                </div>
+            </div>
+        </div>
+    } @else {
+        <!-- Examen Form -->
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="title mb-4 d-flex align-items-center gap-2">
+                    <a (click)="volver()" class="text-primary d-flex align-items-center icon-hover" title="Volver" style="cursor: pointer; text-decoration: none;">
+                        <lucide-icon [img]="arrowLeft" [size]="22"></lucide-icon>
+                    </a>
+                    <h2 style="margin: 0;">Información del examen</h2>
+                </div>
+
+                <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+                    <div class="mb-3">
+                        <label for="examen-titulo" class="form-label">Título <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <input type="text" class="form-control" id="examen-titulo" formControlName="titulo" placeholder="Ej. Examen Parcial 1" autocomplete="off" [class.is-invalid]="campoInvalido('titulo')" />
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('titulo') ? 'visible' : 'hidden'">
+                            El título es obligatorio (mínimo 3 caracteres)
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="examen-descripcion" class="form-label">Descripción <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <textarea class="form-control" id="examen-descripcion" formControlName="descripcion" rows="4" placeholder="Describe brevemente las instrucciones del examen…" [class.is-invalid]="campoInvalido('descripcion')"></textarea>
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('descripcion') ? 'visible' : 'hidden'">
+                            La descripción es obligatoria (mínimo 5 caracteres)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha-apertura" class="form-label">Fecha y Hora de Apertura <span class="text-secondary">*</span></label>
+                            <input type="text" mwlFlatpickr formControlName="fecha_apertura" [options]="{dateFormat:'Y-m-d H:i:S', enableTime:true}" class="form-control" [class.is-invalid]="campoInvalido('fecha_apertura')">
+                            <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('fecha_apertura') ? 'visible' : 'hidden'">
+                                La fecha de apertura es obligatoria
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha-cierre" class="form-label">Fecha y Hora de Cierre <span class="text-secondary">*</span></label>
+                            <input type="text" mwlFlatpickr formControlName="fecha_cierre" [options]="{dateFormat:'Y-m-d H:i:S', enableTime:true}" class="form-control" [class.is-invalid]="campoInvalido('fecha_cierre')">
+                            <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('fecha_cierre') ? 'visible' : 'hidden'">
+                                La fecha de cierre es obligatoria
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (errorMsg()) {
+                        <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                            <lucide-icon [img]="alertCircle" [size]="16"></lucide-icon>
+                            <div>{{ errorMsg() }}</div>
+                        </div>
+                    }
+                    @if (exitoMsg()) {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
+                            <lucide-icon [img]="checkCircle" [size]="16"></lucide-icon>
+                            <div>{{ exitoMsg() }}</div>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-primary fw-semibold py-2" (click)="volver()">Cancelar</button>
+                        <button type="submit" class="btn btn-secondary fw-semibold py-2" [disabled]="form.invalid || isGuardando()">
+                            @if (isGuardando()) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>Guardando…</span>
+                            } @else {
+                                <span>Guardar examen</span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preguntas (solo si el examen existe) -->
+        @if (modoEdicion()) {
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="title mb-4 d-flex justify-content-between align-items-center">
+                        <h2 style="margin: 0;">Preguntas</h2>
+                        @if (!mostrarFormPregunta()) {
+                            <button class="btn btn-secondary fw-semibold py-2" (click)="abrirFormularioPregunta()">
+                                Añadir pregunta
+                            </button>
+                        }
+                    </div>
+
+                    @if (mostrarFormPregunta()) {
+                        <div class="form-pregunta-card p-3 border rounded mb-4 bg-light">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h4 class="mb-0">{{ modoEdicionPregunta() ? 'Editar Pregunta' : 'Nueva Pregunta' }}</h4>
+                                <button type="button" class="btn-close" (click)="cerrarFormularioPregunta()" aria-label="Close"></button>
+                            </div>
+
+                            <form [formGroup]="formPregunta" (ngSubmit)="guardarPregunta()" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Texto de la pregunta <span class="text-secondary">*</span></label>
+                                    <input type="text" class="form-control" formControlName="texto_pregunta" [class.is-invalid]="campoPreguntaInvalido('texto_pregunta')">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Opción A <span class="text-secondary">*</span></label>
+                                        <input type="text" class="form-control" formControlName="opcion_a" [class.is-invalid]="campoPreguntaInvalido('opcion_a')">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Opción B <span class="text-secondary">*</span></label>
+                                        <input type="text" class="form-control" formControlName="opcion_b" [class.is-invalid]="campoPreguntaInvalido('opcion_b')">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Opción C <span class="text-secondary">*</span></label>
+                                        <input type="text" class="form-control" formControlName="opcion_c" [class.is-invalid]="campoPreguntaInvalido('opcion_c')">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Opción D <span class="text-secondary">*</span></label>
+                                        <input type="text" class="form-control" formControlName="opcion_d" [class.is-invalid]="campoPreguntaInvalido('opcion_d')">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Respuesta Correcta <span class="text-secondary">*</span></label>
+                                    <select class="form-select" formControlName="respuesta_correcta" [class.is-invalid]="campoPreguntaInvalido('respuesta_correcta')">
+                                        <option value="" disabled>Selecciona la opción correcta</option>
+                                        <option value="A">Opción A</option>
+                                        <option value="B">Opción B</option>
+                                        <option value="C">Opción C</option>
+                                        <option value="D">Opción D</option>
+                                    </select>
+                                </div>
+
+                                @if (errorPreguntaMsg()) {
+                                    <div class="alert alert-danger mb-3">{{ errorPreguntaMsg() }}</div>
+                                }
+
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-primary" (click)="cerrarFormularioPregunta()">Cancelar</button>
+                                    <button type="submit" class="btn btn-secondary" [disabled]="formPregunta.invalid || isGuardandoPregunta()">
+                                        {{ isGuardandoPregunta() ? 'Guardando...' : 'Guardar Pregunta' }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    }
+
+                    @if (isLoadingPreguntas() && preguntas().length === 0) {
+                        <div class="ec-estado">
+                            <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                            <p>Cargando preguntas...</p>
+                        </div>
+                    } @else {
+                        @if (preguntas().length === 0) {
+                            <div class="ec-estado">
+                                <p>No hay preguntas en este examen.</p>
+                            </div>
+                        } @else {
+                            <div class="ec-contenido-lista">
+                                @for (pregunta of preguntas(); track pregunta.id_pregunta; let i = $index) {
+                                    <div class="ec-contenido-row">
+                                        <div class="ec-contenido-info">
+                                            <div class="ec-contenido-texto">
+                                                <span class="ec-contenido-nombre">{{ i + 1 }}. {{ pregunta.texto_pregunta }}</span>
+                                                <div class="d-flex flex-column mt-2 text-muted small gap-1">
+                                                    <div><span [class.fw-bold]="pregunta.respuesta_correcta === 'A'" [class.text-dark]="pregunta.respuesta_correcta === 'A'">A) {{ pregunta.opcion_a }}</span></div>
+                                                    <div><span [class.fw-bold]="pregunta.respuesta_correcta === 'B'" [class.text-dark]="pregunta.respuesta_correcta === 'B'">B) {{ pregunta.opcion_b }}</span></div>
+                                                    <div><span [class.fw-bold]="pregunta.respuesta_correcta === 'C'" [class.text-dark]="pregunta.respuesta_correcta === 'C'">C) {{ pregunta.opcion_c }}</span></div>
+                                                    <div><span [class.fw-bold]="pregunta.respuesta_correcta === 'D'" [class.text-dark]="pregunta.respuesta_correcta === 'D'">D) {{ pregunta.opcion_d }}</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap: 12px; margin-top: 4px;">
+                                            <a (click)="editarPregunta(pregunta)" class="text-primary d-flex align-items-center icon-hover" title="Editar pregunta" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="pencil" [size]="16"></lucide-icon>
+                                            </a>
+                                            <a (click)="eliminarPregunta(pregunta.id_pregunta)" class="text-secondary d-flex align-items-center icon-hover" title="Eliminar pregunta" style="cursor: pointer; text-decoration: none;">
+                                                <lucide-icon [img]="trash" [size]="16"></lucide-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+
+    <app-confirm-modal
+        [isOpen]="mostrarModalConfirmacion()"
+        [message]="'¿Estás seguro de eliminar esta pregunta?'"
+        (confirm)="confirmarEliminacion()"
+        (cancel)="cerrarConfirmacion()"
+    ></app-confirm-modal>
+</div>

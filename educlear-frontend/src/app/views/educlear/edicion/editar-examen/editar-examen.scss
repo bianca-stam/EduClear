@@ -1,0 +1,50 @@
+.icon-hover {
+    transition: all 0.3s ease;
+    &:hover {
+        color: #ffffff !important;
+        transform: scale(1.1);
+    }
+}
+
+.form-pregunta-card {
+    border-color: var(--bs-border-color) !important;
+    background-color: var(--bs-body-bg) !important;
+}
+
+$border: rgba(255,255,255,0.08);
+
+.ec-contenido-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.ec-contenido-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px;
+    border-bottom: 1px solid $border;
+
+    &:last-child { border-bottom: none; }
+}
+
+.ec-contenido-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ec-contenido-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.ec-contenido-nombre {
+    font-size: 0.95rem;
+    font-weight: 500;
+}

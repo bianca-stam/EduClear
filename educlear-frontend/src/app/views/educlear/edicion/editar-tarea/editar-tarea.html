@@ -1,0 +1,116 @@
+<div class="container-fluid">
+    <app-page-title [title]="tituloHeader()" [hideBreadcrumbs]="true" [breadcrumbs]="[{ label: 'Temas', url: '/temas' }, { label: tituloHeader(), url: '' }]" />
+
+    @if (isLoadingData()) {
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="ec-estado">
+                    <lucide-icon [img]="loader" [size]="32" class="spin"></lucide-icon>
+                    <p>Cargando tarea…</p>
+                </div>
+            </div>
+        </div>
+    } @else {
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <div class="title mb-4 d-flex align-items-center gap-2">
+                    <a (click)="volver()" class="text-primary d-flex align-items-center icon-hover" title="Volver" style="cursor: pointer; text-decoration: none;">
+                        <lucide-icon [img]="arrowLeft" [size]="22"></lucide-icon>
+                    </a>
+                    <h2 style="margin: 0;">Información de la tarea</h2>
+                </div>
+
+                <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="tarea-titulo" class="form-label">Título <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="tarea-titulo"
+                                formControlName="titulo"
+                                placeholder="Ej. Tarea 1: Fundamentos"
+                                autocomplete="off"
+                                [class.is-invalid]="campoInvalido('titulo')"
+                            />
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('titulo') ? 'visible' : 'hidden'">
+                            El título es obligatorio (mínimo 3 caracteres)
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="tarea-descripcion" class="form-label">Descripción <span class="text-secondary">*</span></label>
+                        <div class="app-search">
+                            <textarea
+                                class="form-control"
+                                id="tarea-descripcion"
+                                formControlName="descripcion"
+                                rows="4"
+                                placeholder="Describe brevemente las instrucciones de esta tarea…"
+                                [class.is-invalid]="campoInvalido('descripcion')"
+                            ></textarea>
+                        </div>
+                        <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('descripcion') ? 'visible' : 'hidden'">
+                            La descripción es obligatoria (mínimo 5 caracteres)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha-apertura" class="form-label">Fecha y Hora de Apertura <span class="text-secondary">*</span></label>
+                            <input type="text" mwlFlatpickr formControlName="fecha_apertura" [options]="{dateFormat:'Y-m-d H:i:S', enableTime:true}" class="form-control" [class.is-invalid]="campoInvalido('fecha_apertura')">
+                            <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('fecha_apertura') ? 'visible' : 'hidden'">
+                                La fecha de apertura es obligatoria
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha-cierre" class="form-label">Fecha y Hora de Cierre <span class="text-secondary">*</span></label>
+                            <input type="text" mwlFlatpickr formControlName="fecha_cierre" [options]="{dateFormat:'Y-m-d H:i:S', enableTime:true}" class="form-control" [class.is-invalid]="campoInvalido('fecha_cierre')">
+                            <div class="text-secondary small mt-1" [style.visibility]="campoInvalido('fecha_cierre') ? 'visible' : 'hidden'">
+                                La fecha de cierre es obligatoria
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts de feedback -->
+                    @if (errorMsg()) {
+                        <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" id="alert-error-tarea" role="alert">
+                            <lucide-icon [img]="alertCircle" [size]="16"></lucide-icon>
+                            <div>{{ errorMsg() }}</div>
+                        </div>
+                    }
+                    @if (exitoMsg()) {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-3" id="alert-exito-tarea" role="alert">
+                            <lucide-icon [img]="checkCircle" [size]="16"></lucide-icon>
+                            <div>{{ exitoMsg() }}</div>
+                        </div>
+                    }
+
+                    <!-- Botón guardar -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-primary fw-semibold py-2" (click)="volver()">
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn btn-secondary fw-semibold py-2"
+                            id="btn-guardar-tarea"
+                            [disabled]="form.invalid || isGuardando()"
+                        >
+                            @if (isGuardando()) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>Guardando…</span>
+                            } @else {
+                                <span>Guardar tarea</span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>

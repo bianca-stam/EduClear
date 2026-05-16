@@ -15,20 +15,61 @@ export class ExamenesService {
   private readonly INTENTOS_URL = `${environment.apiUrl}/materiales/intentos-examen`;
   private readonly RESPUESTAS_URL = `${environment.apiUrl}/materiales/respuestas-alumno`;
 
+  /** Usa el endpoint filtrado del backend: GET /preguntas/examen/{examenId} */
   getPreguntasByExamen(examenId: number): Observable<DbPregunta[]> {
-    return this._http.get<any[]>(this.PREGUNTAS_URL).pipe(
-      map(data => data
-        .filter(p => p.examenId === examenId)
-        .map(p => ({
-          id_pregunta: p.id,
-          examen_id: p.examenId,
-          texto_pregunta: p.textoPregunta,
-          opcion_a: p.opcionA,
-          opcion_b: p.opcionB,
-          opcion_c: p.opcionC,
-          opcion_d: p.opcionD,
-          respuesta_correcta: p.respuestaCorrecta
-        } as DbPregunta)))
+    return this._http.get<any[]>(`${this.PREGUNTAS_URL}/examen/${examenId}`).pipe(
+      map(data => data.map(p => ({
+        id_pregunta: p.id,
+        examen_id: p.examenId,
+        texto_pregunta: p.textoPregunta,
+        opcion_a: p.opcionA,
+        opcion_b: p.opcionB,
+        opcion_c: p.opcionC,
+        opcion_d: p.opcionD,
+        respuesta_correcta: p.respuestaCorrecta
+      } as DbPregunta)))
+    );
+  }
+
+  crearPregunta(payload: { examenId: number; textoPregunta: string; opcionA: string; opcionB: string; opcionC: string; opcionD: string; respuestaCorrecta: string }): Observable<DbPregunta> {
+    return this._http.post<any>(this.PREGUNTAS_URL, payload).pipe(
+      map(p => ({
+        id_pregunta: p.id,
+        examen_id: p.examenId,
+        texto_pregunta: p.textoPregunta,
+        opcion_a: p.opcionA,
+        opcion_b: p.opcionB,
+        opcion_c: p.opcionC,
+        opcion_d: p.opcionD,
+        respuesta_correcta: p.respuestaCorrecta
+      } as DbPregunta))
+    );
+  }
+
+  /** Corregido: el backend expone PATCH, no PUT */
+  editarPregunta(id: number, payload: { textoPregunta: string; opcionA: string; opcionB: string; opcionC: string; opcionD: string; respuestaCorrecta: string }): Observable<DbPregunta> {
+    return this._http.patch<any>(`${this.PREGUNTAS_URL}/${id}`, payload).pipe(
+      map(p => ({
+        id_pregunta: p.id,
+        examen_id: p.examenId,
+        texto_pregunta: p.textoPregunta,
+        opcion_a: p.opcionA,
+        opcion_b: p.opcionB,
+        opcion_c: p.opcionC,
+        opcion_d: p.opcionD,
+        respuesta_correcta: p.respuestaCorrecta
+      } as DbPregunta))
+    );
+  }
+
+  eliminarPregunta(id: number): Observable<void> {
+    return this._http.delete<void>(`${this.PREGUNTAS_URL}/${id}`);
+  }
+
+  /** Comprueba si ya existe un intento del alumno para el examen (endpoint filtrado del backend) */
+  existeIntento(alumnoId: number, examenId: number): Observable<boolean> {
+    return this._http.get<boolean>(
+      `${this.INTENTOS_URL}/alumno/${alumnoId}/examen/${examenId}/existe`
     );
   }
 

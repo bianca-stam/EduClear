@@ -40,7 +40,7 @@
                 }
 
                 <div>
-                    @for (agrupacion of agrupaciones(); track agrupacion.asignatura_nombre) {
+                    @for (agrupacion of agrupaciones(); track $index) {
                         <h3 class="text-white mt-4 mb-3">{{ agrupacion.curso_nombre }} - {{ agrupacion.asignatura_nombre }}</h3>
 
                         @for (item of agrupacion.items; track item.id + item.tipo) {

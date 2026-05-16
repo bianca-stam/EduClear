@@ -67,6 +67,13 @@ public class TareaServiceImpl implements TareaService {
         tareaRepository.deleteById(id);
     }
 
+    @Override
+    public List<TareaDTO> findByTemaId(Integer temaId) {
+        return tareaRepository.findByTemaId(temaId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private TareaDTO convertToDTO(Tarea tarea) {
         TareaDTO dto = new TareaDTO();
         dto.setId(tarea.getId());
