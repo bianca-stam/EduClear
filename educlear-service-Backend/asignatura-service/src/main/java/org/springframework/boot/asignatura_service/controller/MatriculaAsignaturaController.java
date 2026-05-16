@@ -36,4 +36,10 @@ public class MatriculaAsignaturaController {
     public ResponseEntity<List<Integer>> getAsignaturaIdsByAlumno(@PathVariable Integer alumnoId) {
         return ResponseEntity.ok(service.getAsignaturaIdsByAlumno(alumnoId));
     }
+
+    // IDs de alumnos matriculados en una asignatura concreta
+    @GetMapping("/asignatura/{asignaturaId}/alumnos")
+    public ResponseEntity<List<Integer>> getAlumnoIdsByAsignatura(@PathVariable Integer asignaturaId) {
+        return ResponseEntity.ok(service.getAlumnoIdsByAsignatura(asignaturaId));
+    }
 }

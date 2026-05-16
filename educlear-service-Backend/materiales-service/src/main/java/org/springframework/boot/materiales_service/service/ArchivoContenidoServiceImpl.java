@@ -62,6 +62,7 @@ public class ArchivoContenidoServiceImpl implements ArchivoContenidoService {
                 .orElse(null);
     }
 
+    @Override
     public void delete(Integer id) {
         archivoContenidoRepository.deleteById(id);
     }

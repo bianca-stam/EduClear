@@ -45,4 +45,12 @@ public class MatriculaAsignaturaServiceImpl implements MatriculaAsignaturaServic
                 .map(MatriculaAsignatura::getAsignaturaId)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Integer> getAlumnoIdsByAsignatura(Integer asignaturaId) {
+        return repository.findByAsignaturaId(asignaturaId)
+                .stream()
+                .map(MatriculaAsignatura::getAlumnoId)
+                .collect(Collectors.toList());
+    }
 }
