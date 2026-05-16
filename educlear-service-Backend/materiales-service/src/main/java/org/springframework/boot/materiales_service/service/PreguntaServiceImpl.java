@@ -68,6 +68,7 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .orElse(null);
     }
 
+    @Override
     public void delete(Integer id) {
         preguntaRepository.deleteById(id);
     }

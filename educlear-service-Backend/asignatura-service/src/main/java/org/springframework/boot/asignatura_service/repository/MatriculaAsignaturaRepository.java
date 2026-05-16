@@ -11,4 +11,6 @@ import java.util.List;
 public interface MatriculaAsignaturaRepository extends JpaRepository<MatriculaAsignatura, MatriculaAsignaturaId> {
 
     List<MatriculaAsignatura> findByAlumnoId(Integer alumnoId);
+
+    List<MatriculaAsignatura> findByAsignaturaId(Integer asignaturaId);
 }

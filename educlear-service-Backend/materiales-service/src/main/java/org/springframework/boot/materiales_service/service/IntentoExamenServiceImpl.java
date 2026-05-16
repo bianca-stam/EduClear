@@ -65,6 +65,7 @@ public class IntentoExamenServiceImpl implements IntentoExamenService {
                 .orElse(null);
     }
 
+    @Override
     public void delete(Integer id) {
         intentoExamenRepository.deleteById(id);
     }

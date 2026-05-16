@@ -62,6 +62,7 @@ public class TareaServiceImpl implements TareaService {
                 .orElse(null);
     }
 
+    @Override
     public void delete(Integer id) {
         tareaRepository.deleteById(id);
     }

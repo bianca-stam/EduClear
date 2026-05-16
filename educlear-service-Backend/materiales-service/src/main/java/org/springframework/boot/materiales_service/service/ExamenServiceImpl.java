@@ -62,6 +62,7 @@ public class ExamenServiceImpl implements ExamenService {
                 .orElse(null);
     }
 
+    @Override
     public void delete(Integer id) {
         examenRepository.deleteById(id);
     }
