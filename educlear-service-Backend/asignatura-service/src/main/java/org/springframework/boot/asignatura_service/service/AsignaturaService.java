@@ -3,6 +3,7 @@ package org.springframework.boot.asignatura_service.service;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
 import org.springframework.boot.asignatura_service.model.Asignatura;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface AsignaturaService {
     Long contarAlumnosMatriculados(Integer asignaturaId);
 
     List<AsignaturaDTO> findByAlumnoId(Integer alumnoId);
+
+    List<AsignaturaDetalleDTO> findDetallesByCursoId(Integer cursoId);
 }

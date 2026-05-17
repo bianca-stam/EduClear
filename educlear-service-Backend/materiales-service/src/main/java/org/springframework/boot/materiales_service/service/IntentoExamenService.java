@@ -13,4 +13,5 @@ public interface IntentoExamenService {
     IntentoExamenDTO update(Integer id, UpdateIntentoExamenDTO intentoExamen);
     void delete(Integer id);
     boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
+    IntentoExamenDTO findByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
 }

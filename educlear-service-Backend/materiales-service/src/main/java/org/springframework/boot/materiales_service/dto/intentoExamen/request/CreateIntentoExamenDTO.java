@@ -8,6 +8,8 @@ import org.springframework.boot.materiales_service.enums.EstadoIntento;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.boot.materiales_service.enums.OpcionEnum;
 
 @Getter
 @Setter
@@ -25,9 +27,20 @@ public class CreateIntentoExamenDTO {
     @NotNull
     private LocalDateTime fechaEnvio;
 
-    @NotNull
     private BigDecimal calificacionFinal;
 
     @NotNull
     private EstadoIntento estado;
+
+    private List<RespuestaExamenDTO> respuestas;
+
+    @Getter
+    @Setter
+    public static class RespuestaExamenDTO {
+        @NotNull
+        private Integer preguntaId;
+
+        @NotNull
+        private OpcionEnum opcionSeleccionada;
+    }
 }

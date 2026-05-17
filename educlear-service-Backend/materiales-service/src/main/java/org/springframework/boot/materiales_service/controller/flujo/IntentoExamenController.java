@@ -58,4 +58,13 @@ public class IntentoExamenController {
     public ResponseEntity<Boolean> existsByAlumnoIdAndExamenId(@PathVariable Integer alumnoId, @PathVariable Integer examenId) {
         return ResponseEntity.ok(intentoExamenService.existsByAlumnoIdAndExamenId(alumnoId, examenId));
     }
+
+    @GetMapping("/examen/{examenId}/alumno/{alumnoId}")
+    public ResponseEntity<IntentoExamenDTO> getByExamenIdAndAlumnoId(@PathVariable Integer examenId, @PathVariable Integer alumnoId) {
+        IntentoExamenDTO intentoExamen = intentoExamenService.findByAlumnoIdAndExamenId(alumnoId, examenId);
+        if (intentoExamen == null) {
+            throw new ResourceNotFoundException("El intento de examen solicitado no existe.");
+        }
+        return ResponseEntity.ok(intentoExamen);
+    }
 }
