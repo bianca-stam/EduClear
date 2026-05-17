@@ -89,4 +89,13 @@ public class UsuarioController {
     public ResponseEntity<List<UsuarioDTO>> getByAsignatura(@PathVariable Integer asignaturaId) {
         return ResponseEntity.ok(usuarioService.findUsuariosByAsignatura(asignaturaId));
     }
+
+    @GetMapping("/rol/{rol}")
+    public ResponseEntity<?> getByRol(@PathVariable String rol) {
+        try {
+            return ResponseEntity.ok(usuarioService.findByRol(rol));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+        }
+    }
 }

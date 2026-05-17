@@ -114,4 +114,16 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<UsuarioDTO> findByRol(String rolString) {
+        try {
+            org.example.serviciousuario.model.Rol rol = org.example.serviciousuario.model.Rol.valueOf(rolString.toLowerCase());
+            return usuarioRepository.findByRol(rol).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Rol no válido");
+        }
+    }
 }
