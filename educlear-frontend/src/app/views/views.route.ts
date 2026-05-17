@@ -72,6 +72,7 @@ export const VIEWS_ROUTES: Routes = [
         path: '',
         loadChildren: () => import('./charts/charts.route').then((mod) => mod.CHARTS_ROUTES)
     },
+    // ── EduClear (Cursos, Asignaturas, Temas) ──────────────────────────────
     {
         path: 'cursos',
         component: Inicio,
@@ -118,6 +119,8 @@ export const VIEWS_ROUTES: Routes = [
         loadComponent: () => import('./educlear/area-personal/area-personal').then(m => m.AreaPersonal),
         data: {title: "Área personal"}
     },
+
+    // ── Gestión & Edición (Admin/Profesor) ──────────────────────────────────
     {
         path: 'edicion',
         canActivate: [adminProfesorGuard],

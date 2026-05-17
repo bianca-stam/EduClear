@@ -8,6 +8,7 @@ import { TemasService } from '@core/services/temas.service';
 import { AuthService } from '@core/services/auth.service';
 import { DbArchivoContenido, DbTema, DbTarea, DbExamen } from '@core/models/db-models';
 import { AsignaturasService } from '@core/services/asignaturas.service';
+import { CursosService } from '@core/services/cursos.service';
 import { PageTitle } from '@/app/components/page-title';
 import {
   LucideAngularModule,
@@ -46,6 +47,7 @@ export class EditarTema implements OnInit {
   private temasService       = inject(TemasService);
   private asignaturasService = inject(AsignaturasService);
   private authService        = inject(AuthService);
+  private cursosService      = inject(CursosService);
   private location           = inject(Location);
 
   // ── Estado ───────────────────────────────────────────────────────────────
@@ -186,22 +188,53 @@ export class EditarTema implements OnInit {
 
     const { titulo, descripcion } = this.form.value;
 
+    const navegarATema = (tema: DbTema) => {
+      this.temasService.temaSeleccionado.set(tema);
+      const temaUrl = tema.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+      
+      const asigEnState = this.asignaturasService.asignaturaSeleccionada();
+      if (asigEnState && asigEnState.id_asignatura === tema.asignatura_id) {
+          const asigUrl = asigEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+          const cursoEnState = this.cursosService.cursoSeleccionado();
+          if (cursoEnState && cursoEnState.id_curso === asigEnState.curso_id) {
+              const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl]);
+          } else {
+              this.cursosService.getCursoById(asigEnState.curso_id).subscribe(c => {
+                  this.cursosService.cursoSeleccionado.set(c);
+                  const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl]);
+              });
+          }
+      } else {
+          this.asignaturasService.getAsignaturaById(tema.asignatura_id!).subscribe(a => {
+              this.asignaturasService.asignaturaSeleccionada.set(a);
+              const asigUrl = a.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              
+              const cursoEnState = this.cursosService.cursoSeleccionado();
+              if (cursoEnState && cursoEnState.id_curso === a.curso_id) {
+                  const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl]);
+              } else {
+                  this.cursosService.getCursoById(a.curso_id).subscribe(c => {
+                      this.cursosService.cursoSeleccionado.set(c);
+                      const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl]);
+                  });
+              }
+          });
+      }
+    };
+
     if (this.modoEdicion()) {
       // PUT
       this.temasService.editarTema(this.temaId()!, {
         titulo:      titulo.trim(),
         descripcion: descripcion.trim()
       }).subscribe({
-        next: () => {
+        next: (tema) => {
           this.isGuardando.set(false);
-          const asigId = this.asignaturaId();
-          if (asigId) {
-            this.temasService.temaSeleccionado.set({ id_tema: this.temaId()!, titulo: titulo.trim(), descripcion: descripcion.trim(), asignatura_id: asigId });
-            this.location.back();
-          } else {
-             this.exitoMsg.set('Tema actualizado correctamente.');
-             setTimeout(() => this.exitoMsg.set(null), 3000);
-          }
+          navegarATema(tema);
         },
         error: (err) => {
           console.error(err);
@@ -223,8 +256,7 @@ export class EditarTema implements OnInit {
       }).subscribe({
         next: (tema) => {
           this.isGuardando.set(false);
-          // Ir al editor del nuevo tema
-          this.router.navigate(['/edicion/tema', tema.id_tema]);
+          navegarATema(tema);
         },
         error: (err) => {
           console.error(err);

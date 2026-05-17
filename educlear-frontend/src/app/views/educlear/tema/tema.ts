@@ -17,6 +17,7 @@ import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
 })
 export class Tema implements OnInit {
 
+  // ── Iconos ───────────────────────────────────────────────────────────────
   arrowRight = ArrowRight;
   clipboardPen = ClipboardPen;
   fileUp = FileUp;
@@ -26,13 +27,18 @@ export class Tema implements OnInit {
   pencil = Pencil;
   trash = Trash2;
 
+  // ── Inyecciones ──────────────────────────────────────────────────────────
   private readonly temaService = inject(TemasService);
   private readonly asignaturasService = inject(AsignaturasService);
   private readonly authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
+  // ── Computed ──────────────────────────────────────────────────────────────
   titulo = computed(() => this.temaService.temaSeleccionado()?.titulo);
   descripcion = computed(() => this.temaService.temaSeleccionado()?.descripcion);
 
+  // ── Estado ───────────────────────────────────────────────────────────────
   entregas = signal<DbTarea[]>([]);
   examenes = signal<DbExamen[]>([]);
   materiales = signal<DbArchivoContenido[]>([]);
@@ -40,9 +46,7 @@ export class Tema implements OnInit {
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
 
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
+  // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(){
     const idTema = this.temaService.temaSeleccionado()!.id_tema;
     
@@ -65,6 +69,7 @@ export class Tema implements OnInit {
     });
   }
 
+  // ── Navegación ────────────────────────────────────────────────────────────
   verTarea(tarea: DbTarea) {
     const slug = tarea.titulo.toLowerCase()
       .normalize("NFD")
@@ -87,6 +92,7 @@ export class Tema implements OnInit {
     this.router.navigate(['examen', slug], { relativeTo: this.route });
   }
 
+  // ── Gestión de Archivos ──────────────────────────────────────────────────
   abrirMaterial(material: DbArchivoContenido): void {
     this.temaService.getArchivoById(material.id_contenido).subscribe((res) => {
       if (!res.archivoBlob) {
@@ -128,6 +134,7 @@ export class Tema implements OnInit {
     return usuario.rol === 'profesor' && asig.profesor_id === usuario.id;
   }
 
+  // ── Gestión de Profesores/Admin ──────────────────────────────────────────
   editarTema() {
     const idTema = this.temaService.temaSeleccionado()?.id_tema;
     if (idTema) {

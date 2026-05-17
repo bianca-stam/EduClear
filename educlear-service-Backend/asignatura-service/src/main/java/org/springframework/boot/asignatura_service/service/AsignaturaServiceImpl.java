@@ -2,13 +2,18 @@ package org.springframework.boot.asignatura_service.service;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
 import org.springframework.boot.asignatura_service.model.Asignatura;
 import org.springframework.boot.asignatura_service.repository.AsignaturaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +21,9 @@ import java.util.stream.Collectors;
 public class AsignaturaServiceImpl implements AsignaturaService {
 
     private AsignaturaRepository asignaturaRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository) {
         this.asignaturaRepository = asignaturaRepository;
@@ -56,6 +64,35 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return asignaturaRepository.findByCursoId(cursoId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AsignaturaDetalleDTO> findDetallesByCursoId(Integer cursoId) {
+        List<Asignatura> asignaturas = asignaturaRepository.findByCursoId(cursoId);
+        
+        return asignaturas.stream().map(a -> {
+            AsignaturaDetalleDTO dto = new AsignaturaDetalleDTO();
+            dto.setId(a.getId());
+            dto.setNombre(a.getNombre());
+            dto.setCursoId(a.getCursoId());
+            dto.setProfesorId(a.getProfesorId());
+            
+            dto.setCantidadAlumnos(asignaturaRepository.countAlumnosByAsignaturaId(a.getId()));
+            
+            if (a.getProfesorId() != null) {
+                try {
+                    Map response = restTemplate.getForObject(
+                            "http://usuario-service:8081/api/usuarios/" + a.getProfesorId(), Map.class);
+                    if (response != null && response.containsKey("nombreCompleto")) {
+                        dto.setNombreProfesor((String) response.get("nombreCompleto"));
+                    }
+                } catch (Exception e) {
+                    dto.setNombreProfesor("Profesor Desconocido");
+                }
+            }
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Override

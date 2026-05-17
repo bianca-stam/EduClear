@@ -1,6 +1,7 @@
 package org.springframework.boot.asignatura_service.controller;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.service.AsignaturaService;
@@ -58,6 +59,11 @@ public class AsignaturaController {
     @GetMapping("/curso/{cursoId}")
     public ResponseEntity<List<AsignaturaDTO>> getAsignaturasByCurso(@PathVariable Integer cursoId) {
         return ResponseEntity.ok(asignaturaService.findByCursoId(cursoId));
+    }
+
+    @GetMapping("/curso/{cursoId}/detalle")
+    public ResponseEntity<List<AsignaturaDetalleDTO>> getAsignaturasDetalleByCurso(@PathVariable Integer cursoId) {
+        return ResponseEntity.ok(asignaturaService.findDetallesByCursoId(cursoId));
     }
 
     @GetMapping("/{id}/alumnos-count")

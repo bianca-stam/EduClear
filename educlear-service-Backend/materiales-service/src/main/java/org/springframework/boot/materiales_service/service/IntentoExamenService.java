@@ -3,6 +3,7 @@ package org.springframework.boot.materiales_service.service;
 import org.springframework.boot.materiales_service.dto.intentoExamen.request.CreateIntentoExamenDTO;
 import org.springframework.boot.materiales_service.dto.intentoExamen.request.UpdateIntentoExamenDTO;
 import org.springframework.boot.materiales_service.dto.intentoExamen.response.IntentoExamenDTO;
+import org.springframework.boot.materiales_service.dto.intentoExamen.response.EstadoIntentoAlumnoDTO;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface IntentoExamenService {
     IntentoExamenDTO update(Integer id, UpdateIntentoExamenDTO intentoExamen);
     void delete(Integer id);
     boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
+    IntentoExamenDTO findByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
+    List<EstadoIntentoAlumnoDTO> getEstadoIntentosAlumnosByExamenId(Integer examenId);
 }

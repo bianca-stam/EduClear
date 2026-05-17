@@ -20,27 +20,23 @@ export class TareasService {
   }
 
   getEntrega(tareaId: number, alumnoId: number): Observable<DbEntregaTarea | undefined> {
-    return this._http.get<any[]>(this.ENTREGAS_URL).pipe(
-      map(entregas => entregas.map(e => ({
+    return this._http.get<any>(`${this.ENTREGAS_URL}/tarea/${tareaId}/alumno/${alumnoId}`).pipe(
+      map(e => ({
         id_entrega_tarea: e.id,
         tarea_id: e.tareaId,
         alumno_id: e.alumnoId,
         estado_entrega: e.estadoEntrega,
         calificacion: e.calificacion
-      })).find(e => e.tarea_id === tareaId && e.alumno_id === alumnoId))
+      }))
     );
   }
 
-  getAllEntregas(): Observable<DbEntregaTarea[]> {
-    return this._http.get<any[]>(this.ENTREGAS_URL).pipe(
-      map(entregas => entregas.map(e => ({
-        id_entrega_tarea: e.id,
-        tarea_id: e.tareaId,
-        alumno_id: e.alumnoId,
-        estado_entrega: e.estadoEntrega,
-        calificacion: e.calificacion
-      })))
-    );
+  getEntregasAsignatura(asignaturaId: number): Observable<any[]> {
+    return this._http.get<any[]>(`${this.ENTREGAS_URL}/asignatura/${asignaturaId}`);
+  }
+
+  getEstadoAlumnosTarea(tareaId: number): Observable<any[]> {
+    return this._http.get<any[]>(`${this.ENTREGAS_URL}/tarea/${tareaId}/estado-alumnos`);
   }
 
   crearEntrega(data: any): Observable<DbEntregaTarea> {

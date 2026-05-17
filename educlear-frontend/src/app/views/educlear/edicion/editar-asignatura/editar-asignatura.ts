@@ -8,6 +8,7 @@ import { TemasService } from '@core/services/temas.service';
 import { UsuarioService } from '@core/services/usuario.service';
 import { AuthService, UsuarioDTO } from '@core/services/auth.service';
 import { DbAsignatura, DbTema } from '@core/models/db-models';
+import { CursosService } from '@core/services/cursos.service';
 import { PageTitle } from '@/app/components/page-title';
 import { ChoiceSelectInputDirective } from '@core/directive/choices-select.directive';
 import {
@@ -15,9 +16,9 @@ import {
   ArrowLeft, Save, Plus, Pencil, Trash2,
   Loader, AlertCircle, CheckCircle, BookOpen, Users, BookMarked
 } from 'lucide-angular';
-import { forkJoin } from 'rxjs';
 
 import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
+import { toSlug } from '@/app/utils/slug';
 
 @Component({
   selector: 'app-editar-asignatura',
@@ -48,6 +49,7 @@ export class EditarAsignatura implements OnInit {
   private temasService       = inject(TemasService);
   private usuarioService     = inject(UsuarioService);
   private authService        = inject(AuthService);
+  private cursosService      = inject(CursosService);
   private location           = inject(Location);
 
   // ── Estado ───────────────────────────────────────────────────────────────
@@ -177,21 +179,32 @@ export class EditarAsignatura implements OnInit {
 
     const { nombre, profesorId } = this.form.value;
 
+    const navegarAAsignatura = (asig: DbAsignatura) => {
+      this.asignaturasService.asignaturaSeleccionada.set(asig);
+      const asigUrl = toSlug(asig.nombre);
+      
+      const cursoEnState = this.cursosService.cursoSeleccionado();
+      if (cursoEnState && cursoEnState.id_curso === asig.curso_id) {
+          const cursoUrl = toSlug(cursoEnState.nombre);
+          this.router.navigate(['/cursos', cursoUrl, asigUrl]);
+      } else {
+          this.cursosService.getCursoById(asig.curso_id).subscribe(c => {
+              this.cursosService.cursoSeleccionado.set(c);
+              const cursoUrl = toSlug(c.nombre);
+              this.router.navigate(['/cursos', cursoUrl, asigUrl]);
+          });
+      }
+    };
+
     if (this.modoEdicion()) {
       // PUT
       this.asignaturasService.editarAsignatura(this.asignaturaId()!, {
         nombre: nombre.trim(),
         profesorId: Number(profesorId)
       }).subscribe({
-        next: () => {
+        next: (asig) => {
           this.isGuardando.set(false);
-          this.asignaturasService.asignaturaSeleccionada.set({
-            id_asignatura: this.asignaturaId()!,
-            nombre: nombre.trim(),
-            curso_id: this.cursoId()!,
-            profesor_id: Number(profesorId)
-          } as DbAsignatura);
-          this.location.back();
+          navegarAAsignatura(asig);
         },
         error: (err) => {
           console.error(err);
@@ -213,8 +226,7 @@ export class EditarAsignatura implements OnInit {
       }).subscribe({
         next: (asig) => {
           this.isGuardando.set(false);
-          // Ir al editor de la nueva asignatura
-          this.router.navigate(['/edicion/asignatura', asig.id_asignatura]);
+          navegarAAsignatura(asig);
         },
         error: (err) => {
           console.error(err);
