@@ -151,30 +151,13 @@ export class Tareas implements OnInit {
 
     if (this.esProfesor()) {
       this.isLoading.set(true);
-      const asignaturaId = this.temaService.temaSeleccionado()?.asignatura_id;
-      
-      if (!asignaturaId) {
-        this.isLoading.set(false);
-        return;
-      }
-
-      forkJoin({
-        alumnosIds: this.asignaturasService.getAlumnosByAsignatura(asignaturaId),
-        usuarios: this.usuarioService.getAllUsers(),
-        entregas: this.tareasService.getAllEntregas()
-      }).subscribe({
-        next: ({ alumnosIds, usuarios, entregas }) => {
-          const entregasTarea = entregas.filter(e => e.tarea_id === tareaId);
-          const estado = alumnosIds.map(alumnoId => {
-            const usuario = usuarios.find(u => u.id === alumnoId);
-            const entrega = entregasTarea.find(e => e.alumno_id === alumnoId && e.estado_entrega === 'enviado');
-            
-            return {
-              alumnoNombre: usuario?.username || 'Desconocido',
-              entregado: !!entrega,
-              calificacion: entrega?.calificacion ?? null
-            };
-          });
+      this.tareasService.getEstadoAlumnosTarea(tareaId).subscribe({
+        next: (estadoAlumnosBackend) => {
+          const estado = estadoAlumnosBackend.map(e => ({
+            alumnoNombre: e.alumnoNombre || 'Desconocido',
+            entregado: e.estadoEntrega === 'enviado',
+            calificacion: e.calificacion ?? null
+          }));
           this.estadoAlumnos.set(estado);
           this.isLoading.set(false);
         },

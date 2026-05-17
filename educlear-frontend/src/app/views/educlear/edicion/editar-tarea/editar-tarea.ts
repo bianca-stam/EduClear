@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TemasService } from '@core/services/temas.service';
+import { AsignaturasService } from '@core/services/asignaturas.service';
+import { CursosService } from '@core/services/cursos.service';
+import { DbTarea } from '@core/models/db-models';
 import { PageTitle } from '@/app/components/page-title';
 import { FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
 import {
@@ -32,6 +35,8 @@ export class EditarTarea implements OnInit {
   private router       = inject(Router);
   private fb           = inject(FormBuilder);
   private temasService = inject(TemasService);
+  private asignaturasService = inject(AsignaturasService);
+  private cursosService = inject(CursosService);
   private location     = inject(Location);
 
   // ── Estado ───────────────────────────────────────────────────────────────
@@ -128,12 +133,69 @@ export class EditarTarea implements OnInit {
       temaId:        this.temaId()!
     };
 
+    const navegarATarea = (tarea: DbTarea) => {
+      this.temasService.tareaSeleccionada.set(tarea);
+      const tareaUrl = tarea.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+      
+      const temaEnState = this.temasService.temaSeleccionado();
+      if (temaEnState && temaEnState.id_tema === tarea.tema_id) {
+          const temaUrl = temaEnState.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+          const asigEnState = this.asignaturasService.asignaturaSeleccionada();
+          if (asigEnState && asigEnState.id_asignatura === temaEnState.asignatura_id) {
+              const asigUrl = asigEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              const cursoEnState = this.cursosService.cursoSeleccionado();
+              if (cursoEnState && cursoEnState.id_curso === asigEnState.curso_id) {
+                  const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'tarea', tareaUrl]);
+              } else {
+                  this.cursosService.getCursoById(asigEnState.curso_id).subscribe(c => {
+                      this.cursosService.cursoSeleccionado.set(c);
+                      const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'tarea', tareaUrl]);
+                  });
+              }
+          } else {
+              // Si no tenemos Asignatura en state, la recuperamos
+              this.asignaturasService.getAsignaturaById(temaEnState.asignatura_id!).subscribe(a => {
+                  this.asignaturasService.asignaturaSeleccionada.set(a);
+                  const asigUrl = a.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  const cursoEnState = this.cursosService.cursoSeleccionado();
+                  if (cursoEnState && cursoEnState.id_curso === a.curso_id) {
+                      const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'tarea', tareaUrl]);
+                  } else {
+                      this.cursosService.getCursoById(a.curso_id).subscribe(c => {
+                          this.cursosService.cursoSeleccionado.set(c);
+                          const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                          this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'tarea', tareaUrl]);
+                      });
+                  }
+              });
+          }
+      } else {
+          // Si no tenemos Tema en state
+          this.temasService.getTemaById(tarea.tema_id).subscribe(t => {
+              this.temasService.temaSeleccionado.set(t);
+              const temaUrl = t.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              this.asignaturasService.getAsignaturaById(t.asignatura_id!).subscribe(a => {
+                  this.asignaturasService.asignaturaSeleccionada.set(a);
+                  const asigUrl = a.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.cursosService.getCursoById(a.curso_id).subscribe(c => {
+                      this.cursosService.cursoSeleccionado.set(c);
+                      const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'tarea', tareaUrl]);
+                  });
+              });
+          });
+      }
+    };
+
     if (this.modoEdicion()) {
       this.temasService.editarTarea(this.tareaId()!, payload).subscribe({
-        next: () => {
+        next: (tarea) => {
           this.isGuardando.set(false);
           this.exitoMsg.set('Tarea actualizada correctamente.');
-          setTimeout(() => this.location.back(), 1500);
+          setTimeout(() => navegarATarea(tarea), 1500);
         },
         error: (err) => {
           console.error(err);
@@ -148,10 +210,10 @@ export class EditarTarea implements OnInit {
         return;
       }
       this.temasService.crearTarea(payload).subscribe({
-        next: () => {
+        next: (tarea) => {
           this.isGuardando.set(false);
           this.exitoMsg.set('Tarea creada correctamente.');
-          setTimeout(() => this.location.back(), 1500);
+          setTimeout(() => navegarATarea(tarea), 1500);
         },
         error: (err) => {
           console.error(err);

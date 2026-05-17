@@ -6,6 +6,7 @@ import { AuthService } from '@core/services/auth.service';
 import { DbCurso } from '@core/models/db-models';
 
 import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
+import { toSlug } from '@/app/utils/slug';
 
 @Component({
   selector: 'app-cursos',
@@ -14,6 +15,7 @@ import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
   styleUrl: './cursos.scss'
 })
 export class Cursos implements OnInit {
+  // ── Iconos ───────────────────────────────────────────────────────────────
   search = Search;
   alertCircle = AlertCircle;
   loader = Loader;
@@ -21,22 +23,23 @@ export class Cursos implements OnInit {
   plus = Plus;
   trash = Trash2;
 
-  esAdminOProfesor = computed(() => {
-    const rol = this.authService.usuarioActual()?.rol;
-    return rol === 'admin' || rol === 'profesor';
-  });
-
+  // ── Inyecciones ──────────────────────────────────────────────────────────
   private router = inject(Router);
   private cursosService = inject(CursosService);
   private authService = inject(AuthService);
 
+  // ── Estado ───────────────────────────────────────────────────────────────
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
   eliminandoId = signal<number | null>(null);
-
   private cursosRaw = signal<DbCurso[]>([]);
-
   terminoBusqueda = signal<string>('');
+
+  // ── Computed ──────────────────────────────────────────────────────────────
+  esAdminOProfesor = computed(() => {
+    const rol = this.authService.usuarioActual()?.rol;
+    return rol === 'admin' || rol === 'profesor';
+  });
 
   cursos = computed(() => {
     const busqueda = this.terminoBusqueda().toLowerCase();
@@ -46,10 +49,12 @@ export class Cursos implements OnInit {
     });
   });
 
+  // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit() {
     this.cargarCursos();
   }
 
+  // ── Carga de datos ────────────────────────────────────────────────────────
   cargarCursos() {
     const usuario = this.authService.usuarioActual()!;
     let cursos$;
@@ -78,15 +83,10 @@ export class Cursos implements OnInit {
     });
   }
 
+  // ── Navegación ────────────────────────────────────────────────────────────
   verCurso(curso: DbCurso) {
     this.cursosService.cursoSeleccionado.set(curso);
-    const nombreUrl = curso.nombre
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, '-');
+    const nombreUrl = toSlug(curso.nombre);
     this.router.navigate(['/cursos', nombreUrl]);
   }
 
@@ -134,6 +134,7 @@ export class Cursos implements OnInit {
     });
   }
 
+  // ── Búsqueda ──────────────────────────────────────────────────────────────
   buscarCurso(busqueda: string) {
     this.terminoBusqueda.set(busqueda);
   }

@@ -15,6 +15,7 @@ export interface AsignaturaVista extends DbAsignatura {
 }
 
 import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
+import { toSlug } from '@/app/utils/slug';
 
 @Component({
   selector: 'app-asignaturas',
@@ -24,6 +25,7 @@ import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
 })
 export class Asignaturas implements OnInit {
 
+  // ── Iconos ───────────────────────────────────────────────────────────────
   search = Search;
   alertCircle = AlertCircle;
   loader = Loader;
@@ -31,12 +33,14 @@ export class Asignaturas implements OnInit {
   trash = Trash2;
   plus = Plus;
 
+  // ── Inyecciones ──────────────────────────────────────────────────────────
   private asignaturasService = inject(AsignaturasService);
   private cursoService = inject(CursosService);
   private usuarioService = inject(UsuarioService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  // ── Estado ───────────────────────────────────────────────────────────────
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
   eliminandoId = signal<number | null>(null);
@@ -44,38 +48,28 @@ export class Asignaturas implements OnInit {
   asignaturasRaw = signal<AsignaturaVista[]>([]);
   terminoBusqueda = signal<string>('');
 
+  // ── Computed ──────────────────────────────────────────────────────────────
   asignaturas = computed(() => {
     const busqueda = this.terminoBusqueda().toLowerCase();
     if (!busqueda) return this.asignaturasRaw();
     return this.asignaturasRaw().filter(asignatura => asignatura.nombre.toLowerCase().includes(busqueda));
   });
 
+  // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit() {
     const cursoSeleccionado = this.cursoService.cursoSeleccionado();
     if (!cursoSeleccionado) return;
 
-    this.asignaturasService.getAsignaturasByCurso(cursoSeleccionado.id_curso).pipe(
-      switchMap(asignaturas => {
-        if (asignaturas.length === 0) return of([]);
-
-        const peticiones = asignaturas.map(asignatura => {
-          return forkJoin({
-            asignatura: of(asignatura),
-            profesorReq: this.usuarioService.getUserById(asignatura.profesor_id).pipe(
-              catchError(() => of({ username: 'Profesor no asignado' } as any))
-            ),
-            alumnosReq: this.asignaturasService.getAlumnosCount(asignatura.id_asignatura).pipe(
-              catchError(() => of(0))
-            )
-          }).pipe(
-            map(({ asignatura, profesorReq, alumnosReq }) => ({
-              ...asignatura,
-              profesor: profesorReq.username,
-              alumnos: alumnosReq
-            } as AsignaturaVista))
-          );
-        });
-        return forkJoin(peticiones);
+    this.asignaturasService.getAsignaturasDetalleByCurso(cursoSeleccionado.id_curso).pipe(
+      map(asignaturas => {
+        return asignaturas.map(a => ({
+          id_asignatura: a.id,
+          nombre: a.nombre,
+          curso_id: a.cursoId,
+          profesor_id: a.profesorId,
+          profesor: a.nombreProfesor || 'Profesor no asignado',
+          alumnos: a.cantidadAlumnos || 0
+        } as AsignaturaVista));
       })
     ).subscribe({
       next: (data) => {
@@ -90,28 +84,18 @@ export class Asignaturas implements OnInit {
     });
   }
 
+  // ── Navegación ────────────────────────────────────────────────────────────
   verAsignatura(asignatura: any) {
     this.asignaturasService.asignaturaSeleccionada.set(asignatura);
-    
-    const nombreUrl = asignatura.nombre
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, '-');
-    
+
+    const nombreUrl = toSlug(asignatura.nombre);
+
     const cursoNombre = this.cursoService.cursoSeleccionado()?.nombre || '';
-    const cursoUrl = cursoNombre
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, '-');
+    const cursoUrl = toSlug(cursoNombre);
     this.router.navigate(['/cursos', cursoUrl, nombreUrl]);
   }
 
+  // ── Búsqueda ──────────────────────────────────────────────────────────────
   buscarAsignatura(busqueda: string) {
     this.terminoBusqueda.set(busqueda);
   }

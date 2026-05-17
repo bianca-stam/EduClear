@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageTitle } from '@/app/components/page-title';
 import { AgrupacionPendiente, AreaPersonalService, ItemPendiente } from '@core/services/area-personal.service';
@@ -10,7 +10,7 @@ import { AsignaturasService } from '@core/services/asignaturas.service';
 import { TemasService } from '@core/services/temas.service';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions, EventApi } from '@fullcalendar/core';
+import { CalendarOptions } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -25,12 +25,14 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AreaPersonal implements OnInit {
   
+  // ── Iconos ───────────────────────────────────────────────────────────────
   arrowRight = ArrowRight;
   loader = Loader;
   alertCircle = AlertCircle;
   clipboardPen = ClipboardPen;
   fileUp = FileUp;
 
+  // ── Inyecciones ──────────────────────────────────────────────────────────
   private areaPersonalService = inject(AreaPersonalService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -38,12 +40,13 @@ export class AreaPersonal implements OnInit {
   private asignaturasService = inject(AsignaturasService);
   private temasService = inject(TemasService);
 
+  // ── Estado ───────────────────────────────────────────────────────────────
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
-
   agrupaciones = signal<AgrupacionPendiente[]>([]);
   todosLosItems = signal<ItemPendiente[]>([]);
 
+  // ── Configuración Calendario ──────────────────────────────────────────────
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
     initialView: 'dayGridMonth',
@@ -67,6 +70,7 @@ export class AreaPersonal implements OnInit {
     eventClick: this.handleEventClick.bind(this)
   };
 
+  // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
     const userId = this.authService.usuarioActual()?.id;
     if (!userId) return;
@@ -103,6 +107,7 @@ export class AreaPersonal implements OnInit {
     });
   }
 
+  // ── Navegación ────────────────────────────────────────────────────────────
   navegarA(item: ItemPendiente) {
     if (item.cursoRef) this.cursosService.cursoSeleccionado.set(item.cursoRef);
     if (item.asignaturaRef) this.asignaturasService.asignaturaSeleccionada.set(item.asignaturaRef);
@@ -113,6 +118,7 @@ export class AreaPersonal implements OnInit {
     this.router.navigateByUrl(item.url);
   }
 
+  // ── Manejadores de Eventos ────────────────────────────────────────────────
   handleEventClick(arg: any): void {
     const item: ItemPendiente = arg.event.extendedProps['item'];
     if (item) {

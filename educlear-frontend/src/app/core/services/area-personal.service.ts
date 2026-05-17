@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@/environments/environment';
 import { map, Observable } from 'rxjs';
+import { toSlug } from '@/app/utils/slug';
 
 export interface ItemPendiente {
   tipo: 'examen' | 'tarea';
@@ -35,26 +36,18 @@ export class AreaPersonalService {
 
   private readonly DASHBOARD_URL = `${environment.apiUrl}/materiales/dashboard`;
 
-  /**
-   * Obtiene los pendientes del alumno agrupados por asignatura.
-   * Usa GET /api/materiales/dashboard/alumno/{alumnoId} que el backend
-   * ya agrupa y devuelve con todas las referencias necesarias.
-   * El contrato de salida (AgrupacionPendiente[]) es idéntico al anterior.
-   */
   getDatosAreaPersonal(alumnoId: number): Observable<AgrupacionPendiente[]> {
     return this._http.get<any[]>(`${this.DASHBOARD_URL}/alumno/${alumnoId}`).pipe(
       map(grupos => grupos.map(grupo => ({
         curso_nombre: grupo.curso_nombre,
         asignatura_nombre: grupo.asignatura_nombre,
         items: (grupo.items as any[]).map(item => {
-          // Mapear cursoRef del backend al formato DbCurso del frontend
           const cursoRef = item.cursoRef ? {
             id_curso: item.cursoRef.id,
             nombre: item.cursoRef.nombre,
             descripcion: item.cursoRef.descripcion || ''
           } : null;
 
-          // Mapear asignaturaRef del backend al formato DbAsignatura del frontend
           const asignaturaRef = item.asignaturaRef ? {
             id_asignatura: item.asignaturaRef.id,
             nombre: item.asignaturaRef.nombre,
@@ -62,7 +55,6 @@ export class AreaPersonalService {
             profesor_id: item.asignaturaRef.profesorId
           } : null;
 
-          // Mapear temaRef del backend al formato DbTema del frontend
           const temaRef = item.temaRef ? {
             id_tema: item.temaRef.idTema,
             titulo: item.temaRef.titulo,
@@ -70,7 +62,6 @@ export class AreaPersonalService {
             asignatura_id: item.temaRef.asignaturaId
           } : null;
 
-          // Mapear tareaRef del backend al formato DbTarea del frontend
           const tareaRef = item.tareaRef ? {
             id_tarea: item.tareaRef.id,
             tema_id: item.tareaRef.temaId,
@@ -80,7 +71,6 @@ export class AreaPersonalService {
             fecha_cierre: item.tareaRef.fechaCierre
           } : undefined;
 
-          // Mapear examenRef del backend al formato DbExamen del frontend
           const examenRef = item.examenRef ? {
             id_examen: item.examenRef.id,
             tema_id: item.examenRef.temaId,
@@ -91,10 +81,10 @@ export class AreaPersonalService {
           } : undefined;
 
           // Generar la URL de navegación igual que antes
-          const slugCurso = this.toSlug(item.curso_nombre);
-          const slugAsignatura = this.toSlug(item.asignatura_nombre);
-          const slugTema = this.toSlug(item.tema_nombre);
-          const slugItem = this.toSlug(item.titulo);
+          const slugCurso = toSlug(item.curso_nombre);
+          const slugAsignatura = toSlug(item.asignatura_nombre);
+          const slugTema = toSlug(item.tema_nombre);
+          const slugItem = toSlug(item.titulo);
           const tipoUrl = item.tipo === 'examen' ? 'examen' : 'tarea';
 
           return {
@@ -119,13 +109,5 @@ export class AreaPersonalService {
     );
   }
 
-  private toSlug(text: string): string {
-    return text.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, '-');
-  }
 }
 

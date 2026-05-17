@@ -2,8 +2,10 @@ import { Component, computed, inject, OnInit, signal, OnDestroy } from '@angular
 import { TemasService } from '@core/services/temas.service';
 import { ExamenesService } from '@core/services/examenes.service';
 import { AuthService } from '@core/services/auth.service';
-import { DbIntentoExamen, DbPregunta, OpcionRespuesta } from '@core/models/db-models';
-import { firstValueFrom } from 'rxjs';
+import { DbIntentoExamen, DbPregunta } from '@core/models/db-models';
+import { firstValueFrom, forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { UsuarioService } from '@core/services/usuario.service';
 import { AlertCircle, ArrowRight, ClipboardPen, FileText, FileUp, Loader, LucideAngularModule, ChevronLeft, ChevronRight, Check } from 'lucide-angular';
 
 @Component({
@@ -17,6 +19,7 @@ export class Examenes implements OnInit, OnDestroy {
   private temaService = inject(TemasService);
   private examenesService = inject(ExamenesService);
   private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
   
   arrowRight = ArrowRight;
   clipboardPen = ClipboardPen;
@@ -34,6 +37,13 @@ export class Examenes implements OnInit, OnDestroy {
 
   isLoading = signal(false);
   errorMsg = signal<string | null>(null);
+
+  esProfesor = computed(() => {
+    const rol = this.authService.usuarioActual()?.rol;
+    return rol === 'profesor' || rol === 'admin';
+  });
+
+  estadoAlumnos = signal<{ alumnoNombre: string; entregado: boolean; calificacion: number | null | string }[]>([]);
 
   formatDate(dateStr: string | undefined): string {
     if (!dateStr) return 'No definida';
@@ -90,7 +100,27 @@ export class Examenes implements OnInit, OnDestroy {
     const examenId = this.examen()?.id_examen;
     const usuarioId = this.authService.usuarioActual()?.id;
 
-    if (examenId && usuarioId) {
+    if (!examenId || !usuarioId) return;
+
+    if (this.esProfesor()) {
+      this.isLoading.set(true);
+      this.examenesService.getEstadoAlumnosExamen(examenId).subscribe({
+        next: (estadoAlumnosBackend) => {
+          const estado = estadoAlumnosBackend.map(e => ({
+            alumnoNombre: e.alumnoNombre || 'Desconocido',
+            entregado: e.estadoIntento !== 'no_iniciado' && e.estadoIntento !== null,
+            calificacion: e.calificacionFinal ?? null
+          }));
+          this.estadoAlumnos.set(estado);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMsg.set('Error al cargar la información de los alumnos');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
       this.isLoading.set(true);
       this.examenesService.getIntento(examenId, usuarioId).subscribe({
         next: (intento) => {
@@ -223,49 +253,36 @@ export class Examenes implements OnInit, OnDestroy {
     this.detenerTemporizador();
 
     try {
-      // 1. Calcular calificación
+      // 1. Recopilar respuestas
       const pregs = this.preguntas();
       const resp = this.respuestas();
-      let correctas = 0;
+      const respuestasPayload = [];
 
-      pregs.forEach(p => {
-        const marcada = resp.get(p.id_pregunta);
-        if (marcada === p.respuesta_correcta) {
-          correctas++;
-        }
-      });
-
-      const calificacionFinal = pregs.length > 0 ? (correctas / pregs.length) * 10 : 0;
-      const ahoraIso = new Date().toISOString().slice(0, 19); // Remove Z and ms to avoid parsing issues if any
-
-      // 2. Crear Intento
-      const nuevoIntentoReq = {
-        examenId: examenId,
-        alumnoId: usuarioId,
-        fechaInicio: ahoraIso, // Para simplificar, fecha de inicio y envío son el mismo instante al finalizar
-        fechaEnvio: ahoraIso,
-        calificacionFinal: calificacionFinal,
-        estado: 'calificado'
-      };
-
-      const intentoDb = await firstValueFrom(this.examenesService.crearIntento(nuevoIntentoReq));
-
-      // 3. Crear Respuestas (opcional esperar todas, o disparar concurrentemente)
-      const promesasRespuestas = [];
       for (const p of pregs) {
         const marcada = resp.get(p.id_pregunta);
         if (marcada) {
-          promesasRespuestas.push(firstValueFrom(this.examenesService.crearRespuesta({
-            intentoId: intentoDb.id, // O intentoDb.id_intento dependiendo de lo que devuelva el backend
+          respuestasPayload.push({
             preguntaId: p.id_pregunta,
             opcionSeleccionada: marcada
-          })));
+          });
         }
       }
 
-      await Promise.all(promesasRespuestas);
+      const ahoraIso = new Date().toISOString().slice(0, 19);
 
-      // 4. Salir de modo examen y recargar intento
+      // 2. Crear Intento (el backend calculará la calificación)
+      const nuevoIntentoReq = {
+        examenId: examenId,
+        alumnoId: usuarioId,
+        fechaInicio: ahoraIso,
+        fechaEnvio: ahoraIso,
+        estado: 'calificado',
+        respuestas: respuestasPayload
+      };
+
+      await firstValueFrom(this.examenesService.crearIntento(nuevoIntentoReq));
+
+      // 3. Salir de modo examen y recargar intento
       this.modoExamen.set(false);
       this.cargarIntentoPrevio();
 
