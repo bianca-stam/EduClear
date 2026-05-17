@@ -140,12 +140,16 @@ export class EditarCurso implements OnInit {
     op$.subscribe({
       next: (curso) => {
         this.isGuardando.set(false);
-        if (this.modoEdicion()) {
-          this.location.back();
-        } else {
-          // Modo creación: ir al editor del nuevo curso
-          this.router.navigate(['/edicion/curso', curso.id_curso]);
-        }
+        const nombreUrl = curso.nombre
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s-]/g, "")
+          .trim()
+          .replace(/\s+/g, '-');
+        
+        this.cursosService.cursoSeleccionado.set(curso);
+        this.router.navigate(['/cursos', nombreUrl]);
       },
       error: (err) => {
         console.error(err);

@@ -103,7 +103,7 @@ export class TemasService {
   }
 
   editarTarea(id: number, payload: { titulo: string; descripcion: string; fechaApertura: string; fechaCierre: string }): Observable<DbTarea> {
-    return this._http.put<any>(`${this.TAREAS_URL}/${id}`, payload).pipe(
+    return this._http.patch<any>(`${this.TAREAS_URL}/${id}`, payload).pipe(
       map(t => ({
         id_tarea: t.id,
         tema_id: t.temaId,
@@ -148,7 +148,7 @@ export class TemasService {
   }
 
   editarExamen(id: number, payload: { titulo: string; descripcion: string; fechaApertura: string; fechaCierre: string }): Observable<DbExamen> {
-    return this._http.put<any>(`${this.EXAMENES_URL}/${id}`, payload).pipe(
+    return this._http.patch<any>(`${this.EXAMENES_URL}/${id}`, payload).pipe(
       map(e => ({
         id_examen: e.id,
         tema_id: e.temaId,

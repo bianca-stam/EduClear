@@ -1,20 +1,19 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
-import { DbCalificacionesAlumno, DbTema, DbTarea, DbEntregaTarea } from '@core/models/db-models';
+import { DbCalificacionesAlumno, DbTema } from '@core/models/db-models';
 import { AsignaturasService } from '@core/services/asignaturas.service';
 import { AuthService } from '@core/services/auth.service';
 import { TemasService } from '@core/services/temas.service';
 import { TareasService } from '@core/services/tareas.service';
 import { UsuarioService } from '@core/services/usuario.service';
-import { UsuarioDTO } from '@core/services/auth.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import { ArrowRight, LucideAngularModule, AlertCircle, Loader, Pencil, Trash2, FileDown, Save } from "lucide-angular";
 import { FormsModule } from '@angular/forms';
 
 import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
+import { toSlug } from '@/app/utils/slug';
 
 @Component({
   selector: 'app-asignatura',
@@ -24,6 +23,7 @@ import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
 })
 export class Asignatura implements OnInit{
 
+  // ── Inyecciones ──────────────────────────────────────────────────────────
   asignaturasService = inject(AsignaturasService);
   authService = inject(AuthService);
   asignaturaSeleccionada = this.asignaturasService.asignaturaSeleccionada;
@@ -33,6 +33,7 @@ export class Asignatura implements OnInit{
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   
+  // ── Iconos ───────────────────────────────────────────────────────────────
   arrowRight = ArrowRight;
   alertCircle = AlertCircle;
   loader = Loader;
@@ -41,6 +42,7 @@ export class Asignatura implements OnInit{
   fileDown = FileDown;
   save = Save;
 
+  // ── Estado ───────────────────────────────────────────────────────────────
   temas = signal<DbTema[]>([]);
   promedios = signal<DbCalificacionesAlumno[]>([]);
   entregasProfesor = signal<any[]>([]);
@@ -49,53 +51,33 @@ export class Asignatura implements OnInit{
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
 
+  // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
     const idAsignatura = this.asignaturaSeleccionada()!.id_asignatura;
     const idUsuario = this.authService.usuarioActual()!.id;
 
     if (this.puedeEditarAsignatura()) {
-      this.asignaturasService.getTemasByAsignatura(idAsignatura).pipe(
-        switchMap(temas => {
+      forkJoin({
+        temas: this.asignaturasService.getTemasByAsignatura(idAsignatura),
+        entregas: this.tareasService.getEntregasAsignatura(idAsignatura)
+      }).subscribe({
+        next: ({ temas, entregas }) => {
           this.temas.set(temas);
-          if (temas.length === 0) {
-            return of({ tareas: [], entregas: [], usuarios: [] });
-          }
-          const tareasObs = temas.map(t => this.temaService.getTareasByTema(t.id_tema));
-          return forkJoin(tareasObs).pipe(
-            switchMap(tareasPorTema => {
-              const allTareas = tareasPorTema.flat();
-              if (allTareas.length === 0) {
-                return of({ tareas: [], entregas: [], usuarios: [] });
-              }
-              return forkJoin({
-                tareas: of(allTareas),
-                entregas: this.tareasService.getAllEntregas(),
-                usuarios: this.usuarioService.getAllUsers()
-              });
-            })
-          );
-        })
-      ).subscribe({
-        next: (data: any) => {
-          if (data.tareas && data.entregas && data.usuarios) {
-            const tareasMap = new Map<number, DbTarea>(data.tareas.map((t: DbTarea) => [t.id_tarea, t]));
-            const usuariosMap = new Map<number, UsuarioDTO>(data.usuarios.map((u: UsuarioDTO) => [u.id, u]));
-
-            const entregasFiltradas = data.entregas
-              .filter((e: DbEntregaTarea) => tareasMap.has(e.tarea_id) && e.estado_entrega === 'enviado')
-              .map((e: DbEntregaTarea) => ({
-                id_entrega_tarea: e.id_entrega_tarea,
-                tarea_id: e.tarea_id,
-                alumno_id: e.alumno_id,
-                tareaNombre: tareasMap.get(e.tarea_id)?.titulo || 'Desconocida',
-                alumnoNombre: usuariosMap.get(e.alumno_id)?.username || 'Desconocido',
-                estado_entrega: e.estado_entrega,
-                calificacion: e.calificacion,
-                nuevaNota: e.calificacion
-              }));
+          
+          const entregasFiltradas = entregas
+            .filter((e: any) => e.estadoEntrega === 'enviado')
+            .map((e: any) => ({
+              id_entrega_tarea: e.idEntregaTarea,
+              tarea_id: e.tareaId,
+              alumno_id: e.alumnoId,
+              tareaNombre: e.tareaNombre || 'Desconocida',
+              alumnoNombre: e.alumnoNombre || 'Desconocido',
+              estado_entrega: e.estadoEntrega,
+              calificacion: e.calificacion,
+              nuevaNota: e.calificacion
+            }));
             
-            this.entregasProfesor.set(entregasFiltradas);
-          }
+          this.entregasProfesor.set(entregasFiltradas);
           this.isLoading.set(false);
         },
         error: (err) => {
@@ -123,17 +105,14 @@ export class Asignatura implements OnInit{
     }
   }
 
+  // ── Métodos de Ayuda ─────────────────────────────────────────────────────
   isTemaSelected() {
     return this.route.firstChild !== null;
   }
 
+  // ── Navegación ────────────────────────────────────────────────────────────
   verTema(tema: DbTema) {
-    const slug = tema.titulo.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, '-');
+    const slug = toSlug(tema.titulo);
       
     this.temaService.temaSeleccionado.set(tema);
     this.router.navigate([slug], { relativeTo: this.route });
@@ -151,6 +130,7 @@ export class Asignatura implements OnInit{
     return usuario.rol === 'profesor' && asig.profesor_id === usuario.id;
   }
 
+  // ── Gestión de Profesores/Admin ──────────────────────────────────────────
   editarTema(event: Event, tema: DbTema) {
     event.stopPropagation();
     this.router.navigate(['/edicion/tema', tema.id_tema]);
@@ -194,6 +174,7 @@ export class Asignatura implements OnInit{
     });
   }
 
+  // ── Gestión de Entregas y Calificaciones ──────────────────────────────────
   descargarArchivo(entregaId: number) {
     this.tareasService.getArchivosEntrega(entregaId).subscribe({
       next: (archivos) => {

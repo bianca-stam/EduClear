@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@/environments/environment';
 import { DbAsignatura, DbCalificacionesAlumno, DbTema } from '../models/db-models';
@@ -14,9 +14,6 @@ export class AsignaturasService {
   private readonly ASIGNATURAS_URL = `${environment.apiUrl}/asignaturas`;
   private readonly MATRICULAS_URL = `${environment.apiUrl}/matriculas`;
   private readonly TEMAS_URL = `${environment.apiUrl}/temas`;
-  private readonly ARCHIVOS_URL = `${environment.apiUrl}/materiales/archivos-contenido`;
-  private readonly EXAMENES_URL = `${environment.apiUrl}/materiales/examenes`;
-  private readonly TAREAS_URL = `${environment.apiUrl}/materiales/tareas`;
 
   asignaturaSeleccionada = signal<DbAsignatura | null>(null);
 
@@ -29,6 +26,10 @@ export class AsignaturasService {
         profesor_id: a.profesorId
       })))
     );
+  }
+
+  getAsignaturasDetalleByCurso(cursoId: number): Observable<any[]> {
+    return this._http.get<any[]>(`${this.ASIGNATURAS_URL}/curso/${cursoId}/detalle`);
   }
 
   getAlumnosCount(asignaturaId: number): Observable<number> {
@@ -48,12 +49,7 @@ export class AsignaturasService {
   }
 
   getAlumnosByAsignatura(asignaturaId: number): Observable<number[]> {
-    return this._http.get<any[]>(this.MATRICULAS_URL).pipe(
-      map(matriculas => matriculas
-        .filter(m => m.asignaturaId === asignaturaId)
-        .map(m => m.alumnoId)
-      )
-    );
+    return this._http.get<number[]>(`${this.MATRICULAS_URL}/asignatura/${asignaturaId}/alumnos`);
   }
 
   /** Usa el endpoint directo del backend: GET /asignaturas/alumno/{alumnoId} */
@@ -77,18 +73,6 @@ export class AsignaturasService {
         descripcion: t.descripcion,
         asignatura_id: t.asignaturaId
       })))
-    );
-  }
-
-  getPromedioCalificacionesPorAlumno(alumnoId: number, asignaturaId: number): Observable<any[]> {
-    return forkJoin({
-      temas: this.getTemasByAsignatura(asignaturaId),
-      promedios: this._http.get<any[]>(`${this.TEMAS_URL}/alumno/${alumnoId}/promedios`)
-    }).pipe(
-      map(({ temas, promedios }) => {
-        const temaIds = temas.map(t => t.id_tema);
-        return promedios.filter(p => temaIds.includes(p.temaId));
-      })
     );
   }
 

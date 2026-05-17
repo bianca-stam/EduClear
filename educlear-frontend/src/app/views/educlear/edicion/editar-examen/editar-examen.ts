@@ -5,6 +5,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { TemasService } from '@core/services/temas.service';
 import { ExamenesService } from '@core/services/examenes.service';
+import { AsignaturasService } from '@core/services/asignaturas.service';
+import { CursosService } from '@core/services/cursos.service';
+import { DbExamen } from '@core/models/db-models';
 import { PageTitle } from '@/app/components/page-title';
 import { FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
 import { DbPregunta } from '@core/models/db-models';
@@ -41,6 +44,8 @@ export class EditarExamen implements OnInit {
   private fb              = inject(FormBuilder);
   private temasService    = inject(TemasService);
   private examenesService = inject(ExamenesService);
+  private asignaturasService = inject(AsignaturasService);
+  private cursosService   = inject(CursosService);
   private location        = inject(Location);
 
   // ── Estado General ────────────────────────────────────────────────────────
@@ -175,12 +180,67 @@ export class EditarExamen implements OnInit {
       temaId:        this.temaId()!
     };
 
+    const navegarAExamen = (examen: DbExamen) => {
+      this.temasService.examenSeleccionado.set(examen);
+      const examenUrl = examen.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+      
+      const temaEnState = this.temasService.temaSeleccionado();
+      if (temaEnState && temaEnState.id_tema === examen.tema_id) {
+          const temaUrl = temaEnState.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+          const asigEnState = this.asignaturasService.asignaturaSeleccionada();
+          if (asigEnState && asigEnState.id_asignatura === temaEnState.asignatura_id) {
+              const asigUrl = asigEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              const cursoEnState = this.cursosService.cursoSeleccionado();
+              if (cursoEnState && cursoEnState.id_curso === asigEnState.curso_id) {
+                  const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'examen', examenUrl]);
+              } else {
+                  this.cursosService.getCursoById(asigEnState.curso_id).subscribe(c => {
+                      this.cursosService.cursoSeleccionado.set(c);
+                      const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'examen', examenUrl]);
+                  });
+              }
+          } else {
+              this.asignaturasService.getAsignaturaById(temaEnState.asignatura_id!).subscribe(a => {
+                  this.asignaturasService.asignaturaSeleccionada.set(a);
+                  const asigUrl = a.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  const cursoEnState = this.cursosService.cursoSeleccionado();
+                  if (cursoEnState && cursoEnState.id_curso === a.curso_id) {
+                      const cursoUrl = cursoEnState.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'examen', examenUrl]);
+                  } else {
+                      this.cursosService.getCursoById(a.curso_id).subscribe(c => {
+                          this.cursosService.cursoSeleccionado.set(c);
+                          const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                          this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'examen', examenUrl]);
+                      });
+                  }
+              });
+          }
+      } else {
+          this.temasService.getTemaById(examen.tema_id).subscribe(t => {
+              this.temasService.temaSeleccionado.set(t);
+              const temaUrl = t.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+              this.asignaturasService.getAsignaturaById(t.asignatura_id!).subscribe(a => {
+                  this.asignaturasService.asignaturaSeleccionada.set(a);
+                  const asigUrl = a.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                  this.cursosService.getCursoById(a.curso_id).subscribe(c => {
+                      this.cursosService.cursoSeleccionado.set(c);
+                      const cursoUrl = c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, '-');
+                      this.router.navigate(['/cursos', cursoUrl, asigUrl, temaUrl, 'examen', examenUrl]);
+                  });
+              });
+          });
+      }
+    };
+
     if (this.modoEdicion()) {
       this.temasService.editarExamen(this.examenId()!, payload).subscribe({
-        next: () => {
+        next: (examen) => {
           this.isGuardando.set(false);
           this.exitoMsg.set('Examen actualizado correctamente.');
-          setTimeout(() => this.location.back(), 1500);
+          setTimeout(() => navegarAExamen(examen), 1500);
         },
         error: (err) => {
           console.error(err);
@@ -197,9 +257,8 @@ export class EditarExamen implements OnInit {
       this.temasService.crearExamen(payload).subscribe({
         next: (examen) => {
           this.isGuardando.set(false);
-          this.exitoMsg.set('Examen creado correctamente. Ahora puedes añadir preguntas.');
-          // Redirect to edit mode to add questions
-          this.router.navigate(['/edicion/examen', examen.id_examen], { replaceUrl: true });
+          this.exitoMsg.set('Examen creado correctamente.');
+          setTimeout(() => navegarAExamen(examen), 1500);
         },
         error: (err) => {
           console.error(err);

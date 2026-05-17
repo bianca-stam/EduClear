@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of, throwError } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { DbIntentoExamen, DbPregunta, DbRespuestaAlumno } from '@core/models/db-models';
 
@@ -73,10 +73,13 @@ export class ExamenesService {
     );
   }
 
+  getEstadoAlumnosExamen(examenId: number): Observable<any[]> {
+    return this._http.get<any[]>(`${this.INTENTOS_URL}/examen/${examenId}/estado-alumnos`);
+  }
+
   getIntento(examenId: number, alumnoId: number): Observable<DbIntentoExamen | undefined> {
-    return this._http.get<any[]>(this.INTENTOS_URL).pipe(
-      map(data => {
-        const intento = data.find(i => i.examenId === examenId && i.alumnoId === alumnoId);
+    return this._http.get<any>(`${this.INTENTOS_URL}/examen/${examenId}/alumno/${alumnoId}`).pipe(
+      map(intento => {
         if (!intento) return undefined;
         return {
           id_intento: intento.id,
@@ -87,11 +90,17 @@ export class ExamenesService {
           calificacion_final: intento.calificacionFinal,
           estado: intento.estado
         } as DbIntentoExamen;
+      }),
+      catchError(error => {
+        if (error.status === 404) {
+          return of(undefined);
+        }
+        return throwError(() => error);
       })
     );
   }
 
-  crearIntento(intento: { examenId: number, alumnoId: number, fechaInicio: string, fechaEnvio: string, calificacionFinal: number, estado: string }): Observable<any> {
+  crearIntento(intento: { examenId: number, alumnoId: number, fechaInicio: string, fechaEnvio: string, estado: string, respuestas: { preguntaId: number, opcionSeleccionada: string }[] }): Observable<any> {
     return this._http.post(this.INTENTOS_URL, intento);
   }
 

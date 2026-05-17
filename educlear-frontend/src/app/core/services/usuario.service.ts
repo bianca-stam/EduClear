@@ -30,9 +30,11 @@ export class UsuarioService {
   }
 
   getProfesores(): Observable<UsuarioDTO[]> {
-    return this.getAllUsers().pipe(
-      map(users => users.filter(u => u.rol?.toLowerCase() === 'profesor'))
-    );
+    return this._http.get<UsuarioDTO[]>(`${this.BASE_URL}/rol/profesor`);
+  }
+
+  getUsuariosByAsignatura(asignaturaId: number): Observable<UsuarioDTO[]> {
+    return this._http.get<UsuarioDTO[]>(`${this.BASE_URL}/asignatura/${asignaturaId}`);
   }
 
   createUser(usuario: CrearUsuarioPayload): Observable<UsuarioDTO> {
