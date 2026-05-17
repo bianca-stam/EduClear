@@ -82,7 +82,7 @@ export class EditarTema implements OnInit {
   // ── Formulario ────────────────────────────────────────────────────────────
   form: FormGroup = this.fb.group({
     titulo:      ['', [Validators.required, Validators.minLength(3)]],
-    descripcion: ['', [Validators.required, Validators.minLength(5)]]
+    descripcion: ['', [Validators.required]]
   });
 
   // ── Computed ──────────────────────────────────────────────────────────────
