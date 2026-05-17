@@ -84,4 +84,9 @@ public class UsuarioController {
                     .body(Map.of("error", ex.getMessage()));
         }
     }
+
+    @GetMapping("/asignatura/{asignaturaId}")
+    public ResponseEntity<List<UsuarioDTO>> getByAsignatura(@PathVariable Integer asignaturaId) {
+        return ResponseEntity.ok(usuarioService.findUsuariosByAsignatura(asignaturaId));
+    }
 }

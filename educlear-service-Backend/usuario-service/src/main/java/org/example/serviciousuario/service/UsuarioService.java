@@ -12,4 +12,5 @@ public interface UsuarioService {
     UsuarioDTO save(Usuario usuario);
     UsuarioDTO login(String email, String contrasena);
     void delete(Integer id);
+    List<UsuarioDTO> findUsuariosByAsignatura(Integer asignaturaId);
 }
