@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.materiales_service.dto.intentoExamen.request.CreateIntentoExamenDTO;
 import org.springframework.boot.materiales_service.dto.intentoExamen.request.UpdateIntentoExamenDTO;
 import org.springframework.boot.materiales_service.dto.intentoExamen.response.IntentoExamenDTO;
+import org.springframework.boot.materiales_service.dto.intentoExamen.response.EstadoIntentoAlumnoDTO;
 import org.springframework.boot.materiales_service.exception.ResourceNotFoundException;
 import org.springframework.boot.materiales_service.service.IntentoExamenService;
 import org.springframework.http.HttpStatus;
@@ -66,5 +67,10 @@ public class IntentoExamenController {
             throw new ResourceNotFoundException("El intento de examen solicitado no existe.");
         }
         return ResponseEntity.ok(intentoExamen);
+    }
+
+    @GetMapping("/examen/{examenId}/estado-alumnos")
+    public ResponseEntity<List<EstadoIntentoAlumnoDTO>> getEstadoAlumnosByExamen(@PathVariable Integer examenId) {
+        return ResponseEntity.ok(intentoExamenService.getEstadoIntentosAlumnosByExamenId(examenId));
     }
 }

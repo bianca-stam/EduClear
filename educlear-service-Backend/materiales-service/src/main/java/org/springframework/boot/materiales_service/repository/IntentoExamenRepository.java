@@ -10,4 +10,5 @@ public interface IntentoExamenRepository extends JpaRepository<IntentoExamen, In
     List<IntentoExamen> findByExamenIdInAndAlumnoId(List<Integer> examenIds, Integer alumnoId);
     boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
     Optional<IntentoExamen> findByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId);
+    List<IntentoExamen> findByExamenId(Integer examenId);
 }
