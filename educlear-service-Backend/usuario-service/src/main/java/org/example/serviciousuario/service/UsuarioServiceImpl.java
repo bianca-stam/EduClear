@@ -16,6 +16,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private org.example.serviciousuario.config.AsignaturaClient asignaturaClient;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -99,5 +102,28 @@ public class UsuarioServiceImpl implements UsuarioService {
         dto.setEmail(usuario.getEmail());
         dto.setRol(usuario.getRol());
         return dto;
+    }
+
+    @Override
+    public List<UsuarioDTO> findUsuariosByAsignatura(Integer asignaturaId) {
+        List<Integer> alumnoIds = asignaturaClient.getAlumnoIdsByAsignatura(asignaturaId);
+        if (alumnoIds == null || alumnoIds.isEmpty()) {
+            return List.of();
+        }
+        return usuarioRepository.findAllById(alumnoIds).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UsuarioDTO> findByRol(String rolString) {
+        try {
+            org.example.serviciousuario.model.Rol rol = org.example.serviciousuario.model.Rol.valueOf(rolString.toLowerCase());
+            return usuarioRepository.findByRol(rol).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Rol no válido");
+        }
     }
 }
