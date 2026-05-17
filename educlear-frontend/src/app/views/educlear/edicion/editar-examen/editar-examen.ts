@@ -71,7 +71,7 @@ export class EditarExamen implements OnInit {
   // ── Formulario Examen ─────────────────────────────────────────────────────
   form: FormGroup = this.fb.group({
     titulo:         ['', [Validators.required, Validators.minLength(3)]],
-    descripcion:    ['', [Validators.required, Validators.minLength(5)]],
+    descripcion:    ['', [Validators.required]],
     fecha_apertura: ['', [Validators.required]],
     fecha_cierre:   ['', [Validators.required]]
   });

@@ -52,7 +52,7 @@ export class EditarTarea implements OnInit {
   // ── Formulario ────────────────────────────────────────────────────────────
   form: FormGroup = this.fb.group({
     titulo:         ['', [Validators.required, Validators.minLength(3)]],
-    descripcion:    ['', [Validators.required, Validators.minLength(5)]],
+    descripcion:    ['', [Validators.required]],
     fecha_apertura: ['', [Validators.required]],
     fecha_cierre:   ['', [Validators.required]]
   });
