@@ -8,6 +8,13 @@ import org.springframework.boot.materiales_service.model.IntentoExamen;
 import org.springframework.boot.materiales_service.repository.IntentoExamenRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.boot.materiales_service.model.Pregunta;
+import org.springframework.boot.materiales_service.model.RespuestaAlumno;
+import org.springframework.boot.materiales_service.repository.PreguntaRepository;
+import org.springframework.boot.materiales_service.repository.RespuestaAlumnoRepository;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +23,12 @@ public class IntentoExamenServiceImpl implements IntentoExamenService {
 
     @Autowired
     private IntentoExamenRepository intentoExamenRepository;
+
+    @Autowired
+    private PreguntaRepository preguntaRepository;
+
+    @Autowired
+    private RespuestaAlumnoRepository respuestaAlumnoRepository;
 
     @Override
     public List<IntentoExamenDTO> findAll() {
@@ -33,8 +46,43 @@ public class IntentoExamenServiceImpl implements IntentoExamenService {
 
     @Override
     public IntentoExamenDTO save(CreateIntentoExamenDTO intentoExamenDto) {
+        List<Pregunta> preguntas = preguntaRepository.findByExamenId(intentoExamenDto.getExamenId());
+        
+        int totalPreguntas = preguntas.size();
+        int respuestasCorrectas = 0;
+
+        if (intentoExamenDto.getRespuestas() != null && totalPreguntas > 0) {
+            for (CreateIntentoExamenDTO.RespuestaExamenDTO respuestaEnvio : intentoExamenDto.getRespuestas()) {
+                Pregunta pregunta = preguntas.stream()
+                        .filter(p -> p.getId().equals(respuestaEnvio.getPreguntaId()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (pregunta != null && pregunta.getRespuestaCorrecta() == respuestaEnvio.getOpcionSeleccionada()) {
+                    respuestasCorrectas++;
+                }
+            }
+        }
+
+        BigDecimal calificacion = totalPreguntas > 0 
+                ? BigDecimal.valueOf((double) respuestasCorrectas / totalPreguntas * 10).setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        intentoExamenDto.setCalificacionFinal(calificacion);
+        
         IntentoExamen intentoExamen = convertToEntity(intentoExamenDto);
         IntentoExamen guardado = intentoExamenRepository.save(intentoExamen);
+
+        if (intentoExamenDto.getRespuestas() != null) {
+            for (CreateIntentoExamenDTO.RespuestaExamenDTO respuestaEnvio : intentoExamenDto.getRespuestas()) {
+                RespuestaAlumno respuestaAlumno = new RespuestaAlumno();
+                respuestaAlumno.setIntentoId(guardado.getId());
+                respuestaAlumno.setPreguntaId(respuestaEnvio.getPreguntaId());
+                respuestaAlumno.setOpcionSeleccionada(respuestaEnvio.getOpcionSeleccionada());
+                respuestaAlumnoRepository.save(respuestaAlumno);
+            }
+        }
+
         return convertToDTO(guardado);
     }
 
@@ -73,6 +121,13 @@ public class IntentoExamenServiceImpl implements IntentoExamenService {
     @Override
     public boolean existsByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId) {
         return intentoExamenRepository.existsByAlumnoIdAndExamenId(alumnoId, examenId);
+    }
+
+    @Override
+    public IntentoExamenDTO findByAlumnoIdAndExamenId(Integer alumnoId, Integer examenId) {
+        return intentoExamenRepository.findByAlumnoIdAndExamenId(alumnoId, examenId)
+                .map(this::convertToDTO)
+                .orElse(null);
     }
 
     private IntentoExamenDTO convertToDTO(IntentoExamen intentoExamen) {

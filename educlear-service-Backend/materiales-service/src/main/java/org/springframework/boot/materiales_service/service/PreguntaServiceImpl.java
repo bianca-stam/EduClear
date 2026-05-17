@@ -76,7 +76,11 @@ public class PreguntaServiceImpl implements PreguntaService {
     @Override
     public List<PreguntaDTO> findByExamenId(Integer examenId) {
         return preguntaRepository.findByExamenId(examenId).stream()
-                .map(this::convertToDTO)
+                .map(pregunta -> {
+                    PreguntaDTO dto = convertToDTO(pregunta);
+                    dto.setRespuestaCorrecta(null);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
