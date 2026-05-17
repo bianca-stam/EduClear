@@ -1,13 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CursosService } from '@core/services/cursos.service';
-import { LucideAngularModule, Search, AlertCircle, Loader, LucidePencil } from "lucide-angular";
+import { LucideAngularModule, Search, AlertCircle, Loader, LucidePencil, Plus, Trash2 } from "lucide-angular";
 import { AuthService } from '@core/services/auth.service';
 import { DbCurso } from '@core/models/db-models';
 
+import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
+
 @Component({
   selector: 'app-cursos',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, ConfirmModal],
   templateUrl: './cursos.html',
   styleUrl: './cursos.scss'
 })
@@ -16,6 +18,8 @@ export class Cursos implements OnInit {
   alertCircle = AlertCircle;
   loader = Loader;
   pencil = LucidePencil;
+  plus = Plus;
+  trash = Trash2;
 
   esAdminOProfesor = computed(() => {
     const rol = this.authService.usuarioActual()?.rol;
@@ -28,6 +32,7 @@ export class Cursos implements OnInit {
 
   isLoading = signal(true);
   errorMsg = signal<string | null>(null);
+  eliminandoId = signal<number | null>(null);
 
   private cursosRaw = signal<DbCurso[]>([]);
 
@@ -42,6 +47,10 @@ export class Cursos implements OnInit {
   });
 
   ngOnInit() {
+    this.cargarCursos();
+  }
+
+  cargarCursos() {
     const usuario = this.authService.usuarioActual()!;
     let cursos$;
 
@@ -81,8 +90,51 @@ export class Cursos implements OnInit {
     this.router.navigate(['/cursos', nombreUrl]);
   }
 
+  navegarACrear() {
+    this.router.navigate(['/edicion/curso/nuevo']);
+  }
+
+  navegarAEditar(event: Event, curso: DbCurso) {
+    event.stopPropagation();
+    this.router.navigate(['/edicion/curso', curso.id_curso]);
+  }
+
+  // ── Modal de Confirmación ────────────────────────────────────────────────
+  mostrarModalConfirmacion = signal(false);
+  itemAEliminar = signal<DbCurso | null>(null);
+
+  confirmarEliminar(event: Event, curso: DbCurso) {
+    event.stopPropagation();
+    this.itemAEliminar.set(curso);
+    this.mostrarModalConfirmacion.set(true);
+  }
+
+  cerrarConfirmacion() {
+    this.mostrarModalConfirmacion.set(false);
+    this.itemAEliminar.set(null);
+  }
+
+  ejecutarEliminacion() {
+    const curso = this.itemAEliminar();
+    if (!curso) return;
+
+    this.eliminandoId.set(curso.id_curso);
+    this.cursosService.eliminarCurso(curso.id_curso).subscribe({
+      next: () => {
+        this.cursosRaw.update(list => list.filter(c => c.id_curso !== curso.id_curso));
+        this.eliminandoId.set(null);
+        this.cerrarConfirmacion();
+      },
+      error: (err) => {
+        console.error('Error al eliminar curso:', err);
+        this.eliminandoId.set(null);
+        alert('No se pudo eliminar el curso. Inténtalo de nuevo.');
+        this.cerrarConfirmacion();
+      }
+    });
+  }
+
   buscarCurso(busqueda: string) {
     this.terminoBusqueda.set(busqueda);
   }
 }
-

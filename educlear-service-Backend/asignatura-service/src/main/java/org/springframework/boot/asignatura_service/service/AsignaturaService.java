@@ -2,6 +2,7 @@ package org.springframework.boot.asignatura_service.service;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.model.Asignatura;
 
 import java.util.List;

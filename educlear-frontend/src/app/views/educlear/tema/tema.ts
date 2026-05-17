@@ -3,12 +3,15 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DbArchivoContenido, DbEntregaTarea, DbExamen, DbTarea } from '@core/models/db-models';
 import { TemasService } from '@core/services/temas.service';
+import { AsignaturasService } from '@core/services/asignaturas.service';
+import { AuthService } from '@core/services/auth.service';
 import { forkJoin } from 'rxjs';
-import { ArrowRight, ClipboardPen, FileUp, FileText, LucideAngularModule, AlertCircle, Loader } from "lucide-angular";
+import { ArrowRight, ClipboardPen, FileUp, FileText, LucideAngularModule, AlertCircle, Loader, Pencil, Trash2 } from "lucide-angular";
+import { ConfirmModal } from '@app/components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-tema',
-  imports: [LucideAngularModule, DatePipe],
+  imports: [LucideAngularModule, DatePipe, ConfirmModal],
   templateUrl: './tema.html',
   styleUrl: './tema.scss'
 })
@@ -20,8 +23,12 @@ export class Tema implements OnInit {
   fileText = FileText;
   alertCircle = AlertCircle;
   loader = Loader;
+  pencil = Pencil;
+  trash = Trash2;
 
   private readonly temaService = inject(TemasService);
+  private readonly asignaturasService = inject(AsignaturasService);
+  private readonly authService = inject(AuthService);
 
   titulo = computed(() => this.temaService.temaSeleccionado()?.titulo);
   descripcion = computed(() => this.temaService.temaSeleccionado()?.descripcion);
@@ -113,4 +120,101 @@ export class Tema implements OnInit {
     });
   }
 
+  puedeEditarTema(): boolean {
+    const usuario = this.authService.usuarioActual();
+    const asig = this.asignaturasService.asignaturaSeleccionada();
+    if (!usuario || !asig) return false;
+    if (usuario.rol === 'admin') return true;
+    return usuario.rol === 'profesor' && asig.profesor_id === usuario.id;
+  }
+
+  editarTema() {
+    const idTema = this.temaService.temaSeleccionado()?.id_tema;
+    if (idTema) {
+      this.router.navigate(['/edicion/tema', idTema]);
+    }
+  }
+
+  editarExamen(event: Event, examen: DbExamen) {
+    event.stopPropagation();
+    this.router.navigate(['/edicion/examen', examen.id_examen]);
+  }
+
+  editarTarea(event: Event, tarea: DbTarea) {
+    event.stopPropagation();
+    this.router.navigate(['/edicion/tarea', tarea.id_tarea]);
+  }
+
+  editarMaterial(event: Event, material: DbArchivoContenido) {
+    event.stopPropagation();
+    // Material is edited on the tema page itself via FileUploader
+    const idTema = this.temaService.temaSeleccionado()?.id_tema;
+    if (idTema) {
+      this.router.navigate(['/edicion/tema', idTema]);
+    }
+  }
+
+  // ── Modal de Confirmación ────────────────────────────────────────────────
+  
+  mostrarModalConfirmacion = signal(false);
+  itemAEliminar = signal<{ id: number, tipo: 'tarea' | 'examen' | 'archivo', nombre?: string } | null>(null);
+
+  get modalMessage(): string {
+    const tipo = this.itemAEliminar()?.tipo;
+    if (tipo === 'archivo') return '¿Seguro que quieres eliminar el archivo';
+    if (tipo === 'tarea') return '¿Seguro que quieres eliminar la tarea';
+    if (tipo === 'examen') return '¿Seguro que quieres eliminar el examen';
+    return '¿Estás seguro de que deseas eliminar este elemento';
+  }
+
+  abrirConfirmacionEliminar(event: Event, id: number, tipo: 'tarea' | 'examen' | 'archivo', nombre?: string) {
+    event.stopPropagation();
+    this.itemAEliminar.set({ id, tipo, nombre });
+    this.mostrarModalConfirmacion.set(true);
+  }
+
+  cerrarConfirmacion() {
+    this.mostrarModalConfirmacion.set(false);
+    this.itemAEliminar.set(null);
+  }
+
+  confirmarEliminacion() {
+    const item = this.itemAEliminar();
+    if (!item) return;
+
+    if (item.tipo === 'tarea') {
+      this.temaService.eliminarTarea(item.id).subscribe({
+        next: () => {
+          this.entregas.update(list => list.filter(t => t.id_tarea !== item.id));
+          this.cerrarConfirmacion();
+        },
+        error: () => {
+          alert('No se pudo eliminar la tarea.');
+          this.cerrarConfirmacion();
+        }
+      });
+    } else if (item.tipo === 'examen') {
+      this.temaService.eliminarExamen(item.id).subscribe({
+        next: () => {
+          this.examenes.update(list => list.filter(e => e.id_examen !== item.id));
+          this.cerrarConfirmacion();
+        },
+        error: () => {
+          alert('No se pudo eliminar el examen.');
+          this.cerrarConfirmacion();
+        }
+      });
+    } else if (item.tipo === 'archivo') {
+      this.temaService.eliminarArchivo(item.id).subscribe({
+        next: () => {
+          this.materiales.update(list => list.filter(a => a.id_contenido !== item.id));
+          this.cerrarConfirmacion();
+        },
+        error: () => {
+          alert('No se pudo eliminar el archivo.');
+          this.cerrarConfirmacion();
+        }
+      });
+    }
+  }
 }

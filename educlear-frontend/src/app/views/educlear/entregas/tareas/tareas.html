@@ -15,19 +15,23 @@
             <h4>Apertura: {{ fechaAperturaFormat() }}</h4>
             <h4 style="color: var(--ins-secondary)">Cierre: {{ fechaCierreFormat() }}</h4>
         </div>
-        <div class="estado-entrega">
-            <h3>Calificacion:</h3>
-            <p [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">{{ calificacionTexto() }}</p>
-            <h3>Tiempo restante:</h3>
-            <p style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">{{ tiempoRestante() }}</p>
-        </div>
+        @if (!esProfesor()) {
+            <div class="estado-entrega">
+                <h3>Calificacion:</h3>
+                <p [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">{{ calificacionTexto() }}</p>
+                <h3>Tiempo restante:</h3>
+                <p style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">{{ tiempoRestante() }}</p>
+            </div>
+        }
     </div>
     <div class="tareas-main">
         <h3>Descripcion</h3>
         <p>{{ descripcion()}}</p>
-        <button [disabled]="estaCalificada() || estaVencida()" (click)="toggleUploader()" class="btn btn-primary fw-semibold py-2 mb-3">
-            {{ textoBotonEntrega() }}
-        </button>
+        @if (!esProfesor()) {
+            <button [disabled]="estaCalificada() || estaVencida()" (click)="toggleUploader()" class="btn btn-primary fw-semibold py-2 mb-3">
+                {{ textoBotonEntrega() }}
+            </button>
+        }
 
         @if (mostrarUploader()) {
             <div class="w-100 mt-2 rounded-3 p-3 uploader-container">
@@ -44,48 +48,84 @@
                 </button>
             </div>
         } @else {
-            <table style="width: 100%; background-color: var(--ins-card-bg); border-collapse: collapse; margin-bottom: 20px; border-radius: 16px; overflow: hidden;">
-                <tbody>
-                    <tr>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; width: 30%;">Estado de la entrega</td>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
-                            <span [style.color]="(estadoTexto() === 'Entregado') ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
-                                {{ estadoTexto() }}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Calificacion</td>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
-                            <span [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
-                                {{ calificacionTexto() }}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Archivo de entrega</td>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
-                            @if (archivoEntrega()) {
-                                <button (click)="abrirArchivo()" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 m-0">
-                                    <lucide-icon [img]="fileText" [size]="18"></lucide-icon>
-                                    {{ archivoEntrega().nombre_archivo }}
-                                    <lucide-icon [img]="externalLink" [size]="14"></lucide-icon>
-                                </button>
-                            } @else {
-                                <span class="text-muted">Ningún archivo subido</span>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Tiempo restante</td>
-                        <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
-                            <span style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">
-                                {{ tiempoRestante() }}
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (esProfesor()) {
+                <table style="width: 100%; background-color: var(--ins-card-bg); border-collapse: collapse; margin-bottom: 20px; border-radius: 16px; overflow: hidden;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; text-align: left;">Alumno</th>
+                            <th style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; text-align: left;">Entregado</th>
+                            <th style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; text-align: left;">Calificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (estado of estadoAlumnos(); track estado.alumnoNombre) {
+                            <tr>
+                                <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">{{ estado.alumnoNombre }}</td>
+                                <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                    <span [style.color]="estado.entregado ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-weight: bold;">
+                                        {{ estado.entregado ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                    <span [style.color]="(estado.calificacion === null || estado.calificacion) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-weight: bold;">
+                                        {{ estado.calificacion !== null ? estado.calificacion : 'Sin calificar' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                        @if (estadoAlumnos().length === 0) {
+                            <tr>
+                                <td colspan="3" style="padding: 12px; border: 2px solid var(--ins-body-bg); text-align: center; color: var(--ins-secondary);">
+                                    No hay alumnos matriculados.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            } @else {
+                <table style="width: 100%; background-color: var(--ins-card-bg); border-collapse: collapse; margin-bottom: 20px; border-radius: 16px; overflow: hidden;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold; width: 30%;">Estado de la entrega</td>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                <span [style.color]="(estadoTexto() === 'Entregado') ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
+                                    {{ estadoTexto() }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Calificacion</td>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                <span [style.color]="(calificacionValor() === null || calificacionValor()! >= 5) ? 'var(--ins-primary)' : 'var(--ins-secondary)'" style="font-size: 1.5rem; font-weight: bold;">
+                                    {{ calificacionTexto() }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Archivo de entrega</td>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                @if (archivoEntrega()) {
+                                    <button (click)="abrirArchivo()" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 m-0">
+                                        <lucide-icon [img]="fileText" [size]="18"></lucide-icon>
+                                        {{ archivoEntrega().nombre_archivo }}
+                                        <lucide-icon [img]="externalLink" [size]="14"></lucide-icon>
+                                    </button>
+                                } @else {
+                                    <span class="text-muted">Ningún archivo subido</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg); font-weight: bold;">Tiempo restante</td>
+                            <td style="padding: 12px; border: 2px solid var(--ins-body-bg);">
+                                <span style="color: var(--ins-secondary); font-size: 1.5rem; font-weight: bold;">
+                                    {{ tiempoRestante() }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
         }
     </div>
 }

@@ -39,6 +39,7 @@ export interface DbArchivoContenido {
   nombre_archivo: string;
   tipo_mime: string;
   peso_bytes: number;
+  archivo_blob?: string;
 }
 
 export interface DbExamen {
@@ -107,6 +108,7 @@ export interface DbArchivoEntrega {
   nombre_archivo: string;
   tipo_mime: string;
   peso_bytes: number;
+  archivo_blob?: string;
 }
 
 // Respustas de ciertas llamadas a la API

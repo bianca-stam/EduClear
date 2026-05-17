@@ -2,6 +2,7 @@ import { environment } from '@/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { UsuarioDTO } from './auth.service';
 
 export interface CrearUsuarioPayload {
@@ -26,6 +27,12 @@ export class UsuarioService {
 
   getUserById(id: number): Observable<UsuarioDTO> {
     return this._http.get<UsuarioDTO>(`${this.BASE_URL}/${id}`);
+  }
+
+  getProfesores(): Observable<UsuarioDTO[]> {
+    return this.getAllUsers().pipe(
+      map(users => users.filter(u => u.rol?.toLowerCase() === 'profesor'))
+    );
   }
 
   createUser(usuario: CrearUsuarioPayload): Observable<UsuarioDTO> {
