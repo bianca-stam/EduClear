@@ -1,6 +1,7 @@
 package org.springframework.boot.asignatura_service.service;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.MatriculaAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
@@ -30,4 +31,7 @@ public interface AsignaturaService {
     List<AsignaturaDTO> findByAlumnoId(Integer alumnoId);
 
     List<AsignaturaDetalleDTO> findDetallesByCursoId(Integer cursoId);
+
+    // Matricula a un usuario en todas las asignaturas de un curso
+    List<MatriculaAsignaturaDTO> matricularEnCurso(Integer cursoId, Integer usuarioId);
 }
