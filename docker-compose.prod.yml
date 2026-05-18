@@ -7,7 +7,7 @@ x-spring-prod: &spring-prod
     DB_PASSWORD: ${DB_PASSWORD}
     SPRING_DATASOURCE_URL: jdbc:mariadb://${AWS_RDS_ENDPOINT}:3306/${DB_NAME:-dbeduclear}?sslMode=trust
     SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 2
-    SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    SPRING_JPA_HIBERNATE_DDL_AUTO: validate
     SPRING_JPA_SHOW_SQL: "false"
 
 services:
