@@ -2,6 +2,8 @@
 
 Plataforma educativa basada en microservicios, desarrollada con Spring Boot y Angular.
 
+---
+
 ## Tecnologías
 
 - **Frontend:** Angular 20
@@ -50,6 +52,9 @@ Edita el `.env` con tus datos:
 DB_NAME=nombre_de_la_base_de_datos
 DB_USER=usuario_para_la_base_de_datos
 DB_PASSWORD=contraseña_para_este_usuario
+
+AWS_RDS_ENDPOINT=endpoint_de_tu_base_de_datos_en_aws_rds
+IP_PUBLICA=ip_publica_de_tu_maquina_virtual
 ```
 
 ### 3. Arranca el proyecto
@@ -60,7 +65,7 @@ Abre la app de **Docker Desktop**, espera a que arranque y escribe el siguiente 
 docker compose up --build
 ```
 
-La **primera** vez tardará unos minutos mientras descarga las imágenes y compila el proyecto. Después, para arrancarlo solo tienes que usar este otro comando:
+La **primera** vez tardará **unos minutos** mientras descarga las imágenes y compila el proyecto. Después, para arrancarlo solo tienes que usar este otro comando:
 
 ```bash
 docker compose up -d
@@ -78,19 +83,19 @@ docker compose down
 Una vez arrancado, la aplicación estará disponible en:
 
 - **Frontend** → http://localhost
-- 
+  
 ## Datos de prueba
 
-Rol profesor: 
-- email: profesor@educlear.com
+### Rol profesor: 
+- email: profesor@educlear.com /  profesor1@educlear.com
 - contraseña: 123
 
-Rol alumno:
-- email: ana@educlear.com
+### Rol alumno:
+- email: ana@educlear.com / luis@educlear.com / elena@educlear.com / juan@educlear.com
 - contraseña: 123
   
-Rol alumno:
-- email: luis@educlear.com
+### Rol admin:
+- email: admin@educlear.com
 - contraseña: 123
 
 Para crear un nuevo usuario, iniciar sesión con el perfil de profesor y desde la pantalla de inicio (cursos) darle a agregar usuario (arriba a la derecha).
@@ -121,13 +126,16 @@ docker compose build usuario-service --no-cache
 
 ```
 EduClear/
-├── docker-compose.yml               ← archivo base
-├── docker-compose.prod.yml          ← para producción 
-├── docker-compose.override.yml      ← para desarrollo
+├── docker-compose.yml              ← archivo base
+├── docker-compose.prod.yml         ← para producción 
+├── docker-compose.override.yml     ← para desarrollo
+├── docker-compose.build.yml        ← para construir imágenes rápidamente
 │
-├── .env.example                     ← plantilla para configurar el entorno
+├── .env.example                    ← plantilla para configurar el entorno
 │
-├── educlear-frontend/               ← aplicación Angular
+├── basedatoseduclear.sql           ← script para inicializar base de datos
+│
+├── educlear-frontend/              ← aplicación Angular
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── src/
