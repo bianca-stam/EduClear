@@ -1,14 +1,19 @@
 package org.springframework.boot.asignatura_service.service;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
+import org.springframework.boot.asignatura_service.dto.MatriculaAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
 import org.springframework.boot.asignatura_service.model.Asignatura;
+import org.springframework.boot.asignatura_service.model.MatriculaAsignatura;
+import org.springframework.boot.asignatura_service.model.MatriculaAsignaturaId;
+import org.springframework.boot.asignatura_service.repository.MatriculaAsignaturaRepository;
 import org.springframework.boot.asignatura_service.repository.AsignaturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,11 +27,15 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     private AsignaturaRepository asignaturaRepository;
 
+    private MatriculaAsignaturaRepository matriculaRepository;
+
     @Autowired
     private RestTemplate restTemplate;
 
-    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository) {
+    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository,
+                                 MatriculaAsignaturaRepository matriculaRepository) {
         this.asignaturaRepository = asignaturaRepository;
+        this.matriculaRepository = matriculaRepository;
     }
 
     @Override
@@ -125,6 +134,40 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public List<AsignaturaDTO> findByAlumnoId(Integer alumnoId) {
         return asignaturaRepository.findAsignaturasByAlumnoId(alumnoId).stream()
                 .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<MatriculaAsignaturaDTO> matricularEnCurso(Integer cursoId, Integer usuarioId) {
+        // 1. Obtener todas las asignaturas del curso
+        List<Asignatura> asignaturas = asignaturaRepository.findByCursoId(cursoId);
+        if (asignaturas.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "No se encontraron asignaturas para el curso " + cursoId);
+        }
+
+        // 2. Crear una matrícula por cada asignatura (ignorando duplicados)
+        List<MatriculaAsignatura> nuevas = asignaturas.stream()
+                .filter(a -> !matriculaRepository.existsById(
+                        new MatriculaAsignaturaId(a.getId(), usuarioId)))
+                .map(a -> {
+                    MatriculaAsignatura m = new MatriculaAsignatura();
+                    m.setAsignaturaId(a.getId());
+                    m.setAlumnoId(usuarioId);
+                    return m;
+                })
+                .collect(Collectors.toList());
+
+        List<MatriculaAsignatura> guardadas = matriculaRepository.saveAll(nuevas);
+
+        return guardadas.stream()
+                .map(m -> {
+                    MatriculaAsignaturaDTO dto = new MatriculaAsignaturaDTO();
+                    dto.setAsignaturaId(m.getAsignaturaId());
+                    dto.setAlumnoId(m.getAlumnoId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
