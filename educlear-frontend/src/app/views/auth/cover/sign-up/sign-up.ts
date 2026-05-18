@@ -1,11 +1,15 @@
 import { credits, currentYear } from '@/app/constants';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { PasswordStrengthBar } from "@app/components/password-strength-bar";
 import { FormBuilder, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ChoiceSelectInputDirective } from '@core/directive/choices-select.directive';
 import { LucideAngularModule, LucideCircleUser, LucideKeyRound, LucideMail, LucideShield } from "lucide-angular";
 import { AuthService } from '@core/services/auth.service';
+import { CursosService } from '@core/services/cursos.service';
+import { AsignaturasService } from '@core/services/asignaturas.service';
+import { DbCurso } from '@core/models/db-models';
+import { switchMap, of } from 'rxjs';
 
 @Component({
     selector: 'app-sign-up',
@@ -23,23 +27,50 @@ import { AuthService } from '@core/services/auth.service';
         }
     `],
 })
-export class SignUp {
+export class SignUp implements OnInit {
     currentYear = currentYear
     credits = credits
 
     private fb = inject(FormBuilder).nonNullable;
     private authService = inject(AuthService);
+    private cursosService = inject(CursosService);
+    private asignaturasService = inject(AsignaturasService);
     private router = inject(Router);
+
+    // ── Estado ───────────────────────────────────────────────────────────────
+    cursos = signal<DbCurso[]>([]);
 
     isLoading = signal(false);
     errorMessage = signal<string | null>(null);
+
+    opcionesCurso = computed(() => ({
+        searchEnabled: true,
+        itemSelectText: '',
+        choices: [
+            { value: '', label: '— Sin curso asignado —', disabled: false, selected: !this.loginForm?.value?.cursoId },
+            ...this.cursos().map(c => ({
+                value: c.id_curso.toString(),
+                label: c.nombre,
+                selected: Number(this.loginForm?.value?.cursoId) === c.id_curso
+            }))
+        ]
+    }));
 
     loginForm = this.fb.group({
         nombreCompleto: ['', [Validators.required, Validators.minLength(3)]],
         correo: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
         password: ['', [Validators.required,Validators.minLength(3) ]],
-        rol: ['alumno', Validators.required]
+        rol: ['alumno', Validators.required],
+        cursoId: [null as number | null]
     });
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    ngOnInit() {
+        this.cursosService.getAllCursos().subscribe({
+            next: (data) => this.cursos.set(data),
+            error: (err) => console.error('Error al cargar cursos para el registro:', err)
+        });
+    }
 
     get form(){ return this.loginForm.controls }
 
@@ -53,6 +84,8 @@ export class SignUp {
     this.errorMessage.set(null);
 
     const formValues = this.loginForm.getRawValue();
+    const cursoId = formValues.cursoId ? Number(formValues.cursoId) : null;
+
     const newUser = {
       nombreCompleto: formValues.nombreCompleto,
       email: formValues.correo,
@@ -60,10 +93,16 @@ export class SignUp {
       rol: formValues.rol
     };
 
-    this.authService.register(newUser).subscribe({
+    this.authService.register(newUser).pipe(
+      switchMap(usuarioCreado => {
+        if (cursoId && usuarioCreado.id) {
+          return this.asignaturasService.matricularEnCurso(cursoId, usuarioCreado.id);
+        }
+        return of(undefined);
+      })
+    ).subscribe({
       next: () => {
         this.isLoading.set(false);
-        // Despues de registrarse exitosamente, navegar a login (o auto-login)
         this.router.navigate(['/auth-2/sign-in']);
       },
       error: (err: Error) => {
