@@ -136,6 +136,22 @@
                                     </div>
                                 </div>
 
+                                <div class="mb-3">
+                                    <label for="userCurso" class="form-label">
+                                        Curso
+                                    </label>
+                                    <div class="app-search">
+                                        @if (cursos().length > 0) {
+                                            <select choicesSelect [options]="opcionesCurso()" class="form-control" id="userCurso" formControlName="cursoId">
+                                            </select>
+                                        } @else {
+                                            <select class="form-control" disabled>
+                                                <option>Cargando cursos...</option>
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+
                                <div
                                 class="d-flex justify-content-between align-items-center mb-3"
                             >

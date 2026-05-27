@@ -121,4 +121,11 @@ export class AsignaturasService {
       }))
     );
   }
+
+  matricularEnCurso(cursoId: number, usuarioId: number): Observable<any[]> {
+    return this._http.post<any[]>(
+      `${this.ASIGNATURAS_URL}/curso/${cursoId}/matricular/${usuarioId}`,
+      {}
+    );
+  }
 }
