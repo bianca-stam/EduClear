@@ -6,7 +6,7 @@ import {
   DbEntregaTarea,
   DbExamen,
   DbIntentoExamen,
-  DbMatriculaAsignatura,
+  DbMatriculaCurso,
   DbPregunta,
   DbRespuestaAlumno,
   DbTarea,
@@ -32,11 +32,10 @@ export const MOCK_ASIGNATURAS: DbAsignatura[] = [
   { id_asignatura: 3, nombre: 'Experiencia de Usuario (UX)', curso_id: 2, profesor_id: 1 }
 ];
 
-export const MOCK_MATRICULAS: DbMatriculaAsignatura[] = [
-  { asignatura_id: 1, alumno_id: 2 },
-  { asignatura_id: 1, alumno_id: 3 },
-  { asignatura_id: 2, alumno_id: 2 },
-  { asignatura_id: 3, alumno_id: 2 }
+export const MOCK_MATRICULAS: DbMatriculaCurso[] = [
+  { curso_id: 1, alumno_id: 2 },
+  { curso_id: 1, alumno_id: 3 },
+  { curso_id: 2, alumno_id: 2 }
 ];
 
 export const MOCK_TEMAS: DbTema[] = [

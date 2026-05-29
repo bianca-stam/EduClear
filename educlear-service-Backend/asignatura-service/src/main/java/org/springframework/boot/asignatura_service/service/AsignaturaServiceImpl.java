@@ -1,22 +1,17 @@
 package org.springframework.boot.asignatura_service.service;
 
+import org.springframework.boot.asignatura_service.config.CursoClient;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
-import org.springframework.boot.asignatura_service.dto.MatriculaAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
 import org.springframework.boot.asignatura_service.model.Asignatura;
-import org.springframework.boot.asignatura_service.model.MatriculaAsignatura;
-import org.springframework.boot.asignatura_service.model.MatriculaAsignaturaId;
-import org.springframework.boot.asignatura_service.repository.MatriculaAsignaturaRepository;
 import org.springframework.boot.asignatura_service.repository.AsignaturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,15 +22,14 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     private AsignaturaRepository asignaturaRepository;
 
-    private MatriculaAsignaturaRepository matriculaRepository;
+    @Autowired
+    private CursoClient cursoClient;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository,
-                                 MatriculaAsignaturaRepository matriculaRepository) {
+    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository) {
         this.asignaturaRepository = asignaturaRepository;
-        this.matriculaRepository = matriculaRepository;
     }
 
     @Override
@@ -64,11 +58,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public List<Integer> obtenerCursoIdsPorAlumno(Integer alumnoId) {
-        return asignaturaRepository.findCursoIdsByAlumnoId(alumnoId);
-    }
-
-    @Override
     public List<AsignaturaDTO> findByCursoId(Integer cursoId) {
         return asignaturaRepository.findByCursoId(cursoId).stream()
                 .map(this::convertToDTO)
@@ -78,28 +67,33 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     @Override
     public List<AsignaturaDetalleDTO> findDetallesByCursoId(Integer cursoId) {
         List<Asignatura> asignaturas = asignaturaRepository.findByCursoId(cursoId);
-        
+
+        // Obtener alumnos del curso (a través de curso-service)
+        List<Integer> alumnoIds = cursoClient.getAlumnoIdsByCurso(cursoId);
+        long cantidadAlumnos = alumnoIds.size();
+
         return asignaturas.stream().map(a -> {
             AsignaturaDetalleDTO dto = new AsignaturaDetalleDTO();
             dto.setId(a.getId());
             dto.setNombre(a.getNombre());
             dto.setCursoId(a.getCursoId());
             dto.setProfesorId(a.getProfesorId());
-            
-            dto.setCantidadAlumnos(asignaturaRepository.countAlumnosByAsignaturaId(a.getId()));
-            
+
+            // Todos los alumnos del curso tienen acceso a todas las asignaturas
+            dto.setCantidadAlumnos(cantidadAlumnos);
+
             if (a.getProfesorId() != null) {
                 try {
                     Map response = restTemplate.getForObject(
                             "http://usuario-service:8081/api/usuarios/" + a.getProfesorId(), Map.class);
-                    if (response != null && response.containsKey("nombreCompleto")) {
-                        dto.setNombreProfesor((String) response.get("nombreCompleto"));
+                    if (response != null && response.containsKey("username")) {
+                        dto.setNombreProfesor((String) response.get("username"));
                     }
                 } catch (Exception e) {
                     dto.setNombreProfesor("Profesor Desconocido");
                 }
             }
-            
+
             return dto;
         }).collect(Collectors.toList());
     }
@@ -127,47 +121,21 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Override
     public Long contarAlumnosMatriculados(Integer asignaturaId) {
-        return asignaturaRepository.countAlumnosByAsignaturaId(asignaturaId);
+        // Obtener el cursoId de la asignatura y contar alumnos del curso
+        return asignaturaRepository.findById(asignaturaId)
+                .map(a -> (long) cursoClient.getAlumnoIdsByCurso(a.getCursoId()).size())
+                .orElse(0L);
     }
 
     @Override
     public List<AsignaturaDTO> findByAlumnoId(Integer alumnoId) {
-        return asignaturaRepository.findAsignaturasByAlumnoId(alumnoId).stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public List<MatriculaAsignaturaDTO> matricularEnCurso(Integer cursoId, Integer usuarioId) {
-        // 1. Obtener todas las asignaturas del curso
-        List<Asignatura> asignaturas = asignaturaRepository.findByCursoId(cursoId);
-        if (asignaturas.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "No se encontraron asignaturas para el curso " + cursoId);
+        // Obtener cursos del alumno via curso-service, luego buscar asignaturas de esos cursos
+        List<Integer> cursoIds = cursoClient.getCursoIdsByAlumno(alumnoId);
+        if (cursoIds.isEmpty()) {
+            return List.of();
         }
-
-        // 2. Crear una matrícula por cada asignatura (ignorando duplicados)
-        List<MatriculaAsignatura> nuevas = asignaturas.stream()
-                .filter(a -> !matriculaRepository.existsById(
-                        new MatriculaAsignaturaId(a.getId(), usuarioId)))
-                .map(a -> {
-                    MatriculaAsignatura m = new MatriculaAsignatura();
-                    m.setAsignaturaId(a.getId());
-                    m.setAlumnoId(usuarioId);
-                    return m;
-                })
-                .collect(Collectors.toList());
-
-        List<MatriculaAsignatura> guardadas = matriculaRepository.saveAll(nuevas);
-
-        return guardadas.stream()
-                .map(m -> {
-                    MatriculaAsignaturaDTO dto = new MatriculaAsignaturaDTO();
-                    dto.setAsignaturaId(m.getAsignaturaId());
-                    dto.setAlumnoId(m.getAlumnoId());
-                    return dto;
-                })
+        return asignaturaRepository.findByCursoIdIn(cursoIds).stream()
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 

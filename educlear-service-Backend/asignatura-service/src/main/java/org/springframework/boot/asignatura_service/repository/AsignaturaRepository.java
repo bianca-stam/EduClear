@@ -14,28 +14,7 @@ public interface AsignaturaRepository extends JpaRepository<Asignatura, Integer>
             """)
     List<Integer> findCursoIdsByProfesorId(Integer profesorId);
 
-    @Query("""
-            SELECT DISTINCT a.cursoId
-            FROM Asignatura a
-            JOIN MatriculaAsignatura m ON a.id = m.asignaturaId
-            WHERE m.alumnoId = :alumnoId
-            """)
-    List<Integer> findCursoIdsByAlumnoId(Integer alumnoId);
-
     List<Asignatura> findByCursoId(Integer cursoId);
 
-    @Query("""
-            SELECT COUNT(m)
-            FROM MatriculaAsignatura m
-            WHERE m.asignaturaId = :asignaturaId
-            """)
-    Long countAlumnosByAsignaturaId(Integer asignaturaId);
-
-    @Query("""
-            SELECT a
-            FROM Asignatura a
-            JOIN MatriculaAsignatura m ON a.id = m.asignaturaId
-            WHERE m.alumnoId = :alumnoId
-            """)
-    List<Asignatura> findAsignaturasByAlumnoId(Integer alumnoId);
+    List<Asignatura> findByCursoIdIn(List<Integer> cursoIds);
 }

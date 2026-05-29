@@ -98,4 +98,17 @@ export class CursosService {
   eliminarCurso(id: number): Observable<void> {
     return this._http.delete<void>(`${this.BASE_URL}/${id}`);
   }
+
+  // ── Matrícula de alumnos ───────────────────────────────────────────────────
+
+  matricularEnCurso(cursoId: number, alumnoId: number): Observable<any> {
+    return this._http.post<any>(
+      `${this.BASE_URL}/${cursoId}/matricular/${alumnoId}`,
+      {}
+    );
+  }
+
+  getAlumnosByCurso(cursoId: number): Observable<number[]> {
+    return this._http.get<number[]>(`${this.BASE_URL}/${cursoId}/alumnos`);
+  }
 }

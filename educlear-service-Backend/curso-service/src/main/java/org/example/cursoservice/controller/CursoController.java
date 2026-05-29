@@ -3,6 +3,7 @@ package org.example.cursoservice.controller;
 import org.example.cursoservice.client.AsignaturaClient;
 import org.example.cursoservice.dto.CreateCursoDto;
 import org.example.cursoservice.dto.CursoDto;
+import org.example.cursoservice.dto.MatriculaCursoDTO;
 import org.example.cursoservice.service.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,33 @@ public class CursoController {
     @GetMapping("/alumno/{alumnoId}")
     public ResponseEntity<List<CursoDto>> getCursosByAlumno(@PathVariable Integer alumnoId) {
         return ResponseEntity.ok(cursoService.findCursosByAlumno(alumnoId));
+    }
+
+    // ── Matrícula de alumnos ────────────────────────────────────────────────
+
+    @PostMapping("/{cursoId}/matricular/{alumnoId}")
+    public ResponseEntity<MatriculaCursoDTO> matricular(
+            @PathVariable Integer cursoId,
+            @PathVariable Integer alumnoId) {
+        return new ResponseEntity<>(cursoService.matricular(cursoId, alumnoId), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{cursoId}/desmatricular/{alumnoId}")
+    public ResponseEntity<Void> desmatricular(
+            @PathVariable Integer cursoId,
+            @PathVariable Integer alumnoId) {
+        cursoService.desmatricular(cursoId, alumnoId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{cursoId}/alumnos")
+    public ResponseEntity<List<Integer>> getAlumnosByCurso(@PathVariable Integer cursoId) {
+        return ResponseEntity.ok(cursoService.getAlumnoIdsByCurso(cursoId));
+    }
+
+    @GetMapping("/alumno/{alumnoId}/curso-ids")
+    public ResponseEntity<List<Integer>> getCursoIdsByAlumno(@PathVariable Integer alumnoId) {
+        return ResponseEntity.ok(cursoService.getCursoIdsByAlumno(alumnoId));
     }
 
 }

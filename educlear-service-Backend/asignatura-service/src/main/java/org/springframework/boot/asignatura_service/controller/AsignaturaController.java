@@ -2,7 +2,6 @@ package org.springframework.boot.asignatura_service.controller;
 
 import org.springframework.boot.asignatura_service.dto.AsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.AsignaturaDetalleDTO;
-import org.springframework.boot.asignatura_service.dto.MatriculaAsignaturaDTO;
 import org.springframework.boot.asignatura_service.dto.UpdateAsignaturaDTO;
 import org.springframework.boot.asignatura_service.service.AsignaturaService;
 import org.springframework.boot.asignatura_service.model.Asignatura;
@@ -48,14 +47,6 @@ public class AsignaturaController {
                 asignaturaService.obtenerCursoIdsPorProfesor(profesorId));
     }
 
-    @GetMapping("/curso-ids/alumno")
-    public ResponseEntity<List<Integer>> getCursoIdsByAlumno(
-            @RequestParam Integer alumnoId) {
-
-        return ResponseEntity.ok(
-                asignaturaService.obtenerCursoIdsPorAlumno(alumnoId));
-    }
-
     @GetMapping("/curso/{cursoId}")
     public ResponseEntity<List<AsignaturaDTO>> getAsignaturasByCurso(@PathVariable Integer cursoId) {
         return ResponseEntity.ok(asignaturaService.findByCursoId(cursoId));
@@ -88,15 +79,6 @@ public class AsignaturaController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         asignaturaService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // Matricula a un usuario en todas las asignaturas de un curso
-    @PostMapping("/curso/{cursoId}/matricular/{usuarioId}")
-    public ResponseEntity<List<MatriculaAsignaturaDTO>> matricularEnCurso(
-            @PathVariable Integer cursoId,
-            @PathVariable Integer usuarioId) {
-        List<MatriculaAsignaturaDTO> matriculas = asignaturaService.matricularEnCurso(cursoId, usuarioId);
-        return new ResponseEntity<>(matriculas, HttpStatus.CREATED);
     }
 
 }

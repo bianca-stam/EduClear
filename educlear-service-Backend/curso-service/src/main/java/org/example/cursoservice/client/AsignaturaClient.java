@@ -17,9 +17,6 @@ public interface AsignaturaClient {
             @RequestParam Integer profesorId
     );
 
-    @GetMapping("/api/asignaturas/curso-ids/alumno")
-    List<Integer> obtenerCursoIdsPorAlumno(
-            @RequestParam Integer alumnoId
-    );
+    // obtenerCursoIdsPorAlumno ya no se necesita:
+    // ahora se consulta directamente desde matriculas_curso (local)
 }
-

@@ -92,7 +92,7 @@ public class EntregaTareaController {
             @PathVariable Integer alumnoId) {
         EntregaTareaDTO entrega = entregaTareaService.findByTareaIdAndAlumnoId(tareaId, alumnoId);
         if (entrega == null) {
-            throw new ResourceNotFoundException("No se encontró entrega del alumno " + alumnoId + " para la tarea " + tareaId);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(entrega);
     }

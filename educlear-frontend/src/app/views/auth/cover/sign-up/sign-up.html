@@ -136,6 +136,7 @@
                                     </div>
                                 </div>
 
+                                @if (form.rol.value === 'alumno') {
                                 <div class="mb-3">
                                     <label for="userCurso" class="form-label">
                                         Curso
@@ -151,6 +152,25 @@
                                         }
                                     </div>
                                 </div>
+                                }
+
+                                @if (form.rol.value === 'profesor') {
+                                <div class="mb-3">
+                                    <label for="userAsignatura" class="form-label">
+                                        Asignatura
+                                    </label>
+                                    <div class="app-search">
+                                        @if (asignaturas().length > 0) {
+                                            <select choicesSelect [options]="opcionesAsignatura()" class="form-control" id="userAsignatura" formControlName="asignaturaId">
+                                            </select>
+                                        } @else {
+                                            <select class="form-control" disabled>
+                                                <option>Cargando asignaturas...</option>
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                                }
 
                                <div
                                 class="d-flex justify-content-between align-items-center mb-3"

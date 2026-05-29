@@ -12,10 +12,20 @@ export class AsignaturasService {
 
   private _http = inject(HttpClient);
   private readonly ASIGNATURAS_URL = `${environment.apiUrl}/asignaturas`;
-  private readonly MATRICULAS_URL = `${environment.apiUrl}/matriculas`;
   private readonly TEMAS_URL = `${environment.apiUrl}/temas`;
 
   asignaturaSeleccionada = signal<DbAsignatura | null>(null);
+
+  getAllAsignaturas(): Observable<DbAsignatura[]> {
+    return this._http.get<any[]>(this.ASIGNATURAS_URL).pipe(
+      map(data => data.map(a => ({
+        id_asignatura: a.id,
+        nombre: a.nombre,
+        curso_id: a.cursoId,
+        profesor_id: a.profesorId
+      })))
+    );
+  }
 
   getAsignaturasByCurso(cursoId: number): Observable<DbAsignatura[]> {
     return this._http.get<any[]>(`${this.ASIGNATURAS_URL}/curso/${cursoId}`).pipe(
@@ -40,16 +50,6 @@ export class AsignaturasService {
     return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids`, {
       params: { profesorId }
     });
-  }
-
-  getCursoIdsByAlumno(alumnoId: number): Observable<number[]> {
-    return this._http.get<number[]>(`${this.ASIGNATURAS_URL}/curso-ids/alumno`, {
-      params: { alumnoId }
-    });
-  }
-
-  getAlumnosByAsignatura(asignaturaId: number): Observable<number[]> {
-    return this._http.get<number[]>(`${this.MATRICULAS_URL}/asignatura/${asignaturaId}/alumnos`);
   }
 
   /** Usa el endpoint directo del backend: GET /asignaturas/alumno/{alumnoId} */
@@ -119,13 +119,6 @@ export class AsignaturasService {
         curso_id: a.cursoId,
         profesor_id: a.profesorId
       }))
-    );
-  }
-
-  matricularEnCurso(cursoId: number, usuarioId: number): Observable<any[]> {
-    return this._http.post<any[]>(
-      `${this.ASIGNATURAS_URL}/curso/${cursoId}/matricular/${usuarioId}`,
-      {}
     );
   }
 }
