@@ -3,6 +3,8 @@ package org.springframework.boot.materiales_service.config;
 import org.springframework.boot.materiales_service.dto.AsignaturaDTO;
 import org.springframework.boot.materiales_service.dto.CursoDTO;
 import org.springframework.boot.materiales_service.dto.UsuarioDTO;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,12 +23,21 @@ public class AsignaturaClient {
     }
 
     /**
-     * Obtiene los IDs de asignaturas en las que el alumno está matriculado.
+     * Obtiene los IDs de asignaturas del alumno (a través de sus cursos matriculados).
      */
     public List<Integer> getAsignaturasByAlumno(Integer alumnoId) {
-        String url = "http://asignatura-service:8083/api/matriculas/alumno/" + alumnoId + "/asignaturas";
-        ResponseEntity<Integer[]> response = restTemplate.getForEntity(url, Integer[].class);
-        return Arrays.asList(response.getBody());
+        // Ahora llama al endpoint adaptado de asignatura-service que internamente
+        // consulta curso-service para obtener los cursos del alumno
+        String url = "http://asignatura-service:8083/api/asignaturas/alumno/" + alumnoId;
+        try {
+            ResponseEntity<AsignaturaDTO[]> response = restTemplate.getForEntity(url, AsignaturaDTO[].class);
+            if (response.getBody() == null) return Collections.emptyList();
+            return Arrays.stream(response.getBody())
+                    .map(AsignaturaDTO::getId)
+                    .collect(java.util.stream.Collectors.toList());
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -47,13 +58,27 @@ public class AsignaturaClient {
     }
 
     /**
-     * Obtiene los IDs de alumnos matriculados en una asignatura concreta.
+     * Obtiene los IDs de alumnos matriculados en una asignatura.
+     * Ahora: obtiene el cursoId de la asignatura → luego los alumnos del curso.
      */
     public List<Integer> getAlumnosByAsignatura(Integer asignaturaId) {
-        String url = "http://asignatura-service:8083/api/matriculas/asignatura/" + asignaturaId + "/alumnos";
         try {
-            ResponseEntity<Integer[]> response = restTemplate.getForEntity(url, Integer[].class);
-            return response.getBody() != null ? Arrays.asList(response.getBody()) : Collections.emptyList();
+            // 1. Obtener la asignatura para conocer su cursoId
+            String asigUrl = "http://asignatura-service:8083/api/asignaturas/" + asignaturaId;
+            AsignaturaDTO asignatura = restTemplate.getForObject(asigUrl, AsignaturaDTO.class);
+            if (asignatura == null || asignatura.getCursoId() == null) {
+                return Collections.emptyList();
+            }
+
+            // 2. Obtener los alumnos del curso
+            String cursoUrl = "http://curso-service:8082/api/cursos/" + asignatura.getCursoId() + "/alumnos";
+            ResponseEntity<List<Integer>> response = restTemplate.exchange(
+                    cursoUrl,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Integer>>() {}
+            );
+            return response.getBody() != null ? response.getBody() : Collections.emptyList();
         } catch (Exception e) {
             return Collections.emptyList();
         }
@@ -71,4 +96,3 @@ public class AsignaturaClient {
         }
     }
 }
-

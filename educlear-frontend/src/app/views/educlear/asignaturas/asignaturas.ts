@@ -51,8 +51,17 @@ export class Asignaturas implements OnInit {
   // ── Computed ──────────────────────────────────────────────────────────────
   asignaturas = computed(() => {
     const busqueda = this.terminoBusqueda().toLowerCase();
-    if (!busqueda) return this.asignaturasRaw();
-    return this.asignaturasRaw().filter(asignatura => asignatura.nombre.toLowerCase().includes(busqueda));
+    const u = this.authService.usuarioActual();
+    
+    let lista = this.asignaturasRaw();
+    
+    // Si es profesor, solo ve sus propias asignaturas
+    if (u?.rol === 'profesor') {
+      lista = lista.filter(a => a.profesor_id === u.id);
+    }
+
+    if (!busqueda) return lista;
+    return lista.filter(asignatura => asignatura.nombre.toLowerCase().includes(busqueda));
   });
 
   // ── Lifecycle ────────────────────────────────────────────────────────────

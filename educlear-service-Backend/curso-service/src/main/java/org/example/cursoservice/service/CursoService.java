@@ -2,6 +2,7 @@ package org.example.cursoservice.service;
 
 import org.example.cursoservice.dto.CreateCursoDto;
 import org.example.cursoservice.dto.CursoDto;
+import org.example.cursoservice.dto.MatriculaCursoDTO;
 
 import java.util.List;
 
@@ -22,4 +23,12 @@ public interface CursoService {
 
     CursoDto update(Integer id, CreateCursoDto dto);
 
+    // ── Matrícula de alumnos ────────────────────────────────────────
+    MatriculaCursoDTO matricular(Integer cursoId, Integer alumnoId);
+
+    void desmatricular(Integer cursoId, Integer alumnoId);
+
+    List<Integer> getAlumnoIdsByCurso(Integer cursoId);
+
+    List<Integer> getCursoIdsByAlumno(Integer alumnoId);
 }

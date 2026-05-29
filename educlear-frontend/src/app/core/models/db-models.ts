@@ -21,8 +21,8 @@ export interface DbAsignatura {
   profesor_id: number;
 }
 
-export interface DbMatriculaAsignatura {
-  asignatura_id: number;
+export interface DbMatriculaCurso {
+  curso_id: number;
   alumno_id: number;
 }
 

@@ -44,11 +44,11 @@ CREATE TABLE asignaturas (
     FOREIGN KEY (profesor_id) REFERENCES usuarios(id_usuario)
 );
 
-CREATE TABLE matriculas_asignatura (
-    asignatura_id INT,
+CREATE TABLE matriculas_curso (
+    curso_id INT,
     alumno_id INT,
-    PRIMARY KEY (asignatura_id, alumno_id),
-    FOREIGN KEY (asignatura_id) REFERENCES asignaturas(id_asignatura) ON DELETE CASCADE,
+    PRIMARY KEY (curso_id, alumno_id),
+    FOREIGN KEY (curso_id) REFERENCES cursos(id_curso) ON DELETE CASCADE,
     FOREIGN KEY (alumno_id) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 
@@ -177,13 +177,11 @@ INSERT INTO asignaturas (id_asignatura, nombre, curso_id, profesor_id) VALUES
 (7, 'Fundamentos de Hardware', 2, 3),
 (8, 'Gestión de Bases de Datos', 2, 3);
 
--- 4. MATRÍCULAS
-TRUNCATE TABLE matriculas_asignatura;
-INSERT INTO matriculas_asignatura (asignatura_id, alumno_id) VALUES
-(1,4),(2,4),(3,4),(4,4), -- Ana en DAM
-(1,5),(2,5),(3,5),(4,5), -- Pablo en DAM
-(5,6),(6,6),(7,6),(8,6), -- Elena en ASIR
-(5,7),(6,7),(7,7),(8,7); -- Juan en ASIR
+-- 4. MATRÍCULAS (ahora a nivel de curso)
+TRUNCATE TABLE matriculas_curso;
+INSERT INTO matriculas_curso (curso_id, alumno_id) VALUES
+(1, 4), (1, 5),   -- Ana y Luis en DAM (curso 1)
+(2, 6), (2, 7);   -- Elena y Juan en ASIR (curso 2)
 
 -- 5. TEMAS (3 por asignatura = 24 temas)
 TRUNCATE TABLE temas;

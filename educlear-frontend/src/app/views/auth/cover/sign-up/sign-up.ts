@@ -6,9 +6,9 @@ import { FormBuilder, FormsModule, Validators, ReactiveFormsModule } from '@angu
 import { ChoiceSelectInputDirective } from '@core/directive/choices-select.directive';
 import { LucideAngularModule, LucideCircleUser, LucideKeyRound, LucideMail, LucideShield } from "lucide-angular";
 import { AuthService } from '@core/services/auth.service';
-import { CursosService } from '@core/services/cursos.service';
 import { AsignaturasService } from '@core/services/asignaturas.service';
-import { DbCurso } from '@core/models/db-models';
+import { CursosService } from '@core/services/cursos.service';
+import { DbCurso, DbAsignatura } from '@core/models/db-models';
 import { switchMap, of } from 'rxjs';
 
 @Component({
@@ -39,6 +39,7 @@ export class SignUp implements OnInit {
 
     // ── Estado ───────────────────────────────────────────────────────────────
     cursos = signal<DbCurso[]>([]);
+    asignaturas = signal<DbAsignatura[]>([]);
 
     isLoading = signal(false);
     errorMessage = signal<string | null>(null);
@@ -56,12 +57,26 @@ export class SignUp implements OnInit {
         ]
     }));
 
+    opcionesAsignatura = computed(() => ({
+        searchEnabled: true,
+        itemSelectText: '',
+        choices: [
+            { value: '', label: '— Sin asignatura asignada —', disabled: false, selected: !this.loginForm?.value?.asignaturaId },
+            ...this.asignaturas().map(a => ({
+                value: a.id_asignatura.toString(),
+                label: a.nombre,
+                selected: Number(this.loginForm?.value?.asignaturaId) === a.id_asignatura
+            }))
+        ]
+    }));
+
     loginForm = this.fb.group({
         nombreCompleto: ['', [Validators.required, Validators.minLength(3)]],
         correo: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
         password: ['', [Validators.required,Validators.minLength(3) ]],
         rol: ['alumno', Validators.required],
-        cursoId: [null as number | null]
+        cursoId: [null as number | null],
+        asignaturaId: [null as number | null]
     });
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -69,6 +84,10 @@ export class SignUp implements OnInit {
         this.cursosService.getAllCursos().subscribe({
             next: (data) => this.cursos.set(data),
             error: (err) => console.error('Error al cargar cursos para el registro:', err)
+        });
+        this.asignaturasService.getAllAsignaturas().subscribe({
+            next: (data) => this.asignaturas.set(data),
+            error: (err) => console.error('Error al cargar asignaturas para el registro:', err)
         });
     }
 
@@ -85,6 +104,7 @@ export class SignUp implements OnInit {
 
     const formValues = this.loginForm.getRawValue();
     const cursoId = formValues.cursoId ? Number(formValues.cursoId) : null;
+    const asignaturaId = formValues.asignaturaId ? Number(formValues.asignaturaId) : null;
 
     const newUser = {
       nombreCompleto: formValues.nombreCompleto,
@@ -95,8 +115,13 @@ export class SignUp implements OnInit {
 
     this.authService.register(newUser).pipe(
       switchMap(usuarioCreado => {
-        if (cursoId && usuarioCreado.id) {
-          return this.asignaturasService.matricularEnCurso(cursoId, usuarioCreado.id);
+        if (formValues.rol === 'alumno' && cursoId && usuarioCreado.id) {
+          return this.cursosService.matricularEnCurso(cursoId, usuarioCreado.id);
+        } else if (formValues.rol === 'profesor' && asignaturaId && usuarioCreado.id) {
+          const asig = this.asignaturas().find(a => a.id_asignatura === asignaturaId);
+          if (asig) {
+            return this.asignaturasService.editarAsignatura(asignaturaId, { nombre: asig.nombre, profesorId: usuarioCreado.id });
+          }
         }
         return of(undefined);
       })

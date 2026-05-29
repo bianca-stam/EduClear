@@ -21,13 +21,13 @@ export class TareasService {
 
   getEntrega(tareaId: number, alumnoId: number): Observable<DbEntregaTarea | undefined> {
     return this._http.get<any>(`${this.ENTREGAS_URL}/tarea/${tareaId}/alumno/${alumnoId}`).pipe(
-      map(e => ({
+      map(e => e ? {
         id_entrega_tarea: e.id,
         tarea_id: e.tareaId,
         alumno_id: e.alumnoId,
         estado_entrega: e.estadoEntrega,
         calificacion: e.calificacion
-      }))
+      } : undefined)
     );
   }
 
