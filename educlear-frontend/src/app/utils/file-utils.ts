@@ -1,13 +1,10 @@
-export const formatFileSize = (bytes: number) => {
-    const kb = bytes / 1024;
-    const mb = kb / 1024;
-    const gb = mb / 1024;
-
-    if (gb >= 1) {
-        return `${gb.toFixed(2)} GB`;
-    } else if (mb >= 1) {
-        return `${mb.toFixed(2)} MB`;
-    } else {
-        return `${kb.toFixed(2)} KB`;
-    }
+/**
+ * Formats a file size in bytes to a human-readable string.
+ */
+export function formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
