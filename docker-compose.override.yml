@@ -41,8 +41,8 @@ services:
     build:
       context: ./educlear-service-Backend/usuario-service
       target: build
-    ports:
-      - "${PORT_USUARIO}:8081"
+    expose:
+      - "${PORT_USUARIO}"
     environment:
       <<: *db-env-local
     volumes:
@@ -56,8 +56,8 @@ services:
     build:
       context: ./educlear-service-Backend/curso-service
       target: build
-    ports:
-      - "${PORT_CURSO}:8082"
+    expose:
+      - "${PORT_CURSO}"
     environment:
       <<: *db-env-local
     volumes:
@@ -71,8 +71,8 @@ services:
     build:
       context: ./educlear-service-Backend/asignatura-service
       target: build
-    ports:
-      - "${PORT_ASIGNATURA}:8083"
+    expose:
+      - "${PORT_ASIGNATURA}"
     environment:
       <<: *db-env-local
     volumes:
@@ -86,8 +86,8 @@ services:
     build:
       context: ./educlear-service-Backend/materiales-service
       target: build
-    ports:
-      - "${PORT_MATERIALES}:8084"
+    expose:
+      - "${PORT_MATERIALES}"
     environment:
       <<: *db-env-local
     volumes:
