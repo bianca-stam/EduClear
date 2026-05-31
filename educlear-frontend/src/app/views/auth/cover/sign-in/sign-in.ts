@@ -59,9 +59,11 @@ export class SignIn {
       error: (err: any) => {
         this.isLoading.set(false);
         let msg = 'Error al iniciar sesión. Verifica tus credenciales.';
-        if (err.error) {
-          msg = err.error;
+        
+        if (err.error?.Error) {
+          msg = err.error.Error;
         }
+
         this.errorMessage.set(msg);
         this.form.password.reset();
       }
