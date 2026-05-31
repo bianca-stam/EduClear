@@ -56,9 +56,13 @@ export class SignIn {
         this.isLoading.set(false);
         this.router.navigate(['/cursos']);
       },
-      error: (err: Error) => {
+      error: (err: any) => {
         this.isLoading.set(false);
-        this.errorMessage.set(err.message ?? 'Error al iniciar sesión. Verifica tus credenciales.');
+        let msg = 'Error al iniciar sesión. Verifica tus credenciales.';
+        if (err.error) {
+          msg = err.error;
+        }
+        this.errorMessage.set(msg);
         this.form.password.reset();
       }
     });
