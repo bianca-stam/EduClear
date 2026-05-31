@@ -117,12 +117,25 @@ export class EditarTarea implements OnInit {
 
     const formVal = this.form.value;
     
-    // Flatpickr might return array of Date, a Date, or a string. We ensure ISO string.
+    // Flatpickr might return array of Date, a Date, or a string.
+    // Convertimos a string en formato YYYY-MM-DDTHH:mm:ss preservando la hora local exacta
+    // para que el backend (LocalDateTime) reciba exactamente la hora seleccionada sin conversiones UTC.
     const parseDate = (d: any) => {
       if (!d) return '';
-      if (Array.isArray(d)) return d[0].toISOString();
-      if (d instanceof Date) return d.toISOString();
-      return new Date(d).toISOString();
+      let dateObj: Date;
+      if (typeof d === 'string') {
+        const str = d.includes(' ') ? d.replace(' ', 'T') : d;
+        dateObj = new Date(str);
+      } else if (Array.isArray(d)) {
+        dateObj = d[0];
+      } else if (d instanceof Date) {
+        dateObj = d;
+      } else {
+        dateObj = new Date(d);
+      }
+      
+      const tzOffset = dateObj.getTimezoneOffset() * 60000;
+      return new Date(dateObj.getTime() - tzOffset).toISOString().slice(0, 19);
     };
 
     const payload = {
